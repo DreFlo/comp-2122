@@ -4,14 +4,55 @@ SMART_NODE_CREATION=false;
 
 SKIP : " " | "\t" | "\r" | "\n";
 
+ID : < LETTERS > (< LETTERS > | < INTEGER > );
+
 TOKEN :
 	< PLUS : "+" > |
 	< MINUS : "-" > |
 	< TIMES : "*" > |
 	< DIVIDE : "/" > |
+	< EQUALS : "=" > |
+	< DIF : "!=" > |
 	< OPEN_PAREN : "(" > |
 	< CLOSE_PAREN : ")" > |
-	< INTEGER : (["0" - "9"])+ >
+	< OPEN_SQ_BRACK : "[" > |
+	< CLOSE_SQ_BRACK: "]" > |
+	< OPEN_CURL_BRACK : "{" > |
+	< CLOSE_CURL_BRACK : "}" > |
+	< LT : "<" > |
+	< GT : ">" > |
+	< LE : "<=" > |
+	< GE : ">=" > |
+	< AND : "&&" > |
+	< OR : "||" > |
+	< NOT : "!" > |
+	< INTEGER : (["0" - "9"])+ > |
+	< LETTERS : (["a" - "z"]) | (["A" - "Z"])+ > |
+	< SEMI_COLON : ";" > |
+	< COLON : ":" > |
+	< COMMA : "," > |
+	< DOT : "." > |
+	< FOR : "for" > |
+	< IF : "if" > |
+	< ELSE : "else" > |
+	< WHILE : "while" > |
+	< SWTICH : "switch" > |
+	< CASE : "case" > |
+	< THIS : "this" > |
+	< IMPORT : "import" > |
+	< EXTENDS : "extends" > |
+	< PUBLIC : "public" > |
+	< RETURN : "return" > |
+	< STATIC : "static" > |
+	< VOID : "void" > |
+	< MAIN : "main" > |
+	< STRING : "String" > |
+	< INT : "int" > |
+	< BOOLEAN : "boolean" > |
+	< TRUE : "true" > |
+	< FALSE : "false" > |
+	< LENGTH : "length" > |
+	< NEW : "new" >
 ;
 
 Start : AdditiveExpression <EOF> ;
@@ -36,4 +77,8 @@ Factor :
 	< INTEGER > |
 	< MINUS> Factor |
 	< OPEN_PAREN > AdditiveExpression < CLOSE_PAREN >
+;
+
+ImportDeclaration :
+    < IMPORT > ID ( < DOT > ID )* < SEMI_COLON >
 ;
