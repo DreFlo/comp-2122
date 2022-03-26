@@ -52,7 +52,8 @@ TOKEN :
 	< TRUE : "true" > |
 	< FALSE : "false" > |
 	< LENGTH : "length" > |
-	< NEW : "new" >
+	< NEW : "new" > |
+	< CLASS : "class" >
 ;
 
 Start : AdditiveExpression <EOF> ;
@@ -79,6 +80,86 @@ Factor :
 	< OPEN_PAREN > AdditiveExpression < CLOSE_PAREN >
 ;
 
+/* Change - na gramatica o import td ta envolvido em {} aka 0 ou + vezes */
 ImportDeclaration :
-    < IMPORT > ID ( < DOT > ID )* < SEMI_COLON >
+    ( < IMPORT > ID ( < DOT > ID )* < SEMI_COLON > )*
 ;
+
+/*
+Type : 
+	( < INT > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > ) |
+	< BOOLEAN > |
+	< INT > |
+	< ID >
+;
+
+Expression : 
+	( Expression ( < AND > | < LT > | < PLUS > | < MINUS > | < TIMES > | < DIVIDE > ) Expression ) |
+	( Expression < OPEN_SQ_BRACK > Expression < CLOSE_SQ_BRACK >) |
+	( Expression < DOT > < LENGTH > ) |
+	( Expression < DOT > < ID > < OPEN_PAREN > ( Expression ( < COMMA > Expression )* )? < CLOSE_PAREN > ) |
+	< INTEGER > | < TRUE > | < FALSE > | < ID > | < THIS > |
+	( < NEW > < INT > < OPEN_SQ_BRACK > Expression < CLOSE_SQ_BRACK > ) | 
+	( < NEW > < ID > < OPEN_PAREN > < CLOSE_PAREN > ) |
+	( < NOT > Expression ) |
+	( < OPEN_PAREN > Expression < CLOSE_PAREN > )
+;
+
+Statement :
+	( < OPEN_CURL_BRACK > ( Statement )* < CLOSE_CURL_BRACK > ) |
+	( 	
+		< IF > < OPEN_PAREN > Expression < CLOSE_PAREN > 
+			Statement
+		< ELSE >
+			Statement
+	) |
+	(
+		< WHILE > < OPEN_PAREN > Expression < CLOSE_PAREN > Statement
+	) |
+	( Expression < SEMI_COLON > ) | 
+	( < ID > < EQUALS > Expression < SEMI_COLON >) |
+	( < ID > < OPEN_SQ_BRACK > Expression < CLOSE_SQ_BRACK > < EQUALS > Expression < SEMI_COLON >)
+;
+
+VarDeclaration :
+	Type < ID > < SEMI_COLON >
+;
+
+MethodDeclaration :
+	(
+		< PUBLIC >
+		Type
+		< ID >
+		< OPEN_PAREN >
+			(
+				Type < ID > ( < COMMA > Type < ID > )*
+			)?
+		< CLOSE_PAREN >
+		< OPEN_CURL_BRACK >
+			( VarDeclaration )*
+			( Statement )*
+			< RETURN > Expression < SEMI_COLON >
+		< CLOSE_CURL_BRACK >
+	) |
+	(
+		< PUBLIC > < STATIC > < VOID > < MAIN >
+		< OPEN_PAREN > < STRING > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > < ID > < CLOSE_PAREN >
+		< OPEN_CURL_BRACK >
+			( VarDeclaration )*
+			( Statement )*
+		< CLOSE_CURL_BRACK >
+	)
+;
+
+ClassDeclaration :
+	< CLASS > ID 
+	(
+		< EXTENDS > ID 
+	)? 
+	< OPEN_CURL_BRACK > 
+		( VarDeclaration )* 
+		( MethodDeclaration )* 
+	< CLOSE_CURL_BRACK > 
+	< SEMI_COLON >
+;
+*/
