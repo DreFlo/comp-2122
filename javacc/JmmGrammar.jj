@@ -56,7 +56,7 @@ TOKEN :
 	< CLASS : "class" >
 ;
 
-Start : AdditiveExpression <EOF> ;
+Start : ImportDeclaration <EOF> ;
 
 AdditiveExpression :
 	MultiplicativeExpression
@@ -70,11 +70,12 @@ MultiplicativeExpression :
 	Factor
 	(
 		(< TIMES > | < DIVIDE >)
-		Factor
+	 	( Factor | Expression)
 	)?
 ;
 
 Factor :
+	ID | 
 	< INTEGER > |
 	< MINUS> Factor |
 	< OPEN_PAREN > AdditiveExpression < CLOSE_PAREN >
@@ -85,25 +86,58 @@ ImportDeclaration :
     ( < IMPORT > ID ( < DOT > ID )* < SEMI_COLON > )*
 ;
 
-/*
+
 Type : 
 	( < INT > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > ) |
 	< BOOLEAN > |
 	< INT > |
-	< ID >
+	ID
 ;
 
+BooleanValue : 
+	< TRUE > | 
+	< FALSE >
+;
+
+Expression :
+	< INTEGER > |
+	< TRUE > |
+	< FALSE > |
+	ID |
+	< THIS >
+	      
+;
+
+MultExp :
+	Expression 
+	(< TIMES> | < DIVIDE > )
+	Expression
+;
+
+AddExp :
+	Expression
+	(< PLUS > | < MINUS >)
+	Expression
+;
+
+
+
+/*
 Expression : 
-	( Expression ( < AND > | < LT > | < PLUS > | < MINUS > | < TIMES > | < DIVIDE > ) Expression ) |
+	AdditiveExpression | 
+	MultiplicativeExpression | 
+	BooleanValue | 
+	( Expression ( < AND > | < LT >  ) Expression ) |
 	( Expression < OPEN_SQ_BRACK > Expression < CLOSE_SQ_BRACK >) |
 	( Expression < DOT > < LENGTH > ) |
-	( Expression < DOT > < ID > < OPEN_PAREN > ( Expression ( < COMMA > Expression )* )? < CLOSE_PAREN > ) |
-	< INTEGER > | < TRUE > | < FALSE > | < ID > | < THIS > |
+	( Expression < DOT > ID < OPEN_PAREN > ( Expression ( < COMMA > Expression )* )? < CLOSE_PAREN > ) |
+	< INTEGER > | < TRUE > | < FALSE > | ID | < THIS > |
 	( < NEW > < INT > < OPEN_SQ_BRACK > Expression < CLOSE_SQ_BRACK > ) | 
-	( < NEW > < ID > < OPEN_PAREN > < CLOSE_PAREN > ) |
+	( < NEW > ID < OPEN_PAREN > < CLOSE_PAREN > ) |
 	( < NOT > Expression ) |
 	( < OPEN_PAREN > Expression < CLOSE_PAREN > )
 ;
+
 
 Statement :
 	( < OPEN_CURL_BRACK > ( Statement )* < CLOSE_CURL_BRACK > ) |
