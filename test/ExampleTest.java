@@ -1,12 +1,37 @@
 import org.junit.Test;
 
 import pt.up.fe.comp.TestUtils;
+import pt.up.fe.specs.util.SpecsIo;
+
+import static pt.up.fe.specs.util.SpecsIo.getResource;
 
 public class ExampleTest {
 
     @Test
     public void testExpression() {
+        /*
+            HOW TO DO TESTS
 
+        1 - Get String
+            1.1 Create - String string = "something"
+            1.2 Get from File - String string = SpecsIo.getResource("fixtures/public/HelloWorld.jmm")
+
+        2 - Parse It
+            var parserResult = TestUtils.parse("import io;\n");
+
+        3 - Check for error
+            If it has to pass - TestUtils.noErrors(parserResult.getReports());
+            If it has to fail - TestUtils.mustFail(parserResult.getReports());
+        */
+
+        // Passed Files: HelloWorld
+        //String test = SpecsIo.getResource("fixtures/public/HelloWorld.jmm");
+        //var parserResult = TestUtils.parse(test);
+        //var parserResult = TestUtils.parse("ioPlus.printHelloWorld();", "Statement");
+        var parserResult = TestUtils.parse("abcjfclasscjvj", "ID");
+        TestUtils.noErrors(parserResult.getReports());
+
+        /*
         // Import Tests
         TestUtils.parse("import io;\n", "ImportDeclaration");
         TestUtils.parse("import org.junit.Test;\n");
@@ -31,11 +56,10 @@ public class ExampleTest {
 
         var parserResult = TestUtils.parse("import io;\n");
         TestUtils.noErrors(parserResult.getReports());
+        */
 
-        // var parserResult = TestUtils.parse("2+3\n10+20\n");
-        // parserResult.getReports().get(0).getException().get().printStackTrace();
-        // // System.out.println();
-        // var analysisResult = TestUtils.analyse(parserResult);
+
+
     }
 
 }
