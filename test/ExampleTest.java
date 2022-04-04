@@ -1,5 +1,6 @@
 import org.junit.Test;
 
+import pt.up.fe.comp.ImportDeclaration;
 import pt.up.fe.comp.TestUtils;
 import pt.up.fe.specs.util.SpecsIo;
 
@@ -24,12 +25,13 @@ public class ExampleTest {
             If it has to fail - TestUtils.mustFail(parserResult.getReports());
         */
 
-        // Passed Files: HelloWorld
-        //String test = SpecsIo.getResource("fixtures/public/HelloWorld.jmm");
-        //var parserResult = TestUtils.parse(test);
-        //var parserResult = TestUtils.parse("ioPlus.printHelloWorld();", "Statement");
-        var parserResult = TestUtils.parse("abcjfclasscjvj", "ID");
+        // Passed Files: HelloWorld Simple
+        String test = SpecsIo.getResource("fixtures/public/TicTacToe.jmm");
+        //var parserResult = TestUtils.parse("args[4+3].dot(4)", "Expression");
+        var parserResult = TestUtils.parse(test);
+        //var parserResult = TestUtils.parse("abcjfclasscjvj", "ID");
         TestUtils.noErrors(parserResult.getReports());
+        //TestUtils.mustFail(parserResult.getReports());
 
         /*
         // Import Tests

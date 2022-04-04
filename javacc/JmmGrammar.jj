@@ -2,9 +2,8 @@ PARSER_PACKAGE=pt.up.fe.comp;
 PARSER_CLASS=JmmGrammarParser;
 SMART_NODE_CREATION=false;
 
-SKIP : " " | "\t" | "\r" | "\n";
-
-ID : ( < LETTER > | < UNDERSCORE > ) ( < LETTER > | < INTEGER > | < UNDERSCORE > )*;
+SKIP : " " | "\t" | "\r" | "\n" | < "//" (~["\n"])* >
+;
 
 TOKEN :
 	< PLUS : "+" > |
@@ -27,10 +26,6 @@ TOKEN :
 	< OR : "||" > |
 	< NOT : "!" > |
 	< INTEGER : (["0" - "9"])+ > |
-	< LETTER : ( < LOWER_CASE > | < UPPER_CASE > ) > |
-	< LOWER_CASE : ["a" - "z"] > |
-	< UPPER_CASE : ["A" - "Z"] > |
-	< UNDERSCORE : "_" > |
 	< SEMI_COLON : ";" > |
 	< COLON : ":" > |
 	< COMMA : "," > |
@@ -56,7 +51,12 @@ TOKEN :
 	< FALSE : "false" > |
 	< LENGTH : "length" > |
 	< NEW : "new" > |
-	< CLASS : "class" >
+	< CLASS : "class" > |
+	< IDD : ( < LETTER > | < UNDERSCORE > ) ( < LETTER > | < INTEGER > | < UNDERSCORE > )* > |
+    < LETTER : ( < LOWER_CASE > | < UPPER_CASE > ) > |
+    < LOWER_CASE : ["a" - "z"] > |
+    < UPPER_CASE : ["A" - "Z"] > |
+    < UNDERSCORE : "_" >
 ;
 
 Start :
@@ -82,21 +82,20 @@ MultiplicativeExpression :
 ;
 
 Factor :
-	ID |
+	< IDD > |
 	< INTEGER > |
 	< MINUS> Factor |
 	< OPEN_PAREN > AdditiveExpression < CLOSE_PAREN >
 ;
 
-/* Change - na gramatica o import td ta envolvido em {} aka 0 ou + vezes */
 ImportDeclaration :
-    ( < IMPORT > ID ( < DOT > ID )* < SEMI_COLON > )*
+    ( < IMPORT > < IDD > ( < DOT > < IDD > )* < SEMI_COLON > )*
 ;
 
 ClassDeclaration :
-	< CLASS > ID
+	< CLASS > < IDD >
 	(
-		< EXTENDS > ID
+		< EXTENDS > < IDD >
 	)?
 	< OPEN_CURL_BRACK >
 		( VarDeclaration )*
@@ -105,31 +104,32 @@ ClassDeclaration :
 ;
 
 VarDeclaration :
-	Type ID < SEMI_COLON >
+	Type < IDD > < SEMI_COLON >
 ;
 
 MethodDeclaration :
     < PUBLIC >
     (
         Type
-        ID
+        < IDD >
         < OPEN_PAREN >
             (
-            Type ID ( < COMMA > Type ID )*
+            Type < IDD > ( < COMMA > Type < IDD > )*
             )?
         < CLOSE_PAREN >
         < OPEN_CURL_BRACK >
-            ( VarDeclaration )*
+            ( SCAN 2 VarDeclaration )*
             ( Statement )*
             < RETURN > Expression < SEMI_COLON >
         < CLOSE_CURL_BRACK >
     |
         < STATIC > < VOID > < MAIN >
         < OPEN_PAREN >
-            < STRING > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > ID
+            < STRING > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > < IDD >
         < CLOSE_PAREN >
         < OPEN_CURL_BRACK >
-            ( SCAN 2 Statement | VarDeclaration)*
+            ( SCAN 2 VarDeclaration )*
+            ( Statement )*
         < CLOSE_CURL_BRACK >
     )
 ;
@@ -145,7 +145,7 @@ Statement :
 	(
 		< WHILE > < OPEN_PAREN > Expression < CLOSE_PAREN > Statement
 	) |
-	(ID (( < EQUALS > Expression) | (<OPEN_SQ_BRACK> Expression <CLOSE_SQ_BRACK> < EQUALS > Expression)) < SEMI_COLON > ) |
+	SCAN 2 (< IDD > (( < EQUALS > Expression) | (<OPEN_SQ_BRACK> Expression <CLOSE_SQ_BRACK> < EQUALS > Expression)) < SEMI_COLON > ) |
 	Expression < SEMI_COLON >;
 
 
@@ -155,7 +155,7 @@ Statement :
 Type : 
 	( < INT > ( < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > )? ) |
 	< BOOLEAN > |
-	ID
+	< IDD >
 ;
 
 Expression  :
@@ -201,7 +201,7 @@ Terminal :
     < INTEGER > |
     < TRUE > |
     < FALSE > |
-    ID |
+    < IDD > |
     < THIS > |
     ( < OPEN_PAREN >
         Expression
@@ -217,7 +217,7 @@ New :
             Expression
           < CLOSE_SQ_BRACK > )
         |
-        ( ID
+        ( < IDD >
           < OPEN_PAREN >
           < CLOSE_PAREN >
         )
@@ -236,26 +236,8 @@ DotStatement :
 ;
 
 CallExpression :
-    ID
+    < IDD >
     < OPEN_PAREN >
         ( Expression ( < COMMA > Expression )* )?
     < CLOSE_PAREN >
 ;
-
-
-/*
-Expression : 
-	AdditiveExpression | 
-	MultiplicativeExpression | 
-	BooleanValue | 
-	( Expression ( < AND > | < LT > | < PLUS > | < MINUS > | < TIMES > | < DIVIDE > ) Expression ) ->
-	( Expression < OPEN_SQ_BRACK > Expression < CLOSE_SQ_BRACK >) -> Array
-	( Expression < DOT > < LENGTH > ) -> DotStatement
-	( Expression < DOT > ID < OPEN_PAREN > ( Expression ( < COMMA > Expression )* )? < CLOSE_PAREN > ) -> DotStatement + CallExpression
-	< INTEGER > | < TRUE > | < FALSE > | ID | < THIS > -> Terminal
-	( < NEW > < INT > < OPEN_SQ_BRACK > Expression < CLOSE_SQ_BRACK > ) -> New
-	( < NEW > ID < OPEN_PAREN > < CLOSE_PAREN > ) -> New
-	( < NOT > Expression )  -> Not
-	( < OPEN_PAREN > Expression < CLOSE_PAREN > ) -> Terminal
-;
-*/
