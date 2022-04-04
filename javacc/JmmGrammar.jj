@@ -1,9 +1,9 @@
 PARSER_PACKAGE=pt.up.fe.comp;
 PARSER_CLASS=JmmGrammarParser;
 SMART_NODE_CREATION=false;
+TOKENS_ARE_NODES=false;
 
-SKIP : " " | "\t" | "\r" | "\n" | < "//" (~["\n"])* >
-;
+SKIP : " " | "\t" | "\r" | "\n" | < "//" (~["\n"])* > | < "/*" (~["*"])* "*" (~["*","/"] (~["*"])* "*" | "*")* "/" >;
 
 TOKEN :
 	< PLUS : "+" > |
@@ -146,11 +146,9 @@ Statement :
 		< WHILE > < OPEN_PAREN > Expression < CLOSE_PAREN > Statement
 	) |
 	SCAN 2 (< IDD > (( < EQUALS > Expression) | (<OPEN_SQ_BRACK> Expression <CLOSE_SQ_BRACK> < EQUALS > Expression)) < SEMI_COLON > ) |
-	Expression < SEMI_COLON >;
+	Expression < SEMI_COLON >
+;
 
-
-/*	( Expression ( < EQUALS > Expression )? < SEMI_COLON > )
-;*/
 
 Type : 
 	( < INT > ( < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > )? ) |
@@ -158,50 +156,50 @@ Type :
 	< IDD >
 ;
 
-Expression  :
+Expression :
     And
 ;
 
-And :
+And #void :
     LessThan
-    ( < AND > LessThan )*
+    ( < AND > #And LessThan )*
 ;
 
-LessThan :
+LessThan #void :
     AddSub
     ( < LT > AddSub )*
 ;
 
-AddSub :
-    MultDiv
+AddSub #void :
+    (MultDiv
     (
-    ( < PLUS > MultDiv ) |
-    ( < MINUS > MultDiv )
-    )*
+    ( < PLUS > MultDiv) |
+    ( < MINUS > MultDiv #Minus(>0))
+    )*) #Add(>1)
 ;
 
-MultDiv :
-    Not
+MultDiv #void :
+    (Not
     (
     ( < TIMES > Not ) |
-    ( < DIVIDE > Not )
-    )*
+    ( < DIVIDE > Not #Inverse(>0))
+    )*) #Mult(>1)
 ;
 
-Not :
+Not #void :
     < NOT > ( Not ) |
     Terminations
 ;
 
-Terminations :
+Terminations #void :
     Terminal ( Array | DotStatement )*
 ;
 
-Terminal :
-    < INTEGER > |
+Terminal #void :
+    < INTEGER > #Int |
     < TRUE > |
     < FALSE > |
-    < IDD > |
+    < IDD > #Id |
     < THIS > |
     ( < OPEN_PAREN >
         Expression
@@ -209,7 +207,7 @@ Terminal :
     New
 ;
 
-New :
+New #void :
     < NEW >
     (
         ( < INT >
@@ -224,18 +222,18 @@ New :
     )
 ;
 
-Array :
+Array #void :
     < OPEN_SQ_BRACK >
         Expression
     < CLOSE_SQ_BRACK >
 ;
 
-DotStatement :
+DotStatement #void :
     < DOT >
     ( < LENGTH > | CallExpression )
 ;
 
-CallExpression :
+CallExpression #void :
     < IDD >
     < OPEN_PAREN >
         ( Expression ( < COMMA > Expression )* )?

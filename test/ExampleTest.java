@@ -26,9 +26,9 @@ public class ExampleTest {
         */
 
         // Passed Files: HelloWorld Simple
-        String test = SpecsIo.getResource("fixtures/public/TicTacToe.jmm");
+        //String test = SpecsIo.getResource("fixtures/public/TicTacToe.jmm");
         //var parserResult = TestUtils.parse("args[4+3].dot(4)", "Expression");
-        var parserResult = TestUtils.parse(test);
+        var parserResult = TestUtils.parse("2-3-4-6*4/2", "Expression");
         //var parserResult = TestUtils.parse("abcjfclasscjvj", "ID");
         TestUtils.noErrors(parserResult.getReports());
         //TestUtils.mustFail(parserResult.getReports());
