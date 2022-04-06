@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.parser.JmmParserResult;
 import pt.up.fe.specs.util.SpecsIo;
 import pt.up.fe.specs.util.SpecsLogs;
@@ -39,6 +40,11 @@ public class Launcher {
 
         // Parse stage
         JmmParserResult parserResult = parser.parse(input, config);
+
+        var eval = new VisitorEval();
+        JmmNode root = parserResult.getRootNode();
+
+        System.out.println("visitor eval: " + eval.visit(root, null));
 
         // Check if there are parsing errors
         TestUtils.noErrors(parserResult.getReports());

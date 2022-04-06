@@ -1,5 +1,5 @@
 PARSER_PACKAGE=pt.up.fe.comp;
-PARSER_CLASS=JmmGrammarParser;
+PARSER_CLASS = JmmGrammarParser;
 SMART_NODE_CREATION=false;
 TOKENS_ARE_NODES=false;
 
@@ -51,7 +51,7 @@ TOKEN :
 	< FALSE : "false" > |
 	< LENGTH : "length" > |
 	< NEW : "new" > |
-	< CLASS : "class" > |
+	< CLASST : "class" > |
 	< IDD : ( < LETTER > | < UNDERSCORE > ) ( < LETTER > | < INTEGER > | < UNDERSCORE > )* > |
     < LETTER : ( < LOWER_CASE > | < UPPER_CASE > ) > |
     < LOWER_CASE : ["a" - "z"] > |
@@ -65,35 +65,12 @@ Start :
     <EOF>
 ;
 
-AdditiveExpression :
-	MultiplicativeExpression
-	(
-		(< PLUS > | < MINUS >)
-		MultiplicativeExpression
-	)?
-;
-
-MultiplicativeExpression :
-	Factor
-	(
-		(< TIMES > | < DIVIDE >)
-	 	( Factor | Expression)
-	)?
-;
-
-Factor :
-	< IDD > |
-	< INTEGER > |
-	< MINUS> Factor |
-	< OPEN_PAREN > AdditiveExpression < CLOSE_PAREN >
-;
-
-ImportDeclaration :
+ImportDeclaration #Import :
     ( < IMPORT > < IDD > ( < DOT > < IDD > )* < SEMI_COLON > )*
 ;
 
-ClassDeclaration :
-	< CLASS > < IDD >
+ClassDeclaration #ClassDec :
+	< CLASST > < IDD >
 	(
 		< EXTENDS > < IDD >
 	)?
@@ -103,14 +80,14 @@ ClassDeclaration :
 	< CLOSE_CURL_BRACK >
 ;
 
-VarDeclaration :
+VarDeclaration #Var :
 	Type < IDD > < SEMI_COLON >
 ;
 
-MethodDeclaration :
+MethodDeclaration #void :
     < PUBLIC >
     (
-        Type
+        (Type
         < IDD >
         < OPEN_PAREN >
             (
@@ -121,36 +98,36 @@ MethodDeclaration :
             ( SCAN 2 VarDeclaration )*
             ( Statement )*
             < RETURN > Expression < SEMI_COLON >
-        < CLOSE_CURL_BRACK >
+        < CLOSE_CURL_BRACK >) #InstanceMethod
     |
-        < STATIC > < VOID > < MAIN >
+        (< STATIC > < VOID > < MAIN >
         < OPEN_PAREN >
             < STRING > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > < IDD >
         < CLOSE_PAREN >
         < OPEN_CURL_BRACK >
             ( SCAN 2 VarDeclaration )*
             ( Statement )*
-        < CLOSE_CURL_BRACK >
+        < CLOSE_CURL_BRACK >) #MainMethod
     )
 ;
 
-Statement :
+Statement #void :
 	( < OPEN_CURL_BRACK > ( Statement )* < CLOSE_CURL_BRACK > ) |
 	(
 		< IF > < OPEN_PAREN > Expression < CLOSE_PAREN >
 			Statement
 		< ELSE >
 			Statement
-	) |
+	) #IfStatement |
 	(
 		< WHILE > < OPEN_PAREN > Expression < CLOSE_PAREN > Statement
-	) |
-	SCAN 2 (< IDD > (( < EQUALS > Expression) | (<OPEN_SQ_BRACK> Expression <CLOSE_SQ_BRACK> < EQUALS > Expression)) < SEMI_COLON > ) |
+	) #WhileStatement |
+	SCAN 2 (< IDD > (( < EQUALS > Expression) | (<OPEN_SQ_BRACK> Expression <CLOSE_SQ_BRACK> < EQUALS > Expression)) < SEMI_COLON > ) #AssignmentStatement |
 	Expression < SEMI_COLON >
 ;
 
 
-Type : 
+Type #void :
 	( < INT > ( < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > )? ) |
 	< BOOLEAN > |
 	< IDD >
@@ -167,23 +144,23 @@ And #void :
 
 LessThan #void :
     AddSub
-    ( < LT > AddSub )*
+    ( < LT > #LessThan AddSub )*
 ;
 
 AddSub #void :
-    (MultDiv
+    MultDiv
     (
-    ( < PLUS > MultDiv) |
-    ( < MINUS > MultDiv #Minus(>0))
-    )*) #Add(>1)
+    ( < PLUS > #Plus MultDiv) |
+    ( < MINUS > #Minus MultDiv)
+    )*
 ;
 
 MultDiv #void :
-    (Not
+    Not
     (
-    ( < TIMES > Not ) |
-    ( < DIVIDE > Not #Inverse(>0))
-    )*) #Mult(>1)
+    ( < TIMES > #Times Not ) |
+    ( < DIVIDE > #Divide Not )
+    )*
 ;
 
 Not #void :
@@ -197,10 +174,10 @@ Terminations #void :
 
 Terminal #void :
     < INTEGER > #Int |
-    < TRUE > |
-    < FALSE > |
+    < TRUE > #True |
+    < FALSE > #False |
     < IDD > #Id |
-    < THIS > |
+    < THIS > #This |
     ( < OPEN_PAREN >
         Expression
     < CLOSE_PAREN > ) |
@@ -211,14 +188,12 @@ New #void :
     < NEW >
     (
         ( < INT >
-          < OPEN_SQ_BRACK >
-            Expression
-          < CLOSE_SQ_BRACK > )
+          Array ) #NewArray
         |
         ( < IDD >
           < OPEN_PAREN >
           < CLOSE_PAREN >
-        )
+        ) #NewObject
     )
 ;
 
@@ -230,12 +205,75 @@ Array #void :
 
 DotStatement #void :
     < DOT >
-    ( < LENGTH > | CallExpression )
+    ( < LENGTH > #DotLength | CallExpression )
 ;
 
-CallExpression #void :
+CallExpression #FunctionCall :
     < IDD >
     < OPEN_PAREN >
         ( Expression ( < COMMA > Expression )* )?
     < CLOSE_PAREN >
 ;
+
+// Injections for the implementation of JmmNode
+// Since this is injected into BaseNode, it affects only non-terminals
+INJECT BaseNode :
+		import pt.up.fe.comp.jmm.ast.JmmNode;
+		import pt.up.fe.comp.jmm.ast.AJmmNode;
+		import pt.up.fe.specs.util.SpecsCollections;
+		extends AJmmNode
+{
+    @Override
+    public List<JmmNode> getChildren() {
+
+        return SpecsCollections.cast(children(), JmmNode.class);
+    }
+
+    @Override
+    public void add(JmmNode child, int index) {
+
+        if (child instanceof Node) {
+
+            addChild(index, (Node) child);
+        } else {
+
+            throw new RuntimeException("Node " + child + " is not a Node.");
+        }
+
+    }
+}
+
+// Injections for the implementation of JmmNode
+// Since this is injected into Token, it affects only terminals
+INJECT Token :
+		import pt.up.fe.comp.jmm.ast.JmmNode;
+		import pt.up.fe.comp.jmm.ast.AJmmNode;
+		import pt.up.fe.specs.util.SpecsCollections;
+		extends AJmmNode
+{
+    @Override
+    public List<JmmNode> getChildren() {
+
+        return SpecsCollections.cast(children(), JmmNode.class);
+    }
+
+    @Override
+    public void add(JmmNode child, int index) {
+
+		throw new RuntimeException("Cannot add child nodes to a Token.");
+    }
+
+    @Override
+    public List<String> getAttributes() {
+        return SpecsCollections.concat("image", super.getAttributes());
+    }
+
+    @Override
+    public String get(String attribute) {
+		if(attribute.equals("image")) {
+			return getImage();
+		}
+
+        return super.get(attribute);
+    }
+}

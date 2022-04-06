@@ -1,11 +1,11 @@
 /**
  * Copyright 2022 SPeCS.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License. under the License.
@@ -17,12 +17,11 @@ import org.junit.Test;
 
 public class GrammarTest {
 
-    private static final String IMPORT = "ImportDeclaration";
+    private static final String IMPORT = "Import";
     private static final String MAIN_METHOD = "MethodDeclaration";
     private static final String INSTANCE_METHOD = "MethodDeclaration";
     private static final String STATEMENT = "Statement";
     private static final String EXPRESSION = "Expression";
-    private static final String VAR_DECLARATION = "VarDeclaration";
 
     private static void noErrors(String code, String grammarRule) {
         if (grammarRule.isEmpty()) {
@@ -41,7 +40,7 @@ public class GrammarTest {
     }
 
     private static void noErrors(String code) {
-        noErrors(code, "Start");
+        noErrors(code, "Program");
     }
 
     @Test
@@ -66,7 +65,7 @@ public class GrammarTest {
 
     @Test
     public void testVarDeclString() {
-        noErrors("String aString;", VAR_DECLARATION);
+        noErrors("String aString;", "VarDecl");
     }
 
     @Test
