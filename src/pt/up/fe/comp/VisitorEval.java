@@ -73,6 +73,10 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
             case SUB:
                 return visit(node.getJmmChild(0)) - visit(node.getJmmChild(1));
 
+            case AND:
+            case LT:
+                return 0;
+
             default:
                 throw new RuntimeException("Illegal operation '" + op + "' in " + node.getKind() + ".");
             }

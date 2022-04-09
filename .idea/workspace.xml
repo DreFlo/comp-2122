@@ -7,9 +7,10 @@
     <list default="true" id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/javacc/JmmGrammar.jj" beforeDir="false" afterPath="$PROJECT_DIR$/javacc/JmmGrammar.jj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/Launcher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/SimpleCalculatorOps.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/SimpleCalculatorOps.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/SimpleParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/SimpleParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/VisitorEval.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/VisitorEval.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/ExampleTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/ExampleTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/GrammarTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/GrammarTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,8 +95,8 @@
       <recent name="$PROJECT_DIR$/test/Basic Tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.ExampleTest.test">
-    <configuration name="ExampleTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RunManager" selected="Gradle.ExampleTest.test (1)">
+    <configuration name="ExampleTest.test (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -212,7 +213,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.ExampleTest.test" />
+        <item itemvalue="Gradle.ExampleTest.test (1)" />
         <item itemvalue="Gradle.ExampleTest.testExpression (1)" />
         <item itemvalue="Gradle.GrammarTest" />
         <item itemvalue="Gradle.ParserTest" />

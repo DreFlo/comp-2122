@@ -24,7 +24,11 @@ public class ExampleTest {
         */
 
         String test = SpecsIo.getResource("fixtures/public/WhileAndIf.jmm");
-        var parserResult = TestUtils.parse(test);
+        var parserResult = TestUtils.parse("if( a < b){\n" +
+                "            c  = a-1;\n" +
+                "        }else{\n" +
+                "            c = b-1;\n" +
+                "        }", "Statement");
         TestUtils.noErrors(parserResult.getReports());
 
     }

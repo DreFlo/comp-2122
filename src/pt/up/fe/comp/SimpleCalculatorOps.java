@@ -8,7 +8,11 @@ public enum SimpleCalculatorOps {
     SUB("-"),
     MUL("*"),
     DIV("/"),
-    NEG("-");
+    NEG("-"),
+    NOT("!"),
+    AND("AND"),
+    LT("LT"),
+    EQ("EQ");
 
     private final String code;
 

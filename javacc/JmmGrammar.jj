@@ -133,38 +133,38 @@ Type #void :
 	< IDD >
 ;
 
-Expression :
+Expression #void :
     And
 ;
 
 And #void :
     LessThan
-    ( < AND > #And LessThan )*
+    ( (< AND > LessThan) ({ jjtThis.put("op", "AND"); }) #BinOp(2) )*
 ;
 
 LessThan #void :
     AddSub
-    ( < LT > #LessThan AddSub )*
+    ( (< LT > AddSub) ({ jjtThis.put("op", "LT"); }) #BinOp(2) )*
 ;
 
 AddSub #void :
     MultDiv
     (
-    ( < PLUS > #Plus MultDiv) |
-    ( < MINUS > #Minus MultDiv)
+    ( (< PLUS > MultDiv) ({ jjtThis.put("op", "ADD"); }) #BinOp(2)) |
+    ( (< MINUS > MultDiv) ({ jjtThis.put("op", "SUB"); }) #BinOp(2))
     )*
 ;
 
 MultDiv #void :
     Not
     (
-    ( < TIMES > #Times Not ) |
-    ( < DIVIDE > #Divide Not )
+    ( (< TIMES > Not) ({ jjtThis.put("op", "MUL"); }) #BinOp(2) ) |
+    ( (< DIVIDE > Not) ({ jjtThis.put("op", "DIV"); }) #BinOp(2))
     )*
 ;
 
-Not #void :
-    < NOT > ( Not ) |
+Not #void:
+    ( (< NOT > Not) ({ jjtThis.put("op", "NOT"); }) #UnaryOp(1)) |
     Terminations
 ;
 
@@ -173,7 +173,7 @@ Terminations #void :
 ;
 
 Terminal #void :
-    < INTEGER > #Int |
+    (< INTEGER > ({ jjtThis.put("value", lastConsumedToken.getImage()); }) #IntegerLiteral ) |
     < TRUE > #True |
     < FALSE > #False |
     < IDD > #Id |
@@ -240,40 +240,5 @@ INJECT BaseNode :
             throw new RuntimeException("Node " + child + " is not a Node.");
         }
 
-    }
-}
-
-// Injections for the implementation of JmmNode
-// Since this is injected into Token, it affects only terminals
-INJECT Token :
-		import pt.up.fe.comp.jmm.ast.JmmNode;
-		import pt.up.fe.comp.jmm.ast.AJmmNode;
-		import pt.up.fe.specs.util.SpecsCollections;
-		extends AJmmNode
-{
-    @Override
-    public List<JmmNode> getChildren() {
-
-        return SpecsCollections.cast(children(), JmmNode.class);
-    }
-
-    @Override
-    public void add(JmmNode child, int index) {
-
-		throw new RuntimeException("Cannot add child nodes to a Token.");
-    }
-
-    @Override
-    public List<String> getAttributes() {
-        return SpecsCollections.concat("image", super.getAttributes());
-    }
-
-    @Override
-    public String get(String attribute) {
-		if(attribute.equals("image")) {
-			return getImage();
-		}
-
-        return super.get(attribute);
     }
 }

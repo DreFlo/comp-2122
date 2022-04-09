@@ -51,7 +51,7 @@ public class SimpleParser implements JmmParser {
     }
 
     @Override
-    public JmmParserResult parse(String jmmCode, String startingRule,Map<String, String> config) {
+    public JmmParserResult parse(String jmmCode, String startingRule, Map<String, String> config) {
 
         try {
 
