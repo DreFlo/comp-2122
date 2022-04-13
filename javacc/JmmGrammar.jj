@@ -52,7 +52,7 @@ TOKEN :
 	< LENGTH : "length" > |
 	< NEW : "new" > |
 	< CLASST : "class" > |
-	< IDD : ( < LETTER > | < UNDERSCORE > ) ( < LETTER > | < INTEGER > | < UNDERSCORE > )* > |
+	< ID : ( < LETTER > | < UNDERSCORE > ) ( < LETTER > | < INTEGER > | < UNDERSCORE > )* > |
     < LETTER : ( < LOWER_CASE > | < UPPER_CASE > ) > |
     < LOWER_CASE : ["a" - "z"] > |
     < UPPER_CASE : ["A" - "Z"] > |
@@ -60,19 +60,23 @@ TOKEN :
 ;
 
 Start :
-    ImportDeclaration
+    ( ImportDeclaration )*
     ClassDeclaration
     <EOF>
 ;
 
 ImportDeclaration #Import :
-    ( < IMPORT > < IDD > ( < DOT > < IDD > )* < SEMI_COLON > )*
+    < IMPORT > (< ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier) ( Package )* < SEMI_COLON >
 ;
 
-ClassDeclaration #ClassDec :
-	< CLASST > < IDD >
+Package #Package :
+    < DOT > (< ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier)
+;
+
+ClassDeclaration #ClassDeclaration :
+	< CLASST > (< ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier)
 	(
-		< EXTENDS > < IDD >
+	    ClassInheritance
 	)?
 	< OPEN_CURL_BRACK >
 		( VarDeclaration )*
@@ -80,29 +84,31 @@ ClassDeclaration #ClassDec :
 	< CLOSE_CURL_BRACK >
 ;
 
-VarDeclaration #Var :
-	Type < IDD > < SEMI_COLON >
+ClassInheritance #Inheritance :
+    < EXTENDS > (< ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier )
+;
+
+VarDeclaration #VarDeclaration :
+	Type  < ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier < SEMI_COLON >
 ;
 
 MethodDeclaration #void :
     < PUBLIC >
     (
         (Type
-        < IDD >
+        < ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier
         < OPEN_PAREN >
-            (
-            Type < IDD > ( < COMMA > Type < IDD > )*
-            )?
+            Arguments
         < CLOSE_PAREN >
         < OPEN_CURL_BRACK >
             ( SCAN 2 VarDeclaration )*
             ( Statement )*
-            < RETURN > Expression < SEMI_COLON >
+            ( (< RETURN > Expression) ({ jjtThis.put("op", "return"); }) #UnaryOp(1)) < SEMI_COLON >
         < CLOSE_CURL_BRACK >) #InstanceMethod
     |
         (< STATIC > < VOID > < MAIN >
         < OPEN_PAREN >
-            < STRING > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > < IDD >
+            MainArguments
         < CLOSE_PAREN >
         < OPEN_CURL_BRACK >
             ( SCAN 2 VarDeclaration )*
@@ -111,26 +117,42 @@ MethodDeclaration #void :
     )
 ;
 
+Arguments #Arguments :
+    ( Argument ( < COMMA > Argument )* )?
+;
+
+Argument #Argument :
+    Type < ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier
+;
+
+MainArguments #Arguments :
+    MainType < ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier
+;
+
+MainType #Type :
+    < STRING > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > ({ jjtThis.put("type", "stringArray"); })
+;
+
 Statement #void :
 	( < OPEN_CURL_BRACK > ( Statement )* < CLOSE_CURL_BRACK > ) |
 	(
-		< IF > < OPEN_PAREN > Expression < CLOSE_PAREN >
-			Statement
+		< IF > < OPEN_PAREN > Expression #IfCondition < CLOSE_PAREN >
+			Statement #IfBody
 		< ELSE >
-			Statement
+			Statement #Else
 	) #IfStatement |
 	(
-		< WHILE > < OPEN_PAREN > Expression < CLOSE_PAREN > Statement
+		< WHILE > < OPEN_PAREN > Expression #WhileCondition < CLOSE_PAREN > Statement #WhileBody
 	) #WhileStatement |
-	SCAN 2 (< IDD > (( < EQUALS > Expression) | (<OPEN_SQ_BRACK> Expression <CLOSE_SQ_BRACK> < EQUALS > Expression)) < SEMI_COLON > ) #AssignmentStatement |
+	SCAN 2 ( (< ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier ) (( < EQUALS > Expression) | (<OPEN_SQ_BRACK> Expression #Index(2) <CLOSE_SQ_BRACK> < EQUALS > Expression)) < SEMI_COLON > ) #AssignmentStatement |
 	Expression < SEMI_COLON >
 ;
 
 
-Type #void :
-	( < INT > ( < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > )? ) |
-	< BOOLEAN > |
-	< IDD >
+Type #Type :
+	(( (< INT > ({ jjtThis.put("type", "int"); })) ( (< OPEN_SQ_BRACK > < CLOSE_SQ_BRACK >) ({ jjtThis.put("type", "intArray"); }) )?) |
+	(< BOOLEAN > ({ jjtThis.put("type", "boolean"); })) |
+	(< ID > ({ jjtThis.put("type", lastConsumedToken.getImage()); })))
 ;
 
 Expression #void :
@@ -139,32 +161,32 @@ Expression #void :
 
 And #void :
     LessThan
-    ( (< AND > LessThan) ({ jjtThis.put("op", "AND"); }) #BinOp(2) )*
+    ( (< AND > LessThan) ({ jjtThis.put("op", "and"); }) #BinOp(2) )*
 ;
 
 LessThan #void :
     AddSub
-    ( (< LT > AddSub) ({ jjtThis.put("op", "LT"); }) #BinOp(2) )*
+    ( (< LT > AddSub) ({ jjtThis.put("op", "lt"); }) #BinOp(2) )*
 ;
 
 AddSub #void :
     MultDiv
     (
-    ( (< PLUS > MultDiv) ({ jjtThis.put("op", "ADD"); }) #BinOp(2)) |
-    ( (< MINUS > MultDiv) ({ jjtThis.put("op", "SUB"); }) #BinOp(2))
+    ( (< PLUS > MultDiv) ({ jjtThis.put("op", "add"); }) #BinOp(2)) |
+    ( (< MINUS > MultDiv) ({ jjtThis.put("op", "sub"); }) #BinOp(2))
     )*
 ;
 
 MultDiv #void :
     Not
     (
-    ( (< TIMES > Not) ({ jjtThis.put("op", "MUL"); }) #BinOp(2) ) |
-    ( (< DIVIDE > Not) ({ jjtThis.put("op", "DIV"); }) #BinOp(2))
+    ( (< TIMES > Not) ({ jjtThis.put("op", "mult"); }) #BinOp(2) ) |
+    ( (< DIVIDE > Not) ({ jjtThis.put("op", "div"); }) #BinOp(2))
     )*
 ;
 
 Not #void:
-    ( (< NOT > Not) ({ jjtThis.put("op", "NOT"); }) #UnaryOp(1)) |
+    ( (< NOT > Not) ({ jjtThis.put("op", "not"); }) #UnaryOp(1)) |
     Terminations
 ;
 
@@ -173,11 +195,11 @@ Terminations #void :
 ;
 
 Terminal #void :
-    (< INTEGER > ({ jjtThis.put("value", lastConsumedToken.getImage()); }) #IntegerLiteral ) |
-    < TRUE > #True |
-    < FALSE > #False |
-    < IDD > #Id |
-    < THIS > #This |
+    (< INTEGER > ({ jjtThis.put("value", lastConsumedToken.getImage()); jjtThis.put("type", "int"); }) #Literal ) |
+    (< TRUE > ({ jjtThis.put("value", lastConsumedToken.getImage()); jjtThis.put("type", "boolean"); }) #Literal) |
+    (< FALSE > ({ jjtThis.put("value", lastConsumedToken.getImage()); jjtThis.put("type", "boolean"); }) #Literal) |
+    (< ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier ) |
+    (< THIS > #This ) |
     ( < OPEN_PAREN >
         Expression
     < CLOSE_PAREN > ) |
@@ -188,16 +210,18 @@ New #void :
     < NEW >
     (
         ( < INT >
-          Array ) #NewArray
+          < OPEN_SQ_BRACK >
+              Expression
+          < CLOSE_SQ_BRACK >  ) ({ jjtThis.put("type", "intArray"); })
         |
-        ( < IDD >
+        ( (< ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier )
           < OPEN_PAREN >
           < CLOSE_PAREN >
-        ) #NewObject
-    )
+        ) ({ jjtThis.put("type", "object"); })
+    ) #New
 ;
 
-Array #void :
+Array #Array :
     < OPEN_SQ_BRACK >
         Expression
     < CLOSE_SQ_BRACK >
@@ -205,40 +229,34 @@ Array #void :
 
 DotStatement #void :
     < DOT >
-    ( < LENGTH > #DotLength | CallExpression )
+    ( (< LENGTH > ({ jjtThis.put("op", "length"); }) #UnaryOp(1)) | CallExpression )
 ;
 
-CallExpression #FunctionCall :
-    < IDD >
+CallExpression #void :
+    ((< ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier )
     < OPEN_PAREN >
-        ( Expression ( < COMMA > Expression )* )?
-    < CLOSE_PAREN >
+        ( Expression ( < COMMA > Expression )* )? #Arguments
+    < CLOSE_PAREN >) #CallExpression(2)
 ;
 
 // Injections for the implementation of JmmNode
 // Since this is injected into BaseNode, it affects only non-terminals
 INJECT BaseNode :
-		import pt.up.fe.comp.jmm.ast.JmmNode;
-		import pt.up.fe.comp.jmm.ast.AJmmNode;
-		import pt.up.fe.specs.util.SpecsCollections;
-		extends AJmmNode
+        import pt.up.fe.comp.jmm.ast.JmmNode;
+        import pt.up.fe.comp.jmm.ast.AJmmNode;
+        import pt.up.fe.specs.util.SpecsCollections;
+        extends AJmmNode
 {
     @Override
     public List<JmmNode> getChildren() {
-
         return SpecsCollections.cast(children(), JmmNode.class);
     }
-
     @Override
     public void add(JmmNode child, int index) {
-
         if (child instanceof Node) {
-
             addChild(index, (Node) child);
         } else {
-
             throw new RuntimeException("Node " + child + " is not a Node.");
         }
-
     }
 }

@@ -35,8 +35,11 @@ public class SimpleParser implements JmmParser {
             JmmGrammarParser parser = new JmmGrammarParser(SpecsIo.toInputStream(jmmCode));
             parser.Start();
 
-            Node root = parser.rootNode();
-            root.dump("");
+            /*Node root = parser.rootNode();
+            root.dump("");*/
+
+            var root = ((JmmNode) parser.rootNode()).sanitize();
+            System.out.println(root.toTree());
 
             if (!(root instanceof JmmNode)) {
                 return JmmParserResult.newError(new Report(ReportType.WARNING, Stage.SYNTATIC, -1,
@@ -58,8 +61,11 @@ public class SimpleParser implements JmmParser {
             JmmGrammarParser parser = new JmmGrammarParser(SpecsIo.toInputStream(jmmCode));
             SpecsSystem.invoke(parser, startingRule);
 
-            Node root = parser.rootNode();
-            root.dump("");
+            /*Node root = parser.rootNode();
+            root.dump("");*/
+
+            var root = ((JmmNode) parser.rootNode()).sanitize();
+            System.out.println(root.toTree());
 
             if (!(root instanceof JmmNode)) {
                 return JmmParserResult.newError(new Report(ReportType.WARNING, Stage.SYNTATIC, -1,
@@ -68,8 +74,20 @@ public class SimpleParser implements JmmParser {
 
             return new JmmParserResult((JmmNode) root, Collections.emptyList(), config);
 
-        } catch (Exception e) {
-            return JmmParserResult.newError(Report.newError(Stage.SYNTATIC, -1, -1, "Exception during parsing", e));
+        } catch (Exception RE) {
+            ParseException e = TestUtils.getException(RE, ParseException.class);
+
+            if(e == null) {
+                return JmmParserResult.newError(Report.newError(Stage.SYNTATIC, -1, -1, "Exception during parsing", RE));
+            }
+            else {
+                Token t = e.getToken();
+                int line = t.getBeginLine();
+                int column = t.getBeginColumn();
+                String message = e.getMessage();
+                Report report = Report.newError(Stage.SYNTATIC, line, column, message, e);
+                return JmmParserResult.newError(report);
+            }
         }
     }
 }

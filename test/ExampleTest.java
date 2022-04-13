@@ -23,12 +23,9 @@ public class ExampleTest {
             If it has to fail - TestUtils.mustFail(parserResult.getReports());
         */
 
-        String test = SpecsIo.getResource("fixtures/public/WhileAndIf.jmm");
-        var parserResult = TestUtils.parse("if( a < b){\n" +
-                "            c  = a-1;\n" +
-                "        }else{\n" +
-                "            c = b-1;\n" +
-                "        }", "Statement");
+        String test = SpecsIo.getResource("fixtures/public/Lazysort.jmm");
+        //var parserResult = TestUtils.parse("q.quicksort(L);", "Expression");
+        var parserResult = TestUtils.parse(test, "Start");
         TestUtils.noErrors(parserResult.getReports());
 
     }

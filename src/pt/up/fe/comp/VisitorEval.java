@@ -7,18 +7,32 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
 
     public VisitorEval() {
 
-        addVisit("IntegerLiteral", this::integerVisit);
+        addVisit("Literal", this::LiteralVisit);
         addVisit("UnaryOp", this::unaryOpVisit);
         addVisit("BinOp", this::binOpVisit);
+        addVisit("Identifier", this::identifierVisist);
+        addVisit("Inheritance", this::inheritanceVisit);
+        addVisit("VarDeclaration", this::varDeclarationVisit);
+        addVisit("Type", this::varTypeVisit);
+        addVisit("CallExpression", this::callExpressionVisit);
+        addVisit("Index", this::indexVisit);
 
         setDefaultVisit(this::defaultVisit);
     }
 
-    private Integer integerVisit(JmmNode node, Object dummy) {
+    private Integer LiteralVisit(JmmNode node, Object dummy) {
 
+        String typeString = node.get("type");
         if (node.getNumChildren() == 0) {
+            switch (typeString){
+                case "int":
+                    return Integer.parseInt(node.get("image"));
+                case "boolean":
+                    return 0;
+                default:
+                    throw new RuntimeException("Illegal type '" + typeString + "' in " + node.getKind() + ".");
+            }
 
-            return Integer.parseInt(node.get("image"));
         }
 
         throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
@@ -33,6 +47,7 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
                 throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
             }
 
+            /*
             SimpleCalculatorOps op = SimpleCalculatorOps.fromName(opString);
             switch (op) {
             case NEG:
@@ -41,6 +56,7 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
             default:
                 throw new RuntimeException("Illegal operation '" + op + "' in " + node.getKind() + ".");
             }
+            */
         }
 
         if (node.getNumChildren() != 1) {
@@ -59,6 +75,7 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
                 throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
             }
 
+            /*
             SimpleCalculatorOps op = SimpleCalculatorOps.fromName(opString);
             switch (op) {
             case MUL:
@@ -79,7 +96,7 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
 
             default:
                 throw new RuntimeException("Illegal operation '" + op + "' in " + node.getKind() + ".");
-            }
+            }*/
         }
 
         if (node.getNumChildren() != 1) {
@@ -87,6 +104,57 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
         }
 
         return visit(node.getJmmChild(0));
+    }
+
+    private Integer identifierVisist(JmmNode node, Object dummy){
+        if (node.getNumChildren() == 0) {
+            return 0;
+        }
+
+        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
+    }
+
+    private Integer inheritanceVisit(JmmNode node, Object dummy){
+        if (node.getNumChildren() == 0) {
+            return 0;
+        }
+
+        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
+    }
+
+    private Integer varDeclarationVisit(JmmNode node, Object dummy){
+        if (node.getNumChildren() == 2) {
+            return 0;
+        }
+
+        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
+    }
+
+    private Integer varTypeVisit(JmmNode node, Object dummy){
+        /*if (node.getNumChildren() == 2) {
+            return 0;
+        }
+
+        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");*/
+        return  0;
+    }
+
+    private Integer callExpressionVisit(JmmNode node, Object dummy){
+        /*if (node.getNumChildren() == 2) {
+            return 0;
+        }
+
+        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");*/
+        return  0;
+    }
+
+    private Integer indexVisit(JmmNode node, Object dummy){
+        /*if (node.getNumChildren() == 2) {
+            return 0;
+        }
+
+        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");*/
+        return  0;
     }
 
     private Integer defaultVisit(JmmNode node, Object dummy) {
