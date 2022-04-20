@@ -5,7 +5,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import pt.up.fe.comp.jmm.analysis.JmmSemanticsResult;
 import pt.up.fe.comp.jmm.ast.JmmNode;
+import pt.up.fe.comp.jmm.jasmin.JasminResult;
+import pt.up.fe.comp.jmm.ollir.OllirResult;
 import pt.up.fe.comp.jmm.parser.JmmParserResult;
 import pt.up.fe.specs.util.SpecsIo;
 import pt.up.fe.specs.util.SpecsLogs;
@@ -49,7 +52,28 @@ public class Launcher {
         // Check if there are parsing errors
         TestUtils.noErrors(parserResult.getReports());
 
-        // ... add remaining stages
+        // Instantiate JmmAnalysis
+        JmmAnalyser analyser = new JmmAnalyser();
+
+        // Analysis stage
+        JmmSemanticsResult analysisResult = analyser.semanticAnalysis(parserResult);
+
+        // Check if there are parsing errors
+        TestUtils.noErrors(analysisResult.getReports());
+
+        // Instantiate JmmOptimization
+        JmmOptimizer optimizer = new JmmOptimizer();
+
+        OllirResult ollirResult = optimizer.toOllir(analysisResult);
+
+        TestUtils.noErrors(ollirResult.getReports());
+
+        // Instantiate JmmBackend
+        JasminBackendHandler backendHandler = new JasminBackendHandler();
+
+        JasminResult jasminResult = backendHandler.toJasmin(ollirResult);
+
+        TestUtils.noErrors(jasminResult.getReports());
     }
 
 }
