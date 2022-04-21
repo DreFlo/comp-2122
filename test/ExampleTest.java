@@ -1,6 +1,7 @@
 import org.junit.Test;
 
 import pt.up.fe.comp.TestUtils;
+import pt.up.fe.comp.jmm.ollir.OllirResult;
 import pt.up.fe.specs.util.SpecsIo;
 
 public class ExampleTest {
@@ -27,6 +28,18 @@ public class ExampleTest {
         //var parserResult = TestUtils.parse("q.quicksort(L);", "Expression");
         var parserResult = TestUtils.parse(test, "Start");
         TestUtils.noErrors(parserResult.getReports());
+
+        /*
+            Analyser
+            var semanticResult = TestUtils.analyse(String jmmCode);
+
+            Optimizer
+            var ollirResult = TestUtils.optimize(String jmmCode);
+
+            BackendHandler
+            var jasminResult = TestUtils.backend(String jmmCode);
+         */
+
 
     }
 
