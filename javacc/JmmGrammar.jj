@@ -65,7 +65,7 @@ Start :
     <EOF>
 ;
 
-ImportDeclaration #Import :
+ImportDeclaration #ImportDec :
     < IMPORT > (< ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier) ( Package )* < SEMI_COLON >
 ;
 
@@ -139,7 +139,7 @@ Statement #void :
 		< IF > < OPEN_PAREN > Expression #IfCondition < CLOSE_PAREN >
 			Statement #IfBody
 		< ELSE >
-			Statement #Else
+			Statement #ElseStatement
 	) #IfStatement |
 	(
 		< WHILE > < OPEN_PAREN > Expression #WhileCondition < CLOSE_PAREN > Statement #WhileBody
@@ -199,7 +199,7 @@ Terminal #void :
     (< TRUE > ({ jjtThis.put("value", lastConsumedToken.getImage()); jjtThis.put("type", "boolean"); }) #Literal) |
     (< FALSE > ({ jjtThis.put("value", lastConsumedToken.getImage()); jjtThis.put("type", "boolean"); }) #Literal) |
     (< ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier ) |
-    (< THIS > #This ) |
+    (< THIS > #ThisT ) |
     ( < OPEN_PAREN >
         Expression
     < CLOSE_PAREN > ) |
@@ -218,7 +218,7 @@ New #void :
           < OPEN_PAREN >
           < CLOSE_PAREN >
         ) ({ jjtThis.put("type", "object"); })
-    ) #New
+    ) #NewExp
 ;
 
 Array #Array :
