@@ -19,7 +19,12 @@ class SymbolTableVisitor extends AJmmVisitor<Object, Integer> {
         addVisit("ClassDeclaration", this::visitClass);
         addVisit("Inheritance", this::visitInheritance);
         addVisit("VarDeclaration", this::visitVarDeclaration);
-        addVisit("MethodDeclaration", this::visitMethodDeclaration);
+        addVisit("MainMethod", this::visitMainMethod);
+        addVisit("MainArguments", this::visitMainArguments);
+        addVisit("InstanceMethod", this::visitInstanceMethod);
+        addVisit("Arguments", this::visitArguments);
+
+        setDefaultVisit(this::defaultVisit);
     }
 
     private Integer visitStart(JmmNode node, Object dummy) {
@@ -54,7 +59,7 @@ class SymbolTableVisitor extends AJmmVisitor<Object, Integer> {
             if (i == 0) {
                 table.className = children.get(i).get("name");
             } else {
-                visit(children.get(i));
+                visit(children.get(i), dummy);
             }
         }
         inClassDeclaration = false;
@@ -75,8 +80,38 @@ class SymbolTableVisitor extends AJmmVisitor<Object, Integer> {
         return 0;
     }
 
-    private Integer visitMethodDeclaration(JmmNode node, Object dummy) {
+    private Integer visitMainMethod(JmmNode node, Object dummy) {
         currentMethod = new SymbolTableMethod();
+        for (JmmNode child : node.getChildren()) {
+            visit(child, dummy);
+        }
+        table.methods.put("main", currentMethod);
+        return 0;
+    }
+
+    private Integer visitMainArguments(JmmNode node, Object dummy) {
+        currentMethod.parameters.put(node.getJmmChild(1).get("name"), new Tuple<>(node.getJmmChild(0).get("type"), ""));
+        return 0;
+    }
+
+    private Integer visitInstanceMethod(JmmNode node, Object dummy) {
+        currentMethod = new SymbolTableMethod();
+        currentMethod.returnType = node.getJmmChild(0).get("type");
+        for (int i = 2; i < node.getNumChildren(); i++) {
+            visit(node.getJmmChild(i), dummy);
+        }
+        table.methods.put(node.getJmmChild(1).get("name"), currentMethod);
+        return 0;
+    }
+
+    private Integer visitArguments(JmmNode node, Object dummy) {
+        for (JmmNode child : node.getChildren()) {
+            currentMethod.parameters.put(child.getJmmChild(1).get("name"), new Tuple<>(child.getJmmChild(0).get("type"), ""));
+        }
+        return 0;
+    }
+
+    private Integer defaultVisit(JmmNode node, Object dummy) {
         return 0;
     }
 }

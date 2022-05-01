@@ -52,7 +52,13 @@ public class Launcher {
         // Check if there are parsing errors
         TestUtils.noErrors(parserResult.getReports());
 
+        SymbolTable symbolTable = new SymbolTable();
 
+        SymbolTableVisitor symbolTableVisitor = new SymbolTableVisitor(symbolTable);
+
+        symbolTableVisitor.visit(root, null);
+
+        System.out.println(symbolTable.toString());
 
         /*
 

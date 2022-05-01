@@ -125,7 +125,7 @@ Argument #Argument :
     Type < ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier
 ;
 
-MainArguments #Arguments :
+MainArguments #MainArguments :
     MainType < ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier
 ;
 

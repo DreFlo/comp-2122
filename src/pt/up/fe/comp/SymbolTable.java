@@ -16,7 +16,7 @@ public class SymbolTable implements pt.up.fe.comp.jmm.analysis.table.SymbolTable
     Map<String, Tuple<String, String>> fields;
     Map<String, SymbolTableMethod> methods;
 
-    public SymbolTable(JmmNode root) {
+    public SymbolTable() {
         this.imports = new HashMap<>();
         this.className = "";
         this.inheritance = "";
@@ -62,5 +62,16 @@ public class SymbolTable implements pt.up.fe.comp.jmm.analysis.table.SymbolTable
     @Override
     public List<Symbol> getLocalVariables(String methodSignature) {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "SymbolTable{" +
+                "imports=" + imports +
+                ", className='" + className + '\'' +
+                ", inheritance='" + inheritance + '\'' +
+                ", fields=" + fields +
+                ", methods=" + methods +
+                '}';
     }
 }
