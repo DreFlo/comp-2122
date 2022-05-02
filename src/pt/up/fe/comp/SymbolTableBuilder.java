@@ -103,6 +103,37 @@ public class SymbolTableBuilder implements pt.up.fe.comp.jmm.analysis.table.Symb
         methodParams.get(methodSignature).add(param);
     }
 
+    public boolean containsMethod(String methodSignature) {
+        return methods.contains(methodSignature);
+    }
+
+    public boolean containsParameter(String methodSignature, String paramName) {
+        for (Symbol symbol : getParameters(methodSignature)) {
+            if (symbol.getName().equals(paramName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsField(String name) {
+        for (Symbol symbol : getFields()) {
+            if (symbol.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsField(String methodSignature, String name) {
+        for (Symbol symbol : getLocalVariables(methodSignature)) {
+            if (symbol.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return "SymbolTableBuilder{" +

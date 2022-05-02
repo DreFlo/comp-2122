@@ -5,6 +5,8 @@ import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ast.PreorderJmmVisitor;
 import pt.up.fe.comp.jmm.report.Report;
+import pt.up.fe.comp.jmm.report.ReportType;
+import pt.up.fe.comp.jmm.report.Stage;
 
 import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
@@ -63,8 +65,16 @@ class SymbolTableFiller extends PreorderJmmVisitor<SymbolTableBuilder, Integer> 
     private Integer visitVarDeclaration(JmmNode node, SymbolTableBuilder symbolTableBuilder) {
         Symbol symbol = new Symbol(new Type(node.getJmmChild(0).get("type"), Objects.equals(node.getJmmChild(0).get("array"), "true")), node.getJmmChild(1).get("name"));
         if (inClassDeclaration) {
+            if (symbolTableBuilder.containsField(symbol.getName())) {
+                reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC, Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")), "Variable of same name declared twice"));
+                return -1;
+            }
             symbolTableBuilder.addField(symbol);
         } else {
+            if (symbolTableBuilder.containsField(currentMethodSignature, symbol.getName())) {
+                reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC, Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")), "Variable of same name declared twice"));
+                return -1;
+            }
             symbolTableBuilder.addMethodField(currentMethodSignature, symbol);
         }
         return 0;
@@ -73,6 +83,10 @@ class SymbolTableFiller extends PreorderJmmVisitor<SymbolTableBuilder, Integer> 
     private Integer visitMainMethod(JmmNode node, SymbolTableBuilder symbolTableBuilder) {
         inClassDeclaration = false;
         currentMethodSignature = "main";
+        if (symbolTableBuilder.containsMethod(currentMethodSignature)) {
+            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC, Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")), "Same method declared twice"));
+            return -1;
+        }
         symbolTableBuilder.addMethod("main");
         symbolTableBuilder.setMethodReturnType("main", new Type("void", false));
         return 0;
@@ -86,13 +100,22 @@ class SymbolTableFiller extends PreorderJmmVisitor<SymbolTableBuilder, Integer> 
     private Integer visitInstanceMethod(JmmNode node, SymbolTableBuilder symbolTableBuilder) {
         inClassDeclaration = false;
         currentMethodSignature = node.getJmmChild(1).get("name");
+        if (symbolTableBuilder.containsMethod(currentMethodSignature)) {
+            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC, Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")), "Same method declared twice"));
+            return -1;
+        }
         symbolTableBuilder.addMethod(currentMethodSignature);
         symbolTableBuilder.setMethodReturnType(currentMethodSignature, new Type(node.getJmmChild(0).get("type"), Objects.equals(node.getJmmChild(0).get("array"), "true")));
         return 0;
     }
 
     private Integer visitArgument(JmmNode node, SymbolTableBuilder symbolTableBuilder) {
-        symbolTableBuilder.addMethodParam(currentMethodSignature, new Symbol(new Type(node.getJmmChild(0).get("type"), Objects.equals(node.getJmmChild(0).get("array"), "true")), node.getJmmChild(1).get("name")));
+        Symbol symbol = new Symbol(new Type(node.getJmmChild(0).get("type"), Objects.equals(node.getJmmChild(0).get("array"), "true")), node.getJmmChild(1).get("name"));
+        if (symbolTableBuilder.containsParameter(currentMethodSignature, symbol.getName())) {
+            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC, Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")), "Variable of same name declared twice"));
+            return -1;
+        }
+        symbolTableBuilder.addMethodParam(currentMethodSignature, symbol);
         return 0;
     }
 

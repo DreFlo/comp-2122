@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="Symbol Table being constructed. Missing reports." />
+    <list default="true" id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="Symbol Table being constructed. Missing reports.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/SymbolTableBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/SymbolTableBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/SymbolTableFiller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/SymbolTableFiller.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -239,7 +243,8 @@
       <option name="presentableId" value="Default" />
       <updated>1648632973536</updated>
       <workItem from="1651431638019" duration="4237000" />
-      <workItem from="1651483067350" duration="10764000" />
+      <workItem from="1651483067350" duration="10843000" />
+      <workItem from="1651518565997" duration="1218000" />
     </task>
     <task id="LOCAL-00001" summary="Symbol Table being constructed. Missing reports.">
       <created>1651493959654</created>
