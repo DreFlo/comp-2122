@@ -130,7 +130,7 @@ MainArguments #MainArguments :
 ;
 
 MainType #Type :
-    < STRING > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > ({ jjtThis.put("type", "stringArray"); })
+    < STRING > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > ({ jjtThis.put("type", "String"); jjtThis.put("array", "true"); })
 ;
 
 Statement #void :
@@ -150,9 +150,9 @@ Statement #void :
 
 
 Type #Type :
-	(( (< INT > ({ jjtThis.put("type", "int"); })) ( (< OPEN_SQ_BRACK > < CLOSE_SQ_BRACK >) ({ jjtThis.put("type", "intArray"); }) )?) |
-	(< BOOLEAN > ({ jjtThis.put("type", "boolean"); })) |
-	(< ID > ({ jjtThis.put("type", lastConsumedToken.getImage()); })))
+	(( (< INT > ({ jjtThis.put("type", "int"); jjtThis.put("array", "false");})) ( (< OPEN_SQ_BRACK > < CLOSE_SQ_BRACK >) ({ jjtThis.put("array", "true"); }) )?) |
+	(< BOOLEAN > ({ jjtThis.put("type", "boolean"); jjtThis.put("array", "false"); })) |
+	(< ID > ({ jjtThis.put("type", lastConsumedToken.getImage()); jjtThis.put("array", "false");})))
 ;
 
 Expression #void :

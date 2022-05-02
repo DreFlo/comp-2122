@@ -38,10 +38,15 @@ public class SimpleParser implements JmmParser {
             /*Node root = parser.rootNode();
             root.dump("");*/
 
-            var root = ((JmmNode) parser.rootNode()).sanitize();
-            System.out.println(root.toTree());
+            var root = (JmmNode) parser.rootNode();
 
-            if (!(root instanceof JmmNode)) {
+            new LineColAnnotator().visit(root);
+
+            if (root != null) {
+                System.out.println(root.sanitize().toTree());
+            }
+
+            if (root == null) {
                 return JmmParserResult.newError(new Report(ReportType.WARNING, Stage.SYNTATIC, -1,
                         "JmmNode interface not yet implemented, returning null root node"));
             }
