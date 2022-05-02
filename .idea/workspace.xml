@@ -4,17 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/javacc/JmmGrammar.jj" beforeDir="false" afterPath="$PROJECT_DIR$/javacc/JmmGrammar.jj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/JmmAnalyser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/JmmAnalyser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/Launcher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/SimpleParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/SimpleParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/SymbolTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/SymbolTableBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/SymbolTableMethod.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/SymbolTableVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/SymbolTableFiller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/Tuple.java" beforeDir="false" />
-    </list>
+    <list default="true" id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="Symbol Table being constructed. Missing reports." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -249,8 +239,16 @@
       <option name="presentableId" value="Default" />
       <updated>1648632973536</updated>
       <workItem from="1651431638019" duration="4237000" />
-      <workItem from="1651483067350" duration="10406000" />
+      <workItem from="1651483067350" duration="10764000" />
     </task>
+    <task id="LOCAL-00001" summary="Symbol Table being constructed. Missing reports.">
+      <created>1651493959654</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1651493959654</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -269,6 +267,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Symbol Table being constructed. Missing reports." />
+    <option name="LAST_COMMIT_MESSAGE" value="Symbol Table being constructed. Missing reports." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
