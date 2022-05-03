@@ -55,16 +55,19 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
     }
 
     private Integer mainMethodVisit(JmmNode mainMethod, Integer dummy) {
-        String methodSignature = mainMethod.getJmmChild(0).getJmmChild(1).get("name");
+        String methodSignature = "main";
         code.append(".method public static main(");
 
+        System.out.println(methodSignature);
         List<Symbol> params = symbolTable.getParameters(methodSignature);
-        String paramCode = params.stream()
-                .map(symbol -> OllirUtils.getCode(symbol))
-                .collect(Collectors.joining(", "));
-        code.append(paramCode);
-        code.append(").");
-        
+        if(params != null){
+            String paramCode = params.stream()
+                    .map(symbol -> OllirUtils.getCode(symbol))
+                    .collect(Collectors.joining(", "));
+            code.append(paramCode);
+        }
+
+        code.append(").V {\n").append("}\n");
         return 0;
     }
 
