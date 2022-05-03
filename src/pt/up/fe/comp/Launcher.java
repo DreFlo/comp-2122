@@ -5,11 +5,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import pt.up.fe.comp.jasmin.JasminEmitter;
 import pt.up.fe.comp.jmm.analysis.JmmSemanticsResult;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.jasmin.JasminResult;
 import pt.up.fe.comp.jmm.ollir.OllirResult;
 import pt.up.fe.comp.jmm.parser.JmmParserResult;
+import pt.up.fe.comp.ollir.JmmOptimizer;
 import pt.up.fe.specs.util.SpecsIo;
 import pt.up.fe.specs.util.SpecsLogs;
 import pt.up.fe.specs.util.SpecsSystem;
@@ -52,6 +54,7 @@ public class Launcher {
         // Check if there are parsing errors
         TestUtils.noErrors(parserResult.getReports());
 
+
         // Instantiate JmmAnalysis
         JmmAnalyser analyser = new JmmAnalyser();
 
@@ -68,12 +71,13 @@ public class Launcher {
 
         TestUtils.noErrors(ollirResult.getReports());
 
+        /*
         // Instantiate JmmBackend
-        JasminBackendHandler backendHandler = new JasminBackendHandler();
+        JasminEmitter jasminEmitter = new JasminEmitter();
 
-        JasminResult jasminResult = backendHandler.toJasmin(ollirResult);
+        JasminResult jasminResult = jasminEmitter.toJasmin(ollirResult);
 
-        TestUtils.noErrors(jasminResult.getReports());
+        TestUtils.noErrors(jasminResult.getReports());*/
     }
 
 }
