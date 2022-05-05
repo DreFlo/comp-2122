@@ -7,7 +7,7 @@ import pt.up.fe.specs.util.SpecsIo;
 public class AnalysisTest {
     @Test
     public void test() {
-        JmmSemanticsResult result = TestUtils.analyse(SpecsIo.getResource("fixtures/public/Lazysort.jmm"));
+        JmmSemanticsResult result = TestUtils.analyse(SpecsIo.getResource("fixtures/public/HelloWorld.jmm"));
         System.out.println(result.getSymbolTable().print());
     }
 }

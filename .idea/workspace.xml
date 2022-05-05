@@ -8,6 +8,10 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/javacc/JmmGrammar.jj" beforeDir="false" afterPath="$PROJECT_DIR$/javacc/JmmGrammar.jj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/ExampleTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/ExampleTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/AnalysisTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/AnalysisTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/GrammarTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/GrammarTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,7 +113,7 @@
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.AnalysisTest.test (1)">
+  <component name="RunManager" selected="Gradle.ParserTest">
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -123,30 +127,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AnalysisTest.test (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.AnalysisTest.test&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="ExampleTest.test (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="ExampleTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -169,7 +150,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="OptimizationTest (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="GrammarTest (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -182,7 +163,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.OptimizationTest&quot;" />
+            <option value="&quot;pt.up.fe.comp.GrammarTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -192,7 +173,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="OptimizationTest.test (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="GrammarTest.testStmtEmptyScope" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -205,7 +186,53 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.OptimizationTest.test&quot;" />
+            <option value="&quot;pt.up.fe.comp.GrammarTest.testStmtEmptyScope&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="GrammarTest.testVarDeclString" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;pt.up.fe.comp.GrammarTest.testVarDeclString&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="ParserTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;pt.up.fe.comp.ParserTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -217,17 +244,19 @@
     </configuration>
     <list>
       <item itemvalue="Application.Launcher" />
-      <item itemvalue="Gradle.AnalysisTest.test (1)" />
-      <item itemvalue="Gradle.OptimizationTest (1)" />
-      <item itemvalue="Gradle.OptimizationTest.test (1)" />
-      <item itemvalue="Gradle.ExampleTest.test (1)" />
+      <item itemvalue="Gradle.ExampleTest.test" />
+      <item itemvalue="Gradle.GrammarTest (1)" />
+      <item itemvalue="Gradle.GrammarTest.testStmtEmptyScope" />
+      <item itemvalue="Gradle.GrammarTest.testVarDeclString" />
+      <item itemvalue="Gradle.ParserTest" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.AnalysisTest.test (1)" />
-        <item itemvalue="Gradle.ExampleTest.test (1)" />
-        <item itemvalue="Gradle.OptimizationTest (1)" />
-        <item itemvalue="Gradle.OptimizationTest.test (1)" />
+        <item itemvalue="Gradle.ParserTest" />
+        <item itemvalue="Gradle.GrammarTest (1)" />
+        <item itemvalue="Gradle.ExampleTest.test" />
+        <item itemvalue="Gradle.GrammarTest.testStmtEmptyScope" />
+        <item itemvalue="Gradle.GrammarTest.testVarDeclString" />
       </list>
     </recent_temporary>
   </component>

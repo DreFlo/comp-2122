@@ -11,15 +11,34 @@ import java.util.stream.Collectors;
 public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
     private final StringBuilder code;
     private final SymbolTable symbolTable;
+    private int localVariableCounter;
 
     public OllirGenerator(SymbolTable symbolTable) {
         this.code = new StringBuilder();
         this.symbolTable = symbolTable;
+        this.localVariableCounter = 0;
 
-        addVisit("Start", this::startVisit);
+        //Start
+        addVisit("Start", this::startVisit); //Adds imports
+
+        //Class
         addVisit("ClassDeclaration", this::classDeclVisit);
+
+        //Methods
         addVisit("MainMethod", this::mainMethodVisit);
         addVisit("InstanceMethod", this::instanceMethodVisit);
+
+        //Expressions
+        addVisit("CallExpression", this::callExpressionVisit);
+
+        //Statements
+        addVisit("IfStatement", this::ifStatementVisit);
+        addVisit("IfCondition", this::ifConditionVisit);
+        addVisit("IfBody", this::ifBodyVisit);
+        addVisit("ElseStatement", this::elseStatementVisit);
+
+
+        addVisit("UnaryOp", this::unaryOpVisit);
     }
 
     public String getCode() {
@@ -27,6 +46,7 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
     }
 
     private Integer startVisit(JmmNode start, Integer dummy) {
+        //Add imports
         for(String importString : symbolTable.getImports()) {
             code.append("import ").append(importString).append(";\n");
         }
@@ -58,7 +78,7 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
         String methodSignature = "main";
         code.append(".method public static main(");
 
-        System.out.println(methodSignature);
+        //Add Arguments
         List<Symbol> params = symbolTable.getParameters(methodSignature);
         if(params != null){
             String paramCode = params.stream()
@@ -69,7 +89,7 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
 
         code.append(").V {\n");
 
-        //Expressions
+        //Every child except Arguments
         for(int i = 1; i < mainMethod.getNumChildren(); i++){
             visit(mainMethod.getJmmChild(i));
         }
@@ -79,23 +99,43 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
     }
 
     private Integer instanceMethodVisit(JmmNode instanceMethod, Integer dummy) {
+        String methodSignature = instanceMethod.getJmmChild(1).get("name");
+        code.append(".method public ").append(methodSignature).append("(");
+
+        //Add Arguments
+        List<Symbol> params = symbolTable.getParameters(methodSignature);
+        if(params != null){
+            String paramCode = params.stream()
+                    .map(symbol -> OllirUtils.getCode(symbol))
+                    .collect(Collectors.joining(", "));
+            code.append(paramCode);
+        }
+
+        code.append(").");
+
+        //Return type
+        code.append(OllirUtils.getCode(symbolTable.getReturnType(methodSignature))).append(" {\n");
+
+        //Every child except method information and arguments
+        for(int i = 3; i < instanceMethod.getNumChildren(); i++){
+            visit(instanceMethod.getJmmChild(i));
+        }
+
+        code.append("}\n");
 
         return 0;
     }
 
     private Integer callExpressionVisit(JmmNode callExpression, Integer dummy){
-        StringBuilder stringBuilder = new StringBuilder();
-
-        var children = callExpression.getChildren();
-        if(symbolTable.getImports().contains(children.get(0).get("name"))){
-            stringBuilder.append("invokestatic(");
-            stringBuilder.append(children.get(0).get("name"));
+        if(symbolTable.getImports().contains(callExpression.getJmmChild(0).get("name"))){
+            code.append("invokestatic(");
+            code.append(callExpression.getJmmChild(0).get("name"));
         }
         else { //this,
-            stringBuilder.append("invokevirtual(");
-            switch (children.get(0).getKind()){
+            code.append("invokevirtual(");
+            switch (callExpression.getJmmChild(0).getKind()){
                 case "ThisT":
-                    stringBuilder.append("this");
+                    code.append("this");
                     break;
                 case "Literal":
                     break;
@@ -106,15 +146,53 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
             }
         }
 
-        stringBuilder.append(", \"").append(callExpression.getJmmChild(0).get("name")).append("\"");
+        code.append(", \"").append(callExpression.getJmmChild(1).get("name")).append("\"");
 
-        var argumentes = callExpression.getJmmChild(1);
-        for(var argument : argumentes.getChildren()){
+        var arguments = callExpression.getJmmChild(2);
+        for(var argument : arguments.getChildren()){
 
         }
 
-        stringBuilder.append(")");
+        code.append(").");
 
+        //Type
+        if(symbolTable.getMethods().contains(callExpression.getJmmChild(1).get("name"))){ //Defined function -> Check symbol table
+            code.append(OllirUtils.getCode(symbolTable.getReturnType(callExpression.getJmmChild(1).get("name"))));
+        }
+        else { //Unknown function -> void
+            code.append("V");
+        }
+
+        code.append(";\n");
+        return 0;
+    }
+
+    private Integer ifStatementVisit(JmmNode ifStatement, Integer dummy){
+        return 0;
+    }
+
+    private Integer ifConditionVisit(JmmNode ifCondition, Integer dummy){
+        return 0;
+    }
+
+    private Integer ifBodyVisit(JmmNode ifBody, Integer dummy){
+        return 0;
+    }
+
+    private Integer elseStatementVisit(JmmNode elseStatement, Integer dummy){
+        return 0;
+    }
+
+    //Need to add rest of op's
+    private Integer unaryOpVisit(JmmNode unaryOp, Integer dummy){
+
+        switch (unaryOp.get("op")){
+            case "return":
+
+                break;
+            default:
+                break;
+        }
         return 0;
     }
 }

@@ -133,8 +133,12 @@ MainType #Type :
     < STRING > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > ({ jjtThis.put("type", "String"); jjtThis.put("array", "true"); })
 ;
 
+EmptyStatement:
+    < OPEN_CURL_BRACK > (Statement)* < CLOSE_CURL_BRACK >
+;
+
 Statement #void :
-	( < OPEN_CURL_BRACK > ( Statement )* < CLOSE_CURL_BRACK > ) |
+	EmptyStatement |
 	(
 		< IF > < OPEN_PAREN > Expression #IfCondition < CLOSE_PAREN >
 			Statement #IfBody
@@ -152,6 +156,7 @@ Statement #void :
 Type #Type :
 	(( (< INT > ({ jjtThis.put("type", "int"); jjtThis.put("array", "false");})) ( (< OPEN_SQ_BRACK > < CLOSE_SQ_BRACK >) ({ jjtThis.put("array", "true"); }) )?) |
 	(< BOOLEAN > ({ jjtThis.put("type", "boolean"); jjtThis.put("array", "false"); })) |
+	(< STRING > ({ jjtThis.put("type", "string"); jjtThis.put("array", "false"); })) |
 	(< ID > ({ jjtThis.put("type", lastConsumedToken.getImage()); jjtThis.put("array", "false");})))
 ;
 

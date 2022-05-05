@@ -25,7 +25,7 @@ public class ExampleTest {
 
         String test = SpecsIo.getResource("fixtures/public/HelloWorld.jmm");
         //var parserResult = TestUtils.parse("q.quicksort(L);", "Expression");
-        var parserResult = TestUtils.parse(test, "Start");
+        var parserResult = TestUtils.parse("{  }", "Statement");
         TestUtils.noErrors(parserResult.getReports());
 
         /*
