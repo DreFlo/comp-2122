@@ -9,7 +9,8 @@ import java.util.Collections;
 public class JasminEmitter implements JasminBackend {
     @Override
     public JasminResult toJasmin(OllirResult ollirResult) {
-        String jasminCode = "";
+        String jasminCode = new OllirToJasmin(ollirResult.getOllirClass()).getCode();
+        System.out.println(jasminCode);
         return new JasminResult(ollirResult, jasminCode, Collections.emptyList());
     }
 }

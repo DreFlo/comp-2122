@@ -16,7 +16,7 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, String> {
         addVisit("BinOp", this::binOpVisit);
     }
 
-    
+
     private String binOpVisit(JmmNode jmmNode, Integer integer) {
         return "";
     }
