@@ -46,6 +46,7 @@ public class OllirToJasmin {
     private void registerInstructionFunctions() {
         instructionMap.put(CallInstruction.class, this::getCode);
         instructionMap.put(AssignInstruction.class, this::getCode);
+        instructionMap.put(BinaryOpInstruction.class, this::getCode);
     }
 
     private String getFullyQualifiedClassName(String className) throws RuntimeException {
@@ -177,6 +178,18 @@ public class OllirToJasmin {
         }
         code.append("\n");
         return code.toString();
+    }
+
+    private String getCode(BinaryOpInstruction instruction) {
+        StringBuilder code = new StringBuilder();
+        code.append(pushOperandToStack((Operand) instruction.getLeftOperand()));
+        code.append(pushOperandToStack((Operand) instruction.getRightOperand()));
+        return code.toString();
+    }
+
+    // TODO
+    private String pushOperandToStack(Operand operand) {
+        return "";
     }
 
     private String getJasminType(Type type) {
