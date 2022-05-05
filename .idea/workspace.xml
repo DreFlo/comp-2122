@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="Symbol Table being constructed. Missing reports.">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/JasminEmitter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/JasminEmitter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

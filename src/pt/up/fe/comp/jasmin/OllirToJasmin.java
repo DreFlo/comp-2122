@@ -14,13 +14,12 @@ public class OllirToJasmin {
     private final Map<String, String> fullyQualifiedClassNames;
     private FunctionClassMap<Instruction, String> instructionMap;
 
-    private Map<String, Integer> variableNameNumber;
+    private Method currentMethod = null;
 
     OllirToJasmin(ClassUnit classUnit) {
         this.classUnit = classUnit;
         this.fullyQualifiedClassNames = new HashMap<>();
         this.instructionMap = new FunctionClassMap<>();
-        this.variableNameNumber = new HashMap<>();
         registerFullyQualifiedClassNames();
         registerInstructionFunctions();
     }
@@ -69,6 +68,8 @@ public class OllirToJasmin {
     }
 
     private String getCode(Method method) {
+        currentMethod = method;
+
         StringBuilder code = new StringBuilder();
 
         AccessModifiers modifier = method.getMethodAccessModifier();
@@ -152,7 +153,10 @@ public class OllirToJasmin {
         StringBuilder code = new StringBuilder();
         switch (instruction.getTypeOfAssign().getTypeOfElement()) {
             case INT32, BOOLEAN -> {
-                code.append("istore_");
+                code.append("istore_").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
+            }
+            case OBJECTREF -> {
+                code.append("astore_").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
             }
             default -> {throw new NotImplementedException("Not implemented for type: " + instruction.getTypeOfAssign().getTypeOfElement());}
         }
@@ -178,10 +182,6 @@ public class OllirToJasmin {
             case OBJECTREF -> {
                 return "L" + getFullyQualifiedClassName(type.name()) + ";";
             }
-            case CLASS -> {
-            }
-            case THIS -> {
-            }
             case STRING -> {
                 return "Ljava/lang/String;";
             }
@@ -190,10 +190,10 @@ public class OllirToJasmin {
             }
             default -> throw new NotImplementedException(type);
         }
-        return "";
     }
 
-    private Integer getVariableNumberFromName(String name) {
-        return variableNameNumber.get(name);
+    private Integer getCurrentMethodVarVirtualRegisterFromElement(Element element) {
+        Operand operand = (Operand) element;
+        return currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
     }
 }
