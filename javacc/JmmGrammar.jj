@@ -133,7 +133,7 @@ MainType #Type :
     < STRING > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > ({ jjtThis.put("type", "String"); jjtThis.put("array", "true"); })
 ;
 
-EmptyStatement:
+EmptyStatement #void:
     < OPEN_CURL_BRACK > (Statement)* < CLOSE_CURL_BRACK >
 ;
 
