@@ -5,13 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="Symbol Table being constructed. Missing reports.">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/javacc/JmmGrammar.jj" beforeDir="false" afterPath="$PROJECT_DIR$/javacc/JmmGrammar.jj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/ExampleTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/ExampleTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/AnalysisTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/AnalysisTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/GrammarTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/GrammarTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/JasminEmitter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/JasminEmitter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,24 +85,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/andre/Documents/FEUP/C/comp2022-2f/src/pt/up/fe/comp&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.language&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "jdk.selected.JAVA_MODULE": "openjdk-15",
+    "last_opened_file_path": "C:/Users/andre/Documents/FEUP/C/comp2022-2f/src/pt/up/fe/comp",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "configurable.group.language"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\andre\Documents\FEUP\C\comp2022-2f\src\pt\up\fe\comp" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\andre\Documents\FEUP\C\comp2022-2f\src\main\resources" />
+      <recent name="C:\Users\andre\Documents\FEUP\C\comp2022-2f\src\pt\up\fe\comp\jasmin" />
       <recent name="$PROJECT_DIR$/src/pt/up/fe/comp/ollir" />
       <recent name="$PROJECT_DIR$/test/Basic Tests" />
     </key>
@@ -113,7 +117,7 @@
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.ParserTest">
+  <component name="RunManager" selected="Gradle.JasminTest.runCode">
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -173,7 +177,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="GrammarTest.testStmtEmptyScope" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="JasminTest.runCode" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -186,7 +190,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.GrammarTest.testStmtEmptyScope&quot;" />
+            <option value="&quot;pt.up.fe.comp.JasminTest.runCode&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -196,7 +200,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="GrammarTest.testVarDeclString" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="JasminTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -209,7 +213,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.GrammarTest.testVarDeclString&quot;" />
+            <option value="&quot;pt.up.fe.comp.JasminTest.test&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -244,19 +248,19 @@
     </configuration>
     <list>
       <item itemvalue="Application.Launcher" />
+      <item itemvalue="Gradle.JasminTest.runCode" />
+      <item itemvalue="Gradle.JasminTest.test" />
       <item itemvalue="Gradle.ExampleTest.test" />
       <item itemvalue="Gradle.GrammarTest (1)" />
-      <item itemvalue="Gradle.GrammarTest.testStmtEmptyScope" />
-      <item itemvalue="Gradle.GrammarTest.testVarDeclString" />
       <item itemvalue="Gradle.ParserTest" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.JasminTest.runCode" />
+        <item itemvalue="Gradle.JasminTest.test" />
         <item itemvalue="Gradle.ParserTest" />
         <item itemvalue="Gradle.GrammarTest (1)" />
         <item itemvalue="Gradle.ExampleTest.test" />
-        <item itemvalue="Gradle.GrammarTest.testStmtEmptyScope" />
-        <item itemvalue="Gradle.GrammarTest.testVarDeclString" />
       </list>
     </recent_temporary>
   </component>
@@ -287,6 +291,7 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.jj" />
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.template" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
