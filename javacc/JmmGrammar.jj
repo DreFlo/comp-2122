@@ -229,14 +229,14 @@ Array #Array :
 
 DotStatement #void :
     < DOT >
-    ( (< LENGTH > ({ jjtThis.put("op", "length"); }) #UnaryOp(1)) | CallExpression )
+    ( (< LENGTH > ({ jjtThis.put("op", "length"); }) #UnaryOp(1)) | CallExpression #CallExpression(3) )
 ;
 
 CallExpression #void :
-    ((< ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier )
+    (< ID > ({ jjtThis.put("name", lastConsumedToken.getImage()); }) #Identifier )
     < OPEN_PAREN >
         ( Expression ( < COMMA > Expression )* )? #Arguments
-    < CLOSE_PAREN >) #CallExpression(2)
+    < CLOSE_PAREN >
 ;
 
 // Injections for the implementation of JmmNode

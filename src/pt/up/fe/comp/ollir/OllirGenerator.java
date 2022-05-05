@@ -67,11 +67,54 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
             code.append(paramCode);
         }
 
-        code.append(").V {\n").append("}\n");
+        code.append(").V {\n");
+
+        //Expressions
+        for(int i = 1; i < mainMethod.getNumChildren(); i++){
+            visit(mainMethod.getJmmChild(i));
+        }
+
+        code.append("}\n");
         return 0;
     }
 
-    private Integer instanceMethodVisit(JmmNode classDecl, Integer dummy) {
+    private Integer instanceMethodVisit(JmmNode instanceMethod, Integer dummy) {
+
+        return 0;
+    }
+
+    private Integer callExpressionVisit(JmmNode callExpression, Integer dummy){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        var children = callExpression.getChildren();
+        if(symbolTable.getImports().contains(children.get(0).get("name"))){
+            stringBuilder.append("invokestatic(");
+            stringBuilder.append(children.get(0).get("name"));
+        }
+        else { //this,
+            stringBuilder.append("invokevirtual(");
+            switch (children.get(0).getKind()){
+                case "ThisT":
+                    stringBuilder.append("this");
+                    break;
+                case "Literal":
+                    break;
+                case "Identifier":
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        stringBuilder.append(", \"").append(callExpression.getJmmChild(0).get("name")).append("\"");
+
+        var argumentes = callExpression.getJmmChild(1);
+        for(var argument : argumentes.getChildren()){
+
+        }
+
+        stringBuilder.append(")");
+
         return 0;
     }
 }
