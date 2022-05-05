@@ -19,9 +19,6 @@ TOKEN :
 	< OPEN_CURL_BRACK : "{" > |
 	< CLOSE_CURL_BRACK : "}" > |
 	< LT : "<" > |
-	< GT : ">" > |
-	< LE : "<=" > |
-	< GE : ">=" > |
 	< AND : "&&" > |
 	< OR : "||" > |
 	< NOT : "!" > |
@@ -138,7 +135,7 @@ EmptyStatement #void:
 ;
 
 Statement #void :
-	EmptyStatement |
+    EmptyStatement |
 	(
 		< IF > < OPEN_PAREN > Expression #IfCondition < CLOSE_PAREN >
 			Statement #IfBody

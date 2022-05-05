@@ -36,9 +36,11 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
         addVisit("IfCondition", this::ifConditionVisit);
         addVisit("IfBody", this::ifBodyVisit);
         addVisit("ElseStatement", this::elseStatementVisit);
-
+        addVisit("AssignmentStatement", this::assignmentStatementVisit);
 
         addVisit("UnaryOp", this::unaryOpVisit);
+
+        addVisit("VarDeclaration", this::varDeclarationVisit);
     }
 
     public String getCode() {
@@ -94,6 +96,8 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
             visit(mainMethod.getJmmChild(i));
         }
 
+        code.append("ret.V;\n");
+
         code.append("}\n");
         return 0;
     }
@@ -121,7 +125,7 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
             visit(instanceMethod.getJmmChild(i));
         }
 
-        code.append("}\n");
+        code.append("\n}\n");
 
         return 0;
     }
@@ -183,16 +187,66 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
         return 0;
     }
 
+    private Integer assignmentStatementVisit(JmmNode assignmentStatement, Integer dummy){
+        StringBuilder assign = new StringBuilder();
+        StringBuilder before = new StringBuilder(); //For Expressions on the right side who might need it
+
+        JmmNode id = assignmentStatement.getJmmChild(0);
+        String varType = "";
+        for (var variable : symbolTable.getLocalVariables(OllirUtils.getParentMethodSignature(assignmentStatement))){
+            if(variable.getName().equals(id.get("name"))){
+                varType = OllirUtils.getCode(variable.getType());
+            }
+        }
+        assign.append(id.get("name")).append(".").append(varType).append(" :=.").append(varType).append(" ");
+
+        JmmNode rightSide = assignmentStatement.getJmmChild(1);
+        switch (rightSide.getKind()){
+            case "Literal":
+                assign.append(rightSide.get("value")).append(".").append(rightSide.get("type")).append(";\n");
+                break;
+            default:
+                break;
+        }
+
+        code.append(before).append(assign);
+        return 0;
+    }
+
     //Need to add rest of op's
     private Integer unaryOpVisit(JmmNode unaryOp, Integer dummy){
 
         switch (unaryOp.get("op")){
             case "return":
-
+                if(unaryOp.getChildren().isEmpty()){
+                    code.append("ret.V");
+                }
+                else {
+                    code.append("ret.");
+                    switch (unaryOp.getJmmChild(0).getKind()){
+                        case "Identifier":
+                            String methodSignature = OllirUtils.getParentMethodSignature(unaryOp);
+                            String return_type = OllirUtils.getCode(symbolTable.getReturnType(methodSignature));
+                            code.append(return_type).append(" ");
+                            code.append(unaryOp.getJmmChild(0).get("name")).append(".").append(return_type).append(";");
+                    }
+                }
                 break;
             default:
                 break;
         }
+        return 0;
+    }
+
+    private Integer varDeclarationVisit(JmmNode varDeclaration, Integer dummy){
+        String type = "";
+        if(varDeclaration.getJmmChild(0).get("array") == "true"){
+            type += ".array";
+        }
+        type += ("." + varDeclaration.getJmmChild(0).get("type"));
+        String name = varDeclaration.getJmmChild(1).get("name");
+
+        code.append(name).append(type).append(" :=").append(type).append(" new(").append(type, 1, type.length()).append(")").append(type).append(";\n");
         return 0;
     }
 }

@@ -21,6 +21,12 @@ public class JmmOptimizer implements JmmOptimization {
                 "    .method public static main(args.array.String).V {\n" +
                 "        invokestatic(ioPlus, \"printHelloWorld\").V;\n" +
                 "    }\n" +
+                "\n" +
+                "    .method public yellow(yel.bet, arr.array.int).int {\n" +
+                "        a.int :=.int new(int).int;\n" +
+                "        a.int :=.int 1.int;\n" +
+                "        ret.int a.int;\n" +
+                "    }\n" +
                 "}";*/
 
         System.out.println("OLLIR CODE:\n" + ollirCode);

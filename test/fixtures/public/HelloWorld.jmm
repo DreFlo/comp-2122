@@ -5,6 +5,10 @@ class HelloWorld {
 	}
 
 	public int yellow(bet yel, int[] arr) {
-	    return 7;
+	    int a;
+	    bool c;
+	    a = 1;
+	    c = (1 < 2) && (4 < 3);
+	    return a;
 	}
 }

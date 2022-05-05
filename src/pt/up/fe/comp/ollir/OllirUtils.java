@@ -1,7 +1,9 @@
 package pt.up.fe.comp.ollir;
 
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
+import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
+import pt.up.fe.comp.jmm.ast.JmmNode;
 
 public class OllirUtils {
     public static String getCode(Symbol symbol){
@@ -24,6 +26,20 @@ public class OllirUtils {
                 return "V";
             default:
                 return jmmType;
+        }
+    }
+
+    public static String getParentMethodSignature(JmmNode jmmNode){
+        while (true){
+            if(jmmNode.getKind().equals("InstanceMethod")){
+                return jmmNode.getJmmChild(1).get("name");
+            }
+            else if(jmmNode.getKind().equals("MainMethod")){
+                return "main";
+            }
+            else{
+                jmmNode = jmmNode.getJmmParent();
+            }
         }
     }
 }
