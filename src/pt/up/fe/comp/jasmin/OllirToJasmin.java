@@ -11,10 +11,14 @@ import java.util.stream.Collectors;
 
 public class OllirToJasmin {
     private final ClassUnit classUnit;
+
     private final Map<String, String> fullyQualifiedClassNames;
-    private FunctionClassMap<Instruction, String> instructionMap;
+
+    private final FunctionClassMap<Instruction, String> instructionMap;
 
     private Method currentMethod = null;
+
+    private final static String DEFAULT_ACCESS = "public";
 
     OllirToJasmin(ClassUnit classUnit) {
         this.classUnit = classUnit;
@@ -44,11 +48,12 @@ public class OllirToJasmin {
         instructionMap.put(AssignInstruction.class, this::getCode);
     }
 
-    public String getFullyQualifiedClassName(String className) throws RuntimeException {
+    private String getFullyQualifiedClassName(String className) throws RuntimeException {
         String fullyQualifiedName = fullyQualifiedClassNames.get(className);
         if (fullyQualifiedName != null) return fullyQualifiedName;
         throw new RuntimeException("Could not find fully qualified class name for class: " + className);
     }
+
     public String getCode() {
         StringBuilder code = new StringBuilder();
 
@@ -57,13 +62,32 @@ public class OllirToJasmin {
         String qualifiedSuperClassName = getFullyQualifiedClassName(classUnit.getSuperClass());
         code.append(".super ").append(qualifiedSuperClassName).append("\n\n");
 
+        code.append(classUnit.getFields().stream().map(this::getCode).collect(Collectors.joining()));
+
         code.append(SpecsIo.getResource("resources/jasminConstructor.template").replace("${SUPER_F_Q_CLASS_NAME}", qualifiedSuperClassName)).append("\n");
 
         for (Method method : classUnit.getMethods()) {
             code.append(getCode(method));
         }
 
+        return code.toString();
+    }
 
+    private String getCode(Field field) {
+        StringBuilder code = new StringBuilder();
+        code.append(".field ").append(getAccessModifierString(field.getFieldAccessModifier())).append(" ");
+        if (field.isStaticField()) {
+            code.append("static ");
+        }
+        if (field.isFinalField()) {
+            code.append("final ");
+        }
+        code.append(field.getFieldName()).append(" ");
+        code.append(getJasminType(field.getFieldType())).append(" ");
+        if (field.isInitialized()) {
+            code.append("= ").append(field.getInitialValue());
+        }
+        code.append("\n");
         return code.toString();
     }
 
@@ -72,9 +96,7 @@ public class OllirToJasmin {
 
         StringBuilder code = new StringBuilder();
 
-        AccessModifiers modifier = method.getMethodAccessModifier();
-
-        code.append(".method ").append(modifier == AccessModifiers.DEFAULT ? "public " : modifier.name() + " ");
+        code.append(".method ").append(getAccessModifierString(method.getMethodAccessModifier())).append(" ");
 
         if (method.isStaticMethod()) {
             code.append("static ");
@@ -138,28 +160,22 @@ public class OllirToJasmin {
     }
 
     private String getCodeNew(CallInstruction instruction) {
-        StringBuilder code = new StringBuilder();
-        code.append("new ").append(getFullyQualifiedClassName(((Operand) instruction.getFirstArg()).getName())).append("\n");
-        return code.toString();
+        return "new " + getFullyQualifiedClassName(((Operand) instruction.getFirstArg()).getName()) + "\n";
     }
 
     private String getCodeLDC(CallInstruction instruction) {
-        StringBuilder code = new StringBuilder();
-        code.append("ldc ").append(((Operand) instruction.getFirstArg()).getName()).append("\n");
-        return code.toString();
+        return "ldc " + ((Operand) instruction.getFirstArg()).getName() + "\n";
     }
 
     private String getCode(AssignInstruction instruction) {
         StringBuilder code = new StringBuilder();
+        code.append(getCode(instruction.getRhs()));
         switch (instruction.getTypeOfAssign().getTypeOfElement()) {
-            case INT32, BOOLEAN -> {
-                code.append("istore_").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
-            }
-            case OBJECTREF -> {
-                code.append("astore_").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
-            }
-            default -> {throw new NotImplementedException("Not implemented for type: " + instruction.getTypeOfAssign().getTypeOfElement());}
+            case INT32, BOOLEAN -> code.append("istore_").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
+            case OBJECTREF, STRING -> code.append("astore_").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
+            default -> throw new NotImplementedException("Not implemented for type: " + instruction.getTypeOfAssign().getTypeOfElement());
         }
+        code.append("\n");
         return code.toString();
     }
 
@@ -167,7 +183,6 @@ public class OllirToJasmin {
         if (type instanceof ArrayType) {
             return "[" + getJasminType(((ArrayType) type).getTypeOfElements());
         }
-
         return getJasminType(type.getTypeOfElement());
     }
 
@@ -195,5 +210,9 @@ public class OllirToJasmin {
     private Integer getCurrentMethodVarVirtualRegisterFromElement(Element element) {
         Operand operand = (Operand) element;
         return currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
+    }
+
+    private String getAccessModifierString(AccessModifiers modifier) {
+        return modifier == AccessModifiers.DEFAULT ? DEFAULT_ACCESS : modifier.name();
     }
 }
