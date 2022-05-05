@@ -4,4 +4,10 @@ public HelloWorld extends BoardBase {
     .method public static main(args.array.String).V {
         invokestatic(ioPlus, "printHelloWorld").V;
     }
+
+    .method public yellow(yel.bet, arr.array.int).int {
+        a.int :=.int new(int).int;
+        a.int :=.int 1.int;
+        ret.int a.int;
+    }
 }
