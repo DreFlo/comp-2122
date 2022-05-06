@@ -16,15 +16,17 @@ public class JmmOptimizer implements JmmOptimization {
         String ollirCode = ollirGenerator.getCode();
 
         /*String ollirCode = "import ioPlus;\n" +
-                "\n" +
-                "public HelloWorld extends BoardBase {\n" +
+                "public HelloWorld {\n" +
                 "    .method public static main(args.array.String).V {\n" +
                 "        invokestatic(ioPlus, \"printHelloWorld\").V;\n" +
+                "        ret.V;\n" +
                 "    }\n" +
-                "\n" +
                 "    .method public yellow(yel.bet, arr.array.int).int {\n" +
-                "        a.int :=.int new(int).int;\n" +
-                "        a.int :=.int 1.int;\n" +
+                "        a.int :=.int 5.int;\n" +
+                "        t0.bool :=.bool 3.int <.int 2.int;\n" +
+                "        t1.bool :=.bool 4.int <.int 3.int;\n" +
+                "        c.bool :=.bool t0.bool &&.bool t1.bool;\n" +
+                "        d.bool :=.bool !.bool c.bool;\n" +
                 "        ret.int a.int;\n" +
                 "    }\n" +
                 "}";*/
