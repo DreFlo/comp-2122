@@ -1,11 +1,14 @@
 package pt.up.fe.comp.ollir;
 
+import pt.up.fe.comp.Array;
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class OllirUtils {
     private static int localVariableCount = 0;
@@ -85,5 +88,15 @@ public class OllirUtils {
     public static String getTypeFromVariableName(String name){
         String[] separate = name.split("[.]");
         return separate[separate.length - 1];
+    }
+
+    public static List<String> getVarNamesFromExpression(String expression){
+        List<String> list = new ArrayList<>();
+
+        String[] parts = expression.split(" ");
+        list.add(parts[2]);
+        list.add(parts[4].replaceFirst(";", ""));
+
+        return list;
     }
 }

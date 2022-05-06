@@ -9,14 +9,16 @@ class HelloWorld {
 
 	public int yellow(bet yel, int[] arr) {
 	    int a;
+	    int d;
 	    bool b;
-	    NewType f;
-	    int[] g;
-	    int e;
-	    b = ! (1 < 2);
-	    f = new NewType();
-	    g = new int[g.length];
-	    e = g.length;
+	    bool c;
+	    if (true) {
+	        a = 5;
+            a = 4;
+	    }
+        else
+            a = 2;
+
 	    return a;
 	}
 }
