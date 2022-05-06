@@ -118,7 +118,7 @@
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.OptimizationTest (1)">
+  <component name="RunManager" selected="Gradle.OptimizationTest">
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -131,29 +131,6 @@
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
-    </configuration>
-    <configuration name="BackendTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;BackendTest&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
     </configuration>
     <configuration name="ExampleTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
@@ -178,7 +155,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="ExampleTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="JasminTest.runCode" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -191,7 +168,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;ExampleTest.test&quot;" />
+            <option value="&quot;pt.up.fe.comp.JasminTest.runCode&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -201,7 +178,30 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="OptimizationTest (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="JasminTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;pt.up.fe.comp.JasminTest.test&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="OptimizationTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -249,19 +249,17 @@
     </configuration>
     <list>
       <item itemvalue="Application.Launcher" />
-      <item itemvalue="Gradle.BackendTest" />
       <item itemvalue="Gradle.ExampleTest" />
+      <item itemvalue="Gradle.OptimizationTest" />
       <item itemvalue="Gradle.OptimizationTest.test (1)" />
-      <item itemvalue="Gradle.ExampleTest.test" />
-      <item itemvalue="Gradle.OptimizationTest (1)" />
+      <item itemvalue="Gradle.JasminTest.runCode" />
+      <item itemvalue="Gradle.JasminTest.test" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.OptimizationTest (1)" />
-        <item itemvalue="Gradle.BackendTest" />
-        <item itemvalue="Gradle.ExampleTest" />
-        <item itemvalue="Gradle.ExampleTest.test" />
-        <item itemvalue="Gradle.OptimizationTest.test (1)" />
+        <item itemvalue="Gradle.OptimizationTest" />
+        <item itemvalue="Gradle.JasminTest.test" />
+        <item itemvalue="Gradle.JasminTest.runCode" />
       </list>
     </recent_temporary>
   </component>
