@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="Symbol Table being constructed. Missing reports.">
+    <list default="true" id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/JmmAnalyser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/JmmAnalyser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,11 +117,7 @@
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-<<<<<<< HEAD
-  <component name="RunManager" selected="Gradle.OptimizationTest (1)">
-=======
-  <component name="RunManager" selected="Gradle.JasminTest.runCode">
->>>>>>> master
+  <component name="RunManager" selected="Gradle.JasminTest.test">
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -179,11 +177,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-<<<<<<< HEAD
-    <configuration name="ExampleTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-=======
     <configuration name="JasminTest.runCode" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
->>>>>>> master
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -196,11 +190,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-<<<<<<< HEAD
-            <option value="&quot;ExampleTest.test&quot;" />
-=======
             <option value="&quot;pt.up.fe.comp.JasminTest.runCode&quot;" />
->>>>>>> master
           </list>
         </option>
         <option name="vmOptions" />
@@ -210,11 +200,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-<<<<<<< HEAD
-    <configuration name="OptimizationTest (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-=======
     <configuration name="JasminTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
->>>>>>> master
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -227,11 +213,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-<<<<<<< HEAD
-            <option value="&quot;pt.up.fe.comp.OptimizationTest&quot;" />
-=======
             <option value="&quot;pt.up.fe.comp.JasminTest.test&quot;" />
->>>>>>> master
           </list>
         </option>
         <option name="vmOptions" />
@@ -266,35 +248,16 @@
     </configuration>
     <list>
       <item itemvalue="Application.Launcher" />
-<<<<<<< HEAD
       <item itemvalue="Gradle.AnalysisTest" />
-      <item itemvalue="Gradle.ExampleTest.test" />
-      <item itemvalue="Gradle.OptimizationTest (1)" />
-      <item itemvalue="Gradle.OptimizationTest.test" />
       <item itemvalue="Gradle.AnalysisTest.test" />
-    </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Gradle.OptimizationTest (1)" />
-        <item itemvalue="Gradle.ExampleTest.test" />
-        <item itemvalue="Gradle.OptimizationTest.test" />
-        <item itemvalue="Gradle.AnalysisTest" />
-        <item itemvalue="Gradle.AnalysisTest.test" />
-=======
+      <item itemvalue="Gradle.OptimizationTest.test" />
       <item itemvalue="Gradle.JasminTest.runCode" />
       <item itemvalue="Gradle.JasminTest.test" />
-      <item itemvalue="Gradle.ExampleTest.test" />
-      <item itemvalue="Gradle.GrammarTest (1)" />
-      <item itemvalue="Gradle.ParserTest" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.JasminTest.runCode" />
         <item itemvalue="Gradle.JasminTest.test" />
-        <item itemvalue="Gradle.ParserTest" />
-        <item itemvalue="Gradle.GrammarTest (1)" />
-        <item itemvalue="Gradle.ExampleTest.test" />
->>>>>>> master
+        <item itemvalue="Gradle.JasminTest.runCode" />
       </list>
     </recent_temporary>
   </component>

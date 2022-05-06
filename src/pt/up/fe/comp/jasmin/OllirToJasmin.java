@@ -7,6 +7,7 @@ import pt.up.fe.specs.util.exceptions.NotImplementedException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class OllirToJasmin {
@@ -47,6 +48,8 @@ public class OllirToJasmin {
         instructionMap.put(CallInstruction.class, this::getCode);
         instructionMap.put(AssignInstruction.class, this::getCode);
         instructionMap.put(BinaryOpInstruction.class, this::getCode);
+        instructionMap.put(UnaryOpInstruction.class, this::getCode);
+        instructionMap.put(ReturnInstruction.class, this::getCode);
     }
 
     private String getFullyQualifiedClassName(String className) throws RuntimeException {
@@ -123,7 +126,12 @@ public class OllirToJasmin {
     }
 
     private String getCode(Instruction instruction) {
-        return instructionMap.apply(instruction);
+        Optional<String> code = instructionMap.applyTry(instruction);
+        if (code.isPresent()) {
+            return code.toString();
+        } else {
+            throw new NotImplementedException("Not implemented for " + instruction.getClass() + " instructions");
+        }
     }
 
     private String getCode(CallInstruction instruction) {
@@ -173,7 +181,7 @@ public class OllirToJasmin {
         code.append(getCode(instruction.getRhs()));
         switch (instruction.getTypeOfAssign().getTypeOfElement()) {
             case INT32, BOOLEAN -> code.append("istore_").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
-            case OBJECTREF, STRING -> code.append("astore_").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
+            case OBJECTREF -> code.append("astore_").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
             default -> throw new NotImplementedException("Not implemented for type: " + instruction.getTypeOfAssign().getTypeOfElement());
         }
         code.append("\n");
@@ -182,14 +190,69 @@ public class OllirToJasmin {
 
     private String getCode(BinaryOpInstruction instruction) {
         StringBuilder code = new StringBuilder();
-        code.append(pushOperandToStack((Operand) instruction.getLeftOperand()));
-        code.append(pushOperandToStack((Operand) instruction.getRightOperand()));
+        code.append(pushOperandToStack(instruction.getLeftOperand()));
+        code.append(pushOperandToStack(instruction.getRightOperand()));
+        switch (instruction.getOperation().getOpType()) {
+            case ADDI32 -> code.append("iadd");
+            case SUBI32 -> code.append("isub");
+            case MULI32 -> code.append("imul");
+            case DIVI32 -> code.append("idiv");
+            case ANDB -> code.append("iand");
+            case LTHI32 -> {
+                code.append("if_icmplt 3\n");
+                code.append("iconst_0\n");
+                code.append("goto 2\n");
+                code.append("iconst_1");
+            }
+            default -> throw new NotImplementedException("Not implemented for type: " + instruction.getOperation().getOpType());
+        }
+        code.append("\n");
         return code.toString();
     }
 
-    // TODO
-    private String pushOperandToStack(Operand operand) {
-        return "";
+    private String getCode(UnaryOpInstruction instruction) {
+        StringBuilder code = new StringBuilder();
+        code.append(pushOperandToStack(instruction.getOperand()));
+        if (instruction.getOperation().getOpType() == OperationType.NOT) {
+            code.append("ifne 3\n");
+            code.append("iconst_1\n");
+            code.append("goto 2\n");
+            code.append("iconst_0\n");
+        } else {
+            throw new NotImplementedException("Not implemented for type: " + instruction.getOperation().getOpType());
+        }
+        return code.toString();
+    }
+    // TODO Test with strings
+    private String getCode(ReturnInstruction instruction) {
+        StringBuilder code = new StringBuilder();
+        if (instruction.hasReturnValue()) {
+            pushOperandToStack(instruction.getOperand());
+            switch (instruction.getElementType()) {
+                case OBJECTREF, STRING -> code.append("areturn\n");
+                case INT32, BOOLEAN -> code.append("ireturn\n");
+            }
+        } else {
+            code.append("return\n");
+        }
+        return code.toString();
+    }
+
+    private String pushOperandToStack(Element element) {
+        StringBuilder code = new StringBuilder();
+        if (!element.isLiteral()) {
+            switch (element.getType().getTypeOfElement()) {
+                case INT32, BOOLEAN -> code.append("iload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
+                case OBJECTREF -> code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
+            }
+        } else {
+            switch (element.getType().getTypeOfElement()) {
+                case INT32, BOOLEAN, STRING -> code.append("ldc ").append(((LiteralElement) element).getLiteral());
+                default -> throw new NotImplementedException("Not implemented for type: " + element.getType().getTypeOfElement() + " with no name.");
+            }
+        }
+        code.append("\n");
+        return code.toString();
     }
 
     private String getJasminType(Type type) {
