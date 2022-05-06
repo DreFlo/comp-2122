@@ -1,14 +1,22 @@
 import ioPlus;
 class HelloWorld {
+    int hey;
+    String str;
+
 	public static void main(String[] args) {
 		ioPlus.printHelloWorld();
 	}
 
 	public int yellow(bet yel, int[] arr) {
 	    int a;
-	    bool c;
-	    a = 1;
-	    c = (1 < 2) && (4 < 3);
+	    bool b;
+	    NewType f;
+	    int[] g;
+	    int e;
+	    b = ! (1 < 2);
+	    f = new NewType();
+	    g = new int[g.length];
+	    e = g.length;
 	    return a;
 	}
 }

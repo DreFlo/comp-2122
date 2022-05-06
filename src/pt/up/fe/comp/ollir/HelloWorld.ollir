@@ -1,13 +1,15 @@
 import ioPlus;
-
-public HelloWorld extends BoardBase {
+public HelloWorld {
     .method public static main(args.array.String).V {
         invokestatic(ioPlus, "printHelloWorld").V;
+        ret.V;
     }
-
     .method public yellow(yel.bet, arr.array.int).int {
-        a.int :=.int new(int).int;
-        a.int :=.int 1.int;
+        a.int :=.int 5.int;
+        t0.bool :=.bool 3.int <.int 2.int;
+        t1.bool :=.bool 4.int <.int 3.int;
+        c.bool :=.bool t0.bool &&.bool t1.bool;
+        d.bool :=.bool !.bool c.bool;
         ret.int a.int;
     }
 }
