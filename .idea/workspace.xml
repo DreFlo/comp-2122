@@ -6,9 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirExpressionsUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirExpressionsUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/ExampleTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/ExampleTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

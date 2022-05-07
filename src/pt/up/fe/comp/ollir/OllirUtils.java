@@ -32,6 +32,8 @@ public class OllirUtils {
                 return "V";
             case "int":
                 return "i32";
+            case "boolean":
+                return "bool";
             default:
                 return jmmType;
         }
@@ -66,7 +68,6 @@ public class OllirUtils {
     }
 
     public static String getIdentifierCode(JmmNode identifier, SymbolTable symbolTable){
-        String code = "";
         String methodSignature = OllirUtils.getParentMethodSignature(identifier);
         if(methodSignature != null){
             for(var variable : symbolTable.getLocalVariables(methodSignature)) {
@@ -82,7 +83,7 @@ public class OllirUtils {
                 }
             }
         }
-        return code;
+        return "V";
     }
 
     public static String getTypeFromVariableName(String name){
@@ -98,5 +99,28 @@ public class OllirUtils {
         list.add(parts[4].replaceFirst(";", ""));
 
         return list;
+    }
+
+    public static String getTypeFromUnknown(JmmNode jmmNode, SymbolTable symbolTable){
+        JmmNode parent = jmmNode.getJmmParent();
+
+        switch (parent.getKind()){
+            case "AssignmentStatement":
+                return OllirUtils.getIdentifierCode(parent.getJmmChild(0), symbolTable);
+            case "BinOp":
+                switch (parent.get("op")){
+                    case "lt":
+                    case "and":
+                        return "bool";
+                    default:
+                        return "i32";
+                }
+            case "UnaryOp":
+                return "bool";
+            case "Identifier":
+                return OllirUtils.getIdentifierCode(parent, symbolTable);
+            default:
+                return "V";
+        }
     }
 }

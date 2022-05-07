@@ -7,18 +7,25 @@ class HelloWorld {
 		ioPlus.printHelloWorld();
 	}
 
+    public boolean red(int arg){
+        bool a;
+        a = true;
+        return a;
+    }
+
 	public int yellow(bet yel, int[] arr) {
 	    int a;
 	    int d;
-	    bool b;
 	    bool c;
-	    if (true) {
-	        a = 5;
-            a = 4;
-	    }
-        else
+	    c = false;
+        while(this.red(a)){
             a = 2;
-
+            d = 1;
+        }
+        while(! c){
+            a = 1;
+            d = 2;
+        }
 	    return a;
 	}
 }
