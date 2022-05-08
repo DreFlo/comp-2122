@@ -96,6 +96,12 @@ public interface SymbolTable {
                     .collect(Collectors.joining(", "));
             // builder.append(paramsString + ")\n");
             builder.append("; params: ").append(paramsString);
+
+
+            var fieldsMe = getLocalVariables(method);
+            var fieldsString = fieldsMe.stream().map(param -> param != null ? param.print() : "<null param>")
+                    .collect(Collectors.joining(", "));
+            builder.append("; fields: ").append(fieldsString);
             builder.append("\n");
         }
 
