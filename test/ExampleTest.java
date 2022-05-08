@@ -23,7 +23,7 @@ public class ExampleTest {
             If it has to fail - TestUtils.mustFail(parserResult.getReports());
         */
 
-        String test = SpecsIo.getResource("fixtures/public/Lazysort.jmm");
+        String test = SpecsIo.getResource("fixtures/public/HelloWorld.jmm");
         //var parserResult = TestUtils.parse("q.quicksort(L);", "Expression");
         var parserResult = TestUtils.parse(test, "Start");
         TestUtils.noErrors(parserResult.getReports());

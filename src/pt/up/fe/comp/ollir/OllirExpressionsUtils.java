@@ -14,7 +14,7 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
     private final SymbolTable symbolTable;
     private int indentCounter;
 
-    public OllirExpressionsUtils(SymbolTable symbolTable, int indentCounter){
+    public OllirExpressionsUtils(SymbolTable symbolTable, int indentCounter) {
         this.symbolTable = symbolTable;
         this.indentCounter = indentCounter;
 
@@ -24,6 +24,7 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
         addVisit("Identifier", this::identifierVisit);
         addVisit("NewExp", this::newExpVisit);
         addVisit("CallExpression", this::callExpressionVisit);
+        addVisit("Array", this::arrayVisit);
     }
 
     private OllirCode binOpVisit(JmmNode jmmNode, Integer integer) {
@@ -36,39 +37,43 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
         OllirCode leftCode = visit(leftNode);
         OllirCode rightCode = visit(rightNode);
 
+        StringBuilder leftVariable = leftCode.getVariable();
+        StringBuilder rightVariable = rightCode.getVariable();
+
         beforeCode.append(leftCode.getBeforeCode()).append(rightCode.getBeforeCode());
 
         variable.append(OllirUtils.getVariableName(jmmNode));
-        switch (jmmNode.get("op")){
+
+        switch (jmmNode.get("op")) {
             case "lt":
                 variable.append(".bool");
-                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.bool ").append(leftCode.getVariable()).append(" <.i32 ")
-                        .append(rightCode.getVariable()).append(";\n");
+                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.bool ").append(leftVariable).append(" <.i32 ")
+                        .append(rightVariable).append(";\n");
                 break;
             case "and":
                 variable.append(".bool");
-                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.bool ").append(leftCode.getVariable()).append(" &&.bool ")
-                        .append(rightCode.getVariable()).append(";\n");
+                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.bool ").append(leftVariable).append(" &&.bool ")
+                        .append(rightVariable).append(";\n");
                 break;
             case "add":
                 variable.append(".i32");
-                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.i32 ").append(leftCode.getVariable()).append(" +.i32 ")
-                        .append(rightCode.getVariable()).append(";\n");
+                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.i32 ").append(leftVariable).append(" +.i32 ")
+                        .append(rightVariable).append(";\n");
                 break;
             case "sub":
                 variable.append(".i32");
-                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.i32 ").append(leftCode.getVariable()).append(" -.i32 ")
-                        .append(rightCode.getVariable()).append(";\n");
+                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.i32 ").append(leftVariable).append(" -.i32 ")
+                        .append(rightVariable).append(";\n");
                 break;
             case "mult":
-                variable.append(".int");
-                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.i32 ").append(leftCode.getVariable()).append(" *.i32 ")
-                        .append(rightCode.getVariable()).append(";\n");
+                variable.append(".i32");
+                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.i32 ").append(leftVariable).append(" *.i32 ")
+                        .append(rightVariable).append(";\n");
                 break;
             case "div":
                 variable.append(".i32");
-                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.i32 ").append(leftCode.getVariable()).append(" /.i32 ")
-                        .append(rightCode.getVariable()).append(";\n");
+                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.i32 ").append(leftVariable).append(" /.i32 ")
+                        .append(rightVariable).append(";\n");
                 break;
         }
 
@@ -77,12 +82,12 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
 
     private OllirCode literalVisit(JmmNode jmmNode, Integer integer) {
         StringBuilder variable = new StringBuilder();
-        switch (jmmNode.get("type")){
+        switch (jmmNode.get("type")) {
             case "int":
                 variable.append(jmmNode.get("value")).append(".i32");
                 break;
             case "boolean":
-                switch (jmmNode.get("value")){
+                switch (jmmNode.get("value")) {
                     case "true":
                         variable.append("1.bool");
                         break;
@@ -100,7 +105,7 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
         StringBuilder variable = new StringBuilder();
         OllirCode child = visit(jmmNode.getJmmChild(0));
 
-        switch (jmmNode.get("op")){
+        switch (jmmNode.get("op")) {
             case "not":
                 variable.append(OllirUtils.getVariableName(jmmNode)).append(".bool");
                 beforeCode.append(child.getBeforeCode());
@@ -108,7 +113,7 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
                 break;
             case "length":
                 variable.append(OllirUtils.getVariableName(jmmNode)).append(".i32");
-                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.i32 arraylength($1.").append(child.getVariable()).append(").")
+                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.i32 arraylength(").append(child.getVariable()).append(").")
                         .append(OllirUtils.getTypeFromVariableName(child.getVariable().toString())).append(";\n");
                 break;
             default:
@@ -124,6 +129,34 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
 
         variable.append(OllirUtils.getIdentifierCode(jmmNode, symbolTable));
 
+        List<Symbol> parameters = symbolTable.getParameters(OllirUtils.getParentMethodSignature(jmmNode));
+        for (int i = 0; i < parameters.size(); i++) {
+            if (parameters.get(i).getName().equals(jmmNode.get("name"))) {
+                StringBuilder newVariable = new StringBuilder("$").append(i + 1).append(".").append(variable);
+                variable = new StringBuilder(newVariable);
+            }
+        }
+
+        if (jmmNode.getOptional("field").isPresent()) {
+            if(! jmmNode.getJmmParent().getKind().equals("Index")){
+                if (!(jmmNode.getJmmParent().getKind().equals("AssignmentStatement")
+                        && jmmNode.getJmmParent().getJmmChild(0).equals(jmmNode))) {
+                    return OllirUtils.getField(variable.toString(), this.indentCounter);
+                }
+            }
+        }
+
+        return new OllirCode(beforeCode, variable);
+    }
+
+    private OllirCode arrayVisit(JmmNode jmmNode, Integer integer) {
+        StringBuilder beforeCode = new StringBuilder();
+        StringBuilder variable = new StringBuilder();
+
+        OllirCode arrayCode = OllirUtils.getArrayOrIndexVar(jmmNode, this.symbolTable, this.indentCounter);
+        beforeCode.append(arrayCode.getBeforeCode());
+        variable.append(arrayCode.getVariable());
+
         return new OllirCode(beforeCode, variable);
     }
 
@@ -136,7 +169,7 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
         variable.append(OllirUtils.getVariableName(jmmNode));
 
         String type = "";
-        switch (jmmNode.get("type")){
+        switch (jmmNode.get("type")) {
             case "intArray":
                 type = ".array.i32";
                 beforeCode.append("\t".repeat(indentCounter)).append(variable).append(type).append(" :=").append(type).append(" new(array, ").
@@ -153,7 +186,7 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
         return new OllirCode(beforeCode, variable);
     }
 
-    private OllirCode callExpressionVisit(JmmNode jmmNode, Integer integer){
+    private OllirCode callExpressionVisit(JmmNode jmmNode, Integer integer) {
         StringBuilder beforeCode = new StringBuilder();
         StringBuilder variable = new StringBuilder();
 
@@ -164,26 +197,37 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
         String functionName = functionId.get("name");
 
         List<StringBuilder> argumentsList = new ArrayList<>();
-        for(var argument : arguments.getChildren()) {
+        for (var argument : arguments.getChildren()) {
             OllirCode childOllir = visit(argument);
             beforeCode.append(childOllir.getBeforeCode());
-            argumentsList.add(childOllir.getVariable());
+
+            if(argument.getKind().equals("Array")){
+                String type = OllirUtils.getTypeFromVariableName(childOllir.getVariable().toString());
+                StringBuilder newVar = new StringBuilder(OllirUtils.getNewVariableName()).append(".").append(type);
+                beforeCode.append("\t".repeat(indentCounter)).append(newVar).append(" :=.").append(type).append(" ").
+                        append(childOllir.getVariable()).append(";\n");
+                argumentsList.add(newVar);
+            }
+            else{
+                argumentsList.add(childOllir.getVariable());
+            }
+
+
         }
         String args = argumentsList.stream()
                 .collect(Collectors.joining(", "));
 
         String retType;
-        switch (variableId.getKind()){
+        switch (variableId.getKind()) {
             case "ThisT":
                 beforeCode.append("\t".repeat(indentCounter));
-                if (symbolTable.getMethods().contains(functionName)){
+                if (symbolTable.getMethods().contains(functionName)) {
                     retType = OllirUtils.getCode(symbolTable.getReturnType(functionName));
                     variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
                     beforeCode.append(variable).append(" :=.").append(retType).append(" ");
-                }
-                else{
+                } else {
                     retType = OllirUtils.getTypeFromUnknown(jmmNode, symbolTable);
-                    if(!retType.equals("V")){
+                    if (!retType.equals("V")) {
                         variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
                         beforeCode.append(variable).append(" :=.").append(retType).append(" ");
                     }
@@ -193,20 +237,19 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
 
                 break;
             default:
-                if(variableId.getOptional("name").isPresent()){
+                if (variableId.getOptional("name").isPresent()) {
                     beforeCode.append("\t".repeat(indentCounter));
                     String name = variableId.get("name");
-                    if(symbolTable.getImports().contains(name)){
+                    if (symbolTable.getImports().contains(name)) {
                         retType = OllirUtils.getTypeFromUnknown(jmmNode, symbolTable);
-                        if(!retType.equals("V")){
+                        if (!retType.equals("V")) {
                             variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
                             beforeCode.append(variable).append(" :=.").append(retType).append(" ");
                         }
                         beforeCode.append("invokestatic(").append(name).append(", \"").append(functionName).append("\"").
                                 append(args.isEmpty() ? "" : ", ").append(args).append(").").
                                 append(retType).append(";\n");
-                    }
-                    else if(symbolTable.getMethods().contains(functionName)){
+                    } else if (symbolTable.getMethods().contains(functionName)) {
                         retType = OllirUtils.getCode(symbolTable.getReturnType(functionName));
                         variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
                         beforeCode.append(variable).append(" :=.").append(retType).append(" ").
@@ -214,10 +257,9 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
                                 append(OllirUtils.getIdentifierCode(variableId, symbolTable)).append(", \"").
                                 append(functionName).append("\"").append(args.isEmpty() ? "" : ", ").append(args).
                                 append(").").append(retType).append(";\n");
-                    }
-                    else{
+                    } else {
                         retType = OllirUtils.getTypeFromUnknown(jmmNode, symbolTable);
-                        if(!retType.equals("V")){
+                        if (!retType.equals("V")) {
                             variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
                             beforeCode.append(variable).append(" :=.").append(retType).append(" ");
                         }
@@ -227,13 +269,12 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
                                 append(args.isEmpty() ? "" : ", ").append(args).append(").").
                                 append(retType).append(";\n");
                     }
-                }
-                else{ //MonteCarlo
+                } else { //MonteCarlo
                     OllirCode ollirCode = visit(variableId);
                     beforeCode.append(ollirCode.getBeforeCode());
                     retType = OllirUtils.getTypeFromUnknown(jmmNode, symbolTable);
                     beforeCode.append("\t".repeat(indentCounter));
-                    if(!retType.equals("V")){
+                    if (!retType.equals("V")) {
                         variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
                         beforeCode.append(variable).append(" :=.").append(retType).append(" ");
                     }

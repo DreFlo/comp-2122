@@ -193,7 +193,7 @@ Not #void:
 ;
 
 Terminations #void :
-    Terminal ( Array | DotStatement )*
+    Terminal ( Array #Array(2) | DotStatement )*
 ;
 
 Terminal #void :
@@ -223,7 +223,7 @@ New #void :
     ) #NewExp
 ;
 
-Array #Array :
+Array #void :
     < OPEN_SQ_BRACK >
         Expression
     < CLOSE_SQ_BRACK >
