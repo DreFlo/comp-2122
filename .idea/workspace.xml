@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="">
+    <list default="true" id="80a454e3-c98a-400a-b777-b058a365c767" name="Changes" comment="Symbol Table being constructed. Missing reports.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirExpressionsUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirExpressionsUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -118,7 +117,7 @@
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.OptimizationTest">
+  <component name="RunManager" selected="Gradle.JasminTest.test">
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -257,8 +256,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.OptimizationTest" />
         <item itemvalue="Gradle.JasminTest.test" />
+        <item itemvalue="Gradle.OptimizationTest" />
         <item itemvalue="Gradle.JasminTest.runCode" />
       </list>
     </recent_temporary>
@@ -266,7 +265,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="" />
+      <changelist id="80a454e3-c98a-400a-b777-b058a365c767" name="Changes" comment="Symbol Table being constructed. Missing reports." />
       <created>1648632973536</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -274,6 +273,7 @@
       <workItem from="1651431638019" duration="4237000" />
       <workItem from="1651483067350" duration="10843000" />
       <workItem from="1651518565997" duration="1218000" />
+      <workItem from="1652033672943" duration="8078000" />
     </task>
     <task id="LOCAL-00001" summary="Symbol Table being constructed. Missing reports.">
       <created>1651493959654</created>

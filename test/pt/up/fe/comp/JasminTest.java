@@ -15,7 +15,7 @@ public class JasminTest {
 
     @Test
     public void test() {
-        JasminResult jasminResult = TestUtils.backend(SpecsIo.getResource("fixtures/public/HelloWorld.jmm"));
+        JasminResult jasminResult = TestUtils.backend(SpecsIo.getResource("fixtures/public/TicTacToe.jmm"));
         TestUtils.noErrors(jasminResult.getReports());
 
         Scanner scanner = new Scanner(jasminResult.getJasminCode());
@@ -29,7 +29,7 @@ public class JasminTest {
             l++;
         }
 
-        String result = jasminResult.run();
+        jasminResult.compile();
     }
 
     @Test

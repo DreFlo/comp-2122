@@ -57,6 +57,10 @@ public class OllirToJasmin {
         instructionMap.put(UnaryOpInstruction.class, this::getCode);
         instructionMap.put(ReturnInstruction.class, this::getCode);
         instructionMap.put(SingleOpInstruction.class, this::getCode);
+        instructionMap.put(GotoInstruction.class, this::getCode);
+        instructionMap.put(GetFieldInstruction.class, this::getCode);
+        instructionMap.put(PutFieldInstruction.class, this::getCode);
+        instructionMap.put(CondBranchInstruction.class, this::getCode);
     }
 
     private String getFullyQualifiedClassName(String className) throws RuntimeException {
@@ -256,10 +260,8 @@ public class OllirToJasmin {
         return code.toString();
     }
 
-    // TODO Test with strings
     private String getCode(ReturnInstruction instruction) {
         StringBuilder code = new StringBuilder();
-        instruction.show();
         if (instruction.hasReturnValue()) {
             pushElementToStack(instruction.getOperand());
             switch (instruction.getOperand().getType().getTypeOfElement()) {
@@ -272,10 +274,37 @@ public class OllirToJasmin {
         return code.toString();
     }
 
-    // TODO
     public String getCode(SingleOpInstruction instruction) {
         StringBuilder code = new StringBuilder();
+        code.append(pushElementToStack(instruction.getSingleOperand()));
         return code.toString();
+    }
+
+    public String getCode(GotoInstruction instruction) {
+        return "goto " + instruction.getLabel() + "\n";
+    }
+
+    public String getCode(GetFieldInstruction instruction) {
+        return "getfield " +
+                getFullyQualifiedClassName(instruction.getFirstOperand().getClass().getName()) + "/" +
+                ((Operand) instruction.getSecondOperand()).getName() + " " +
+                getFullyQualifiedClassName(instruction.getSecondOperand().getClass().getName()) +
+                "\n";
+    }
+
+    public String getCode(PutFieldInstruction instruction) {
+        return "getfield " +
+                getFullyQualifiedClassName(instruction.getFirstOperand().getClass().getName()) + "/" +
+                ((Operand) instruction.getSecondOperand()).getName() + " " +
+                getFullyQualifiedClassName(instruction.getSecondOperand().getClass().getName()) + " " +
+                ((LiteralElement) instruction.getThirdOperand()).getLiteral() +
+                "\n";
+
+    }
+
+    public String getCode(CondBranchInstruction instruction) {
+        instruction.show();
+        return "ere";
     }
 
     private String pushElementToStack(Element element) {

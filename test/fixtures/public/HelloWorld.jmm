@@ -5,38 +5,8 @@ class HelloWorld {
     String str;
 
 	public static void main(String[] args) {
-		ioPlus.printHelloWorld();
-	}
-
-	public int yellow(int yel, int[] arr) {
-	    bool b;
-	    int[] g;
-	    int e;
-	    b = ! (1 < 2);
-	    g = new int[6];
-	    e = g.length;
-	    return e;
-	}
-
-    public boolean red(int arg){
-        bool a;
-        a = true;
-        return a;
-    }
-
-	public int brown(char yel, int[] arr) {
 	    int a;
-	    int d;
-	    bool c;
-	    c = false;
-        while(this.red(a)){
-            a = 2;
-            d = 1;
-        }
-        while(! c){
-            a = 1;
-            d = 2;
-        }
-	    return a;
+        a = 6;
+		ioPlus.printHelloWorld();
 	}
 }
