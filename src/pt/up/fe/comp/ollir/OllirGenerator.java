@@ -5,6 +5,7 @@ import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.ast.AJmmVisitor;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +16,8 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
 
     /*
     TODO:
-      Statements: If, While, Assign with Array on left side
-      Expressions: Array, Finish CallExpression
+      Statements: Assign with Array on left side (Index)
+      Expressions: Array
      */
 
 
@@ -40,14 +41,10 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
 
         //Statements
         addVisit("IfStatement", this::ifStatementVisit);
-        addVisit("IfCondition", this::ifConditionVisit);
-        addVisit("IfBody", this::ifBodyVisit);
-        addVisit("ElseStatement", this::elseStatementVisit);
+        addVisit("WhileStatement", this::whileStatementVisit);
         addVisit("AssignmentStatement", this::assignmentStatementVisit);
 
         addVisit("UnaryOp", this::unaryOpVisit);
-
-        addVisit("VarDeclaration", this::varDeclarationVisit);
     }
 
     public String getCode() {
@@ -104,6 +101,7 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
 
     private Integer mainMethodVisit(JmmNode mainMethod, Integer dummy) {
         String methodSignature = "main";
+        int begIndentCounter = this.indentCounter;
         code.append("\t".repeat(indentCounter)).append(".method public static main(");
 
         //Add Arguments
@@ -125,13 +123,15 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
 
         code.append("\t".repeat(indentCounter)).append("ret.V;\n");
 
+        this.indentCounter = begIndentCounter;
         code.append("\t".repeat(indentCounter)).append("}\n");
-        this.indentCounter--;
+
         return 0;
     }
 
     private Integer instanceMethodVisit(JmmNode instanceMethod, Integer dummy) {
         String methodSignature = instanceMethod.getJmmChild(1).get("name");
+        int begIndentCounter = this.indentCounter;
         code.append("\t".repeat(indentCounter)).append(".method public ").append(methodSignature).append("(");
 
         //Add Arguments
@@ -154,66 +154,183 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
             visit(instanceMethod.getJmmChild(i));
         }
 
-        code.append("\t".repeat(indentCounter)).append("\n}\n");
-        this.indentCounter--;
+        this.indentCounter = begIndentCounter;
+        code.append("\t".repeat(indentCounter)).append("}\n");
 
         return 0;
     }
 
     private Integer callExpressionVisit(JmmNode callExpression, Integer dummy){
-        if(symbolTable.getImports().contains(callExpression.getJmmChild(0).get("name"))){
-            code.append("\t".repeat(indentCounter)).append("invokestatic(");
-            code.append(callExpression.getJmmChild(0).get("name"));
-        }
-        else { //this,
-            code.append("\t".repeat(indentCounter)).append("invokevirtual(");
-            switch (callExpression.getJmmChild(0).getKind()){
-                case "ThisT":
-                    code.append("this");
-                    break;
-                case "Literal":
-                    break;
-                case "Identifier":
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        code.append(", \"").append(callExpression.getJmmChild(1).get("name")).append("\"");
-
-        var arguments = callExpression.getJmmChild(2);
-        for(var argument : arguments.getChildren()){
-
-        }
-
-        code.append(").");
-
-        //Type
-        if(symbolTable.getMethods().contains(callExpression.getJmmChild(1).get("name"))){ //Defined function -> Check symbol table
-            code.append(OllirUtils.getCode(symbolTable.getReturnType(callExpression.getJmmChild(1).get("name"))));
-        }
-        else { //Unknown function -> void
-            code.append("V");
-        }
-
-        code.append(";\n");
+        OllirExpressionsUtils ollirExpressionsUtils = new OllirExpressionsUtils(symbolTable, indentCounter);
+        OllirCode ollirCode = ollirExpressionsUtils.visit(callExpression);
+        code.append(ollirCode.getBeforeCode());
         return 0;
     }
 
     private Integer ifStatementVisit(JmmNode ifStatement, Integer dummy){
+        JmmNode ifCondition = ifStatement.getJmmChild(0);
+        JmmNode ifBody = ifStatement.getJmmChild(1);
+        JmmNode elseStatement = ifStatement.getJmmChild(2);
+
+        OllirExpressionsUtils ollirExpressionsUtils = new OllirExpressionsUtils(symbolTable, indentCounter);
+        OllirCode ollirCode = ollirExpressionsUtils.visit(ifCondition.getJmmChild(0));
+
+        String[] codeLines = ollirCode.getBeforeCode().toString().split("\n");
+        if(ifCondition.getJmmChild(0).getKind().equals("CallExpression")){
+            code.append(ollirCode.getBeforeCode());
+        }
+        else{
+            if(codeLines.length > 1){
+                for(int i = 0; i < codeLines.length - 1; i++){
+                    code.append(codeLines[i]).append("\n");
+                }
+            }
+        }
+
+        code.append("\t".repeat(indentCounter)).append("if (");
+        switch (ifCondition.getJmmChild(0).getKind()){
+            case "BinOp":
+                String condition = codeLines[codeLines.length - 1];
+                List<String> variables = OllirUtils.getVarNamesFromExpression(condition);
+                switch (ifCondition.getJmmChild(0).get("op")){
+                    case "lt":
+                        code.append(variables.get(0)).append(" >=.bool ").append(variables.get(1));
+                        break;
+                    case "and":
+                        code.append(variables.get(0)).append(" ||.bool ").append(variables.get(1));
+                        break;
+                }
+                break;
+            case "UnaryOp":
+                switch (ifCondition.getJmmChild(0).get("op")){
+                    case "not":
+                        String[] parts = codeLines[codeLines.length - 1].split(" ");
+                        String variable = parts[parts.length - 1].replace(";", "");
+                        code.append(variable);
+                        break;
+                }
+                break;
+            case "Literal":
+                switch (ifCondition.getJmmChild(0).get("value")){
+                    case "true":
+                        code.append("0.bool");
+                        break;
+                    case "false":
+                        code.append("1.bool");
+                        break;
+                }
+                break;
+            case "Identifier":
+            case "CallExpression":
+                code.append("!.bool ").append(ollirCode.getVariable());
+                break;
+            default:
+                System.out.println("This should be done in ifCondition: ");
+                System.out.println(ifCondition.getJmmChild(0).getKind());
+                break;
+        }
+        code.append(") goto else;\n");
+
+        //Visit body
+        this.indentCounter++;
+        for(JmmNode child : ifBody.getChildren()){
+            visit(child);
+        }
+
+        code.append("\t".repeat(indentCounter)).append("goto endif;\n");
+        this.indentCounter--;
+
+        //Visit else
+        code.append("\t".repeat(indentCounter)).append("else:\n");
+        this.indentCounter++;
+
+        for(JmmNode child : elseStatement.getChildren()){
+            visit(child);
+        }
+
+        this.indentCounter--;
+        code.append("\t".repeat(indentCounter)).append("endif:\n");
+
+        this.indentCounter++;
         return 0;
     }
 
-    private Integer ifConditionVisit(JmmNode ifCondition, Integer dummy){
-        return 0;
-    }
+    private Integer whileStatementVisit(JmmNode whileStatement, Integer dummy){
+        JmmNode whileCondition = whileStatement.getJmmChild(0);
+        JmmNode whileBody = whileStatement.getJmmChild(1);
 
-    private Integer ifBodyVisit(JmmNode ifBody, Integer dummy){
-        return 0;
-    }
+        code.append("\t".repeat(indentCounter)).append("Loop:\n");
+        this.indentCounter++;
 
-    private Integer elseStatementVisit(JmmNode elseStatement, Integer dummy){
+        OllirExpressionsUtils ollirExpressionsUtils = new OllirExpressionsUtils(symbolTable, indentCounter);
+        OllirCode ollirCode = ollirExpressionsUtils.visit(whileCondition.getJmmChild(0));
+        System.out.println("Code:");
+        System.out.println(ollirCode.getBeforeCode());
+        System.out.println("Var");
+        System.out.println(ollirCode.getVariable());
+        System.out.println("-");
+
+        String[] codeLines = ollirCode.getBeforeCode().toString().split("\n");
+        if(whileCondition.getJmmChild(0).getKind().equals("CallExpression")){
+            code.append(ollirCode.getBeforeCode());
+        }
+        else{
+            if(codeLines.length > 1){
+                for(int i = 0; i < codeLines.length - 1; i++){
+                    code.append(codeLines[i]).append("\n");
+                }
+            }
+        }
+
+        code.append("\t".repeat(indentCounter)).append("if (");
+        switch (whileCondition.getJmmChild(0).getKind()){
+            case "BinOp":
+                String condition = codeLines[codeLines.length - 1];
+                List<String> variables = OllirUtils.getVarNamesFromExpression(condition);
+                switch (whileCondition.getJmmChild(0).get("op")){
+                    case "lt":
+                        code.append(variables.get(0)).append(" <.bool ").append(variables.get(1));
+                        break;
+                    case "and":
+                        code.append(variables.get(0)).append(" &&.bool ").append(variables.get(1));
+                        break;
+                }
+                break;
+            case "UnaryOp":
+                switch (whileCondition.getJmmChild(0).get("op")){
+                    case "not":
+                        String[] parts = codeLines[codeLines.length - 1].split(" ");
+                        code.append(parts[parts.length - 2]).append(" ").append(parts[parts.length - 1].replace(";", ""));
+                        break;
+                }
+                break;
+            case "Literal":
+            case "Identifier":
+            case "CallExpression":
+                code.append(ollirCode.getVariable());
+                break;
+            default:
+                System.out.println("This should be done in whileCondition: ");
+                System.out.println(whileCondition.getJmmChild(0).getKind());
+                break;
+        }
+        code.append(") goto Body;\n");
+        code.append("\t".repeat(indentCounter)).append("goto EndLoop;\n");
+
+        this.indentCounter--;
+        code.append("\t".repeat(indentCounter)).append("Body:\n");
+
+        this.indentCounter++;
+        for(JmmNode child : whileBody.getChildren()){
+            visit(child);
+        }
+        code.append("\t".repeat(indentCounter)).append("goto Loop;\n");
+
+        this.indentCounter--;
+        code.append("\t".repeat(indentCounter)).append("EndLoop:\n");
+
+        this.indentCounter++;
+
         return 0;
     }
 
@@ -254,7 +371,7 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
                 break;
             case "return":
                 if(unaryOp.getChildren().isEmpty()){
-                    code.append("\t".repeat(indentCounter)).append("ret.V");
+                    code.append("\t".repeat(indentCounter)).append("ret.V\n");
                 }
                 else {
                     code.append("\t".repeat(indentCounter)).append("ret.");
@@ -263,27 +380,13 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
                             String methodSignature = OllirUtils.getParentMethodSignature(unaryOp);
                             String return_type = OllirUtils.getCode(symbolTable.getReturnType(methodSignature));
                             code.append(return_type).append(" ");
-                            code.append(unaryOp.getJmmChild(0).get("name")).append(".").append(return_type).append(";");
+                            code.append(unaryOp.getJmmChild(0).get("name")).append(".").append(return_type).append(";\n");
                     }
                 }
                 break;
             default:
                 break;
         }
-        return 0;
-    }
-
-    private Integer varDeclarationVisit(JmmNode varDeclaration, Integer dummy){
-        /*
-        String type = "";
-        if(varDeclaration.getJmmChild(0).get("array") == "true"){
-            type += ".array";
-        }
-        type += ("." + varDeclaration.getJmmChild(0).get("type"));
-        String name = varDeclaration.getJmmChild(1).get("name");
-
-        code.append(name).append(type).append(" :=").append(type).append(" new(").append(type, 1, type.length()).append(")").append(type).append(";\n");
-        */
         return 0;
     }
 }

@@ -5,6 +5,10 @@ import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.ast.AJmmVisitor;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
     private static int localVariableCounter = 0;
     private final SymbolTable symbolTable;
@@ -19,6 +23,7 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
         addVisit("UnaryOp", this::unaryOpVisit);
         addVisit("Identifier", this::identifierVisit);
         addVisit("NewExp", this::newExpVisit);
+        addVisit("CallExpression", this::callExpressionVisit);
     }
 
     private OllirCode binOpVisit(JmmNode jmmNode, Integer integer) {
@@ -71,13 +76,20 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
     }
 
     private OllirCode literalVisit(JmmNode jmmNode, Integer integer) {
-        StringBuilder variable = new StringBuilder(jmmNode.get("value"));
+        StringBuilder variable = new StringBuilder();
         switch (jmmNode.get("type")){
             case "int":
-                variable.append(".i32");
+                variable.append(jmmNode.get("value")).append(".i32");
                 break;
             case "boolean":
-                variable.append(".bool");
+                switch (jmmNode.get("value")){
+                    case "true":
+                        variable.append("1.bool");
+                        break;
+                    case "false":
+                        variable.append("0.bool");
+                        break;
+                }
                 break;
         }
         return new OllirCode(new StringBuilder(), variable);
@@ -137,6 +149,101 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
                 break;
         }
 
+
+        return new OllirCode(beforeCode, variable);
+    }
+
+    private OllirCode callExpressionVisit(JmmNode jmmNode, Integer integer){
+        StringBuilder beforeCode = new StringBuilder();
+        StringBuilder variable = new StringBuilder();
+
+        JmmNode variableId = jmmNode.getJmmChild(0);
+        JmmNode functionId = jmmNode.getJmmChild(1);
+        JmmNode arguments = jmmNode.getJmmChild(2);
+
+        String functionName = functionId.get("name");
+
+        List<StringBuilder> argumentsList = new ArrayList<>();
+        for(var argument : arguments.getChildren()) {
+            OllirCode childOllir = visit(argument);
+            beforeCode.append(childOllir.getBeforeCode());
+            argumentsList.add(childOllir.getVariable());
+        }
+        String args = argumentsList.stream()
+                .collect(Collectors.joining(", "));
+
+        String retType;
+        switch (variableId.getKind()){
+            case "ThisT":
+                beforeCode.append("\t".repeat(indentCounter));
+                if (symbolTable.getMethods().contains(functionName)){
+                    retType = OllirUtils.getCode(symbolTable.getReturnType(functionName));
+                    variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
+                    beforeCode.append(variable).append(" :=.").append(retType).append(" ");
+                }
+                else{
+                    retType = OllirUtils.getTypeFromUnknown(jmmNode, symbolTable);
+                    if(!retType.equals("V")){
+                        variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
+                        beforeCode.append(variable).append(" :=.").append(retType).append(" ");
+                    }
+                }
+                beforeCode.append("invokevirtual(this, \"").append(functionName).append("\"").
+                        append(args.isEmpty() ? "" : ", ").append(args).append(").").append(retType).append(";\n");
+
+                break;
+            default:
+                if(variableId.getOptional("name").isPresent()){
+                    beforeCode.append("\t".repeat(indentCounter));
+                    String name = variableId.get("name");
+                    if(symbolTable.getImports().contains(name)){
+                        retType = OllirUtils.getTypeFromUnknown(jmmNode, symbolTable);
+                        if(!retType.equals("V")){
+                            variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
+                            beforeCode.append(variable).append(" :=.").append(retType).append(" ");
+                        }
+                        beforeCode.append("invokestatic(").append(name).append(", \"").append(functionName).append("\"").
+                                append(args.isEmpty() ? "" : ", ").append(args).append(").").
+                                append(retType).append(";\n");
+                    }
+                    else if(symbolTable.getMethods().contains(functionName)){
+                        retType = OllirUtils.getCode(symbolTable.getReturnType(functionName));
+                        variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
+                        beforeCode.append(variable).append(" :=.").append(retType).append(" ").
+                                append("invokevirtual(").append(name).append(".").
+                                append(OllirUtils.getIdentifierCode(variableId, symbolTable)).append(", \"").
+                                append(functionName).append("\"").append(args.isEmpty() ? "" : ", ").append(args).
+                                append(").").append(retType).append(";\n");
+                    }
+                    else{
+                        retType = OllirUtils.getTypeFromUnknown(jmmNode, symbolTable);
+                        if(!retType.equals("V")){
+                            variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
+                            beforeCode.append(variable).append(" :=.").append(retType).append(" ");
+                        }
+                        beforeCode.append("invokevirtual(").append(name).append(".").
+                                append(OllirUtils.getIdentifierCode(variableId, symbolTable)).
+                                append(", \"").append(functionName).append("\"").
+                                append(args.isEmpty() ? "" : ", ").append(args).append(").").
+                                append(retType).append(";\n");
+                    }
+                }
+                else{ //MonteCarlo
+                    OllirCode ollirCode = visit(variableId);
+                    beforeCode.append(ollirCode.getBeforeCode());
+                    retType = OllirUtils.getTypeFromUnknown(jmmNode, symbolTable);
+                    beforeCode.append("\t".repeat(indentCounter));
+                    if(!retType.equals("V")){
+                        variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
+                        beforeCode.append(variable).append(" :=.").append(retType).append(" ");
+                    }
+                    beforeCode.append("invokevirtual(").append(ollirCode.getVariable()).append(".").
+                            append(", \"").append(functionName).append("\"").
+                            append(args.isEmpty() ? "" : ", ").append(args).append(").").
+                            append(retType).append(";\n");
+                }
+                break;
+        }
 
         return new OllirCode(beforeCode, variable);
     }

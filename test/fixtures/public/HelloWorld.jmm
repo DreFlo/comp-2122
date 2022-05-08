@@ -17,4 +17,26 @@ class HelloWorld {
 	    e = g.length;
 	    return e;
 	}
+
+    public boolean red(int arg){
+        bool a;
+        a = true;
+        return a;
+    }
+
+	public int brown(char yel, int[] arr) {
+	    int a;
+	    int d;
+	    bool c;
+	    c = false;
+        while(this.red(a)){
+            a = 2;
+            d = 1;
+        }
+        while(! c){
+            a = 1;
+            d = 2;
+        }
+	    return a;
+	}
 }
