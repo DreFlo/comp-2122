@@ -1,4 +1,5 @@
 import ioPlus;
+
 class HelloWorld {
     int hey;
     String str;
@@ -8,19 +9,19 @@ class HelloWorld {
 		ioPlus.printHelloWorld();
 	}
 
+	public int yellow(int yel, int[] arr) {
+	    bool b;
+	    int[] g;
+	    int e;
+	    b = ! (1 < 2);
+	    g = new int[6];
+	    e = g.length;
+	    return e;
+	}
+
     public boolean red(int arg){
         bool a;
         a = true;
         return a;
     }
-
-	public int yellow(bet yel, int[] arr, int e) {
-	    int a;
-	    int d;
-	    bool c;
-        a = newA[1];
-        a = newA[a] + 1;
-        a = arr[2];
-	    return a;
-	}
 }
