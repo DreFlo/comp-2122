@@ -2,6 +2,7 @@ import ioPlus;
 class HelloWorld {
     int hey;
     String str;
+    int[] newA;
 
 	public static void main(String[] args) {
 		ioPlus.printHelloWorld();
@@ -13,19 +14,13 @@ class HelloWorld {
         return a;
     }
 
-	public int yellow(bet yel, int[] arr) {
+	public int yellow(bet yel, int[] arr, int e) {
 	    int a;
 	    int d;
 	    bool c;
-	    c = false;
-        while(this.red(a)){
-            a = 2;
-            d = 1;
-        }
-        while(! c){
-            a = 1;
-            d = 2;
-        }
+        a = newA[1];
+        a = newA[a] + 1;
+        a = arr[2];
 	    return a;
 	}
 }
