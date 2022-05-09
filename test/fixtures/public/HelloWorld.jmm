@@ -10,18 +10,10 @@ class HelloWorld {
 	}
 
 	public int yellow(int yel, int[] arr) {
-	    bool b;
-	    int[] g;
-	    int e;
-	    b = ! (1 < 2);
-	    g = new int[6];
-	    e = g.length;
-	    return e;
-	}
+	    int[] d;
+	    int a;
+	    d[a] = ioPlus.printHelloWorld();
 
-    public boolean red(int arg){
-        bool a;
-        a = true;
-        return a;
-    }
+	    return a;
+	}
 }
