@@ -26,20 +26,15 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
         this.indentCounter = 0;
         this.labelCounter = 0;
 
-        //Start
-        addVisit("Start", this::startVisit); //Adds imports
+        addVisit("Start", this::startVisit);
 
-        //Class
         addVisit("ClassDeclaration", this::classDeclVisit);
 
-        //Methods
         addVisit("MainMethod", this::mainMethodVisit);
         addVisit("InstanceMethod", this::instanceMethodVisit);
 
-        //Expressions
         addVisit("CallExpression", this::callExpressionVisit);
 
-        //Statements
         addVisit("IfStatement", this::ifStatementVisit);
         addVisit("WhileStatement", this::whileStatementVisit);
         addVisit("AssignmentStatement", this::assignmentStatementVisit);
@@ -416,14 +411,9 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
         return 0;
     }
 
-    //Need to add rest of op's
     private Integer unaryOpVisit(JmmNode unaryOp, Integer dummy){
 
         switch (unaryOp.get("op")){
-            case "not":
-                break;
-            case "length":
-                break;
             case "return":
                 if(unaryOp.getChildren().isEmpty()){
                     code.append("\t".repeat(indentCounter)).append("ret.V\n");
@@ -431,13 +421,6 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
                 else {
                     JmmNode child = unaryOp.getJmmChild(0);
                     switch (child.getKind()){
-                        /*case "Identifier":
-                            code.append("\t".repeat(indentCounter)).append("ret.");
-                            String methodSignature = OllirUtils.getParentMethodSignature(unaryOp);
-                            String return_type = OllirUtils.getCode(symbolTable.getReturnType(methodSignature));
-                            code.append(return_type).append(" ");
-                            code.append(child.get("name")).append(".").append(return_type).append(";\n");
-                            break;*/
                         case "Literal":
                             code.append("\t".repeat(indentCounter)).append("ret.");
                             switch (child.get("type")){

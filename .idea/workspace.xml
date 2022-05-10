@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="e4aa7e05-ad04-4a15-8516-8321bad3e553" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/JmmOptimizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/JmmOptimizer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirExpressionsUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirExpressionsUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/ollir/OllirUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/OptimizationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/OptimizationTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +117,7 @@
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.OptimizationTest.test (1)">
+  <component name="RunManager" selected="Gradle.OptimizationTest.test">
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -133,7 +131,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ExampleTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Cp2Test.test_2_01_OllirBasic" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -146,7 +144,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;ExampleTest&quot;" />
+            <option value="&quot;pt.up.fe.comp.Cp2Test.test_2_01_OllirBasic&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -156,7 +154,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="JasminTest.runCode" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Cp2Test.test_2_02_OllirArithmetic" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -169,7 +167,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.JasminTest.runCode&quot;" />
+            <option value="&quot;pt.up.fe.comp.Cp2Test.test_2_02_OllirArithmetic&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -179,7 +177,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="JasminTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Cp2Test.test_2_03_OllirMethodInvocation" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -192,7 +190,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.JasminTest.test&quot;" />
+            <option value="&quot;pt.up.fe.comp.Cp2Test.test_2_03_OllirMethodInvocation&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -202,7 +200,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="OptimizationTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Cp2Test.test_2_04_OllirAssignment" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -215,7 +213,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.OptimizationTest&quot;" />
+            <option value="&quot;pt.up.fe.comp.Cp2Test.test_2_04_OllirAssignment&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -225,7 +223,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="OptimizationTest.test (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="OptimizationTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -250,18 +248,19 @@
     </configuration>
     <list>
       <item itemvalue="Application.Launcher" />
-      <item itemvalue="Gradle.ExampleTest" />
-      <item itemvalue="Gradle.OptimizationTest" />
-      <item itemvalue="Gradle.OptimizationTest.test (1)" />
-      <item itemvalue="Gradle.JasminTest.runCode" />
-      <item itemvalue="Gradle.JasminTest.test" />
+      <item itemvalue="Gradle.Cp2Test.test_2_01_OllirBasic" />
+      <item itemvalue="Gradle.Cp2Test.test_2_02_OllirArithmetic" />
+      <item itemvalue="Gradle.Cp2Test.test_2_03_OllirMethodInvocation" />
+      <item itemvalue="Gradle.Cp2Test.test_2_04_OllirAssignment" />
+      <item itemvalue="Gradle.OptimizationTest.test" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.OptimizationTest.test (1)" />
-        <item itemvalue="Gradle.OptimizationTest" />
-        <item itemvalue="Gradle.JasminTest.test" />
-        <item itemvalue="Gradle.JasminTest.runCode" />
+        <item itemvalue="Gradle.OptimizationTest.test" />
+        <item itemvalue="Gradle.Cp2Test.test_2_04_OllirAssignment" />
+        <item itemvalue="Gradle.Cp2Test.test_2_03_OllirMethodInvocation" />
+        <item itemvalue="Gradle.Cp2Test.test_2_02_OllirArithmetic" />
+        <item itemvalue="Gradle.Cp2Test.test_2_01_OllirBasic" />
       </list>
     </recent_temporary>
   </component>

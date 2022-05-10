@@ -139,12 +139,10 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
         }
 
         if (jmmNode.getOptional("field").isPresent()) {
-            //if(! jmmNode.getJmmParent().getKind().equals("Index")){
-                if (!(jmmNode.getJmmParent().getKind().equals("AssignmentStatement")
-                        && jmmNode.getJmmParent().getJmmChild(0).equals(jmmNode))) {
-                    return OllirUtils.getField(variable.toString(), this.indentCounter);
-                }
-            //}
+            if (!(jmmNode.getJmmParent().getKind().equals("AssignmentStatement")
+                    && jmmNode.getJmmParent().getJmmChild(0).equals(jmmNode))) {
+                return OllirUtils.getField(variable.toString(), this.indentCounter);
+            }
         }
 
         return new OllirCode(beforeCode, variable);
@@ -230,10 +228,10 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
                     beforeCode.append(variable).append(" :=.").append(retType).append(" ");
                 } else {
                     retType = OllirUtils.getTypeFromUnknown(jmmNode, symbolTable);
-                    /*if (!retType.equals("V")) {
+                    if (!retType.equals("V")) {
                         variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
                         beforeCode.append(variable).append(" :=.").append(retType).append(" ");
-                    }*/
+                    }
                 }
                 beforeCode.append("invokevirtual(this, \"").append(functionName).append("\"").
                         append(args.isEmpty() ? "" : ", ").append(args).append(").").append(retType).append(";\n");
