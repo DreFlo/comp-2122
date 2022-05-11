@@ -29,7 +29,7 @@ public class JasminTest {
             l++;
         }
 
-        jasminResult.compile();
+        jasminResult.run();
     }
 
     @Test

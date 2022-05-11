@@ -1,4 +1,4 @@
-import ioPlus;
+import io;
 
 class HelloWorld {
     int hey;
@@ -6,12 +6,18 @@ class HelloWorld {
     int[] newA;
 
 	public static void main(String[] args) {
-	    int a;
+	    int[] a;
 	    int b;
-	    boolean c;
-        a = 6;
-        b = 7;
-        c = a < b;
-		ioPlus.printHelloWorld();
+	    a = new int[10];
+	    a[1] = 1;
+	    b = a[1];
+	    io.println(b);
+
+	    if (1 < 2) {
+	        io.println(1);
+	    }
+	    else {
+	        io.println(2);
+	    }
 	}
 }

@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="80a454e3-c98a-400a-b777-b058a365c767" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/JasminEmitter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/JasminEmitter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" afterDir="false" />
@@ -118,7 +117,7 @@
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.Cp2Test.test_3_03_OllirToJasminInvoke">
+  <component name="RunManager" selected="Gradle.JasminTest.test">
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -257,11 +256,11 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.Cp2Test.test_3_03_OllirToJasminInvoke" />
+        <item itemvalue="Gradle.JasminTest.test" />
         <item itemvalue="Gradle.Cp2Test.test_3_04_OllirToJasminFields" />
+        <item itemvalue="Gradle.Cp2Test.test_3_03_OllirToJasminInvoke" />
         <item itemvalue="Gradle.Cp2Test.test_3_02_OllirToJasminArithmetics" />
         <item itemvalue="Gradle.Cp2Test.test_3_01_OllirToJasminBasic" />
-        <item itemvalue="Gradle.JasminTest.test" />
       </list>
     </recent_temporary>
   </component>
