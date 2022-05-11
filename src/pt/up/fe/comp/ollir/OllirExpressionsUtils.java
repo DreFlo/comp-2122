@@ -24,7 +24,8 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
         addVisit("Identifier", this::identifierVisit);
         addVisit("NewExp", this::newExpVisit);
         addVisit("CallExpression", this::callExpressionVisit);
-        addVisit("Array", this::arrayVisit);
+        addVisit("Array", this::arrayOrIndexVisit);
+        addVisit("Index", this::arrayOrIndexVisit);
     }
 
     private OllirCode binOpVisit(JmmNode jmmNode, Integer integer) {
@@ -138,18 +139,16 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
         }
 
         if (jmmNode.getOptional("field").isPresent()) {
-            if(! jmmNode.getJmmParent().getKind().equals("Index")){
-                if (!(jmmNode.getJmmParent().getKind().equals("AssignmentStatement")
-                        && jmmNode.getJmmParent().getJmmChild(0).equals(jmmNode))) {
-                    return OllirUtils.getField(variable.toString(), this.indentCounter);
-                }
+            if (!(jmmNode.getJmmParent().getKind().equals("AssignmentStatement")
+                    && jmmNode.getJmmParent().getJmmChild(0).equals(jmmNode))) {
+                return OllirUtils.getField(variable.toString(), this.indentCounter);
             }
         }
 
         return new OllirCode(beforeCode, variable);
     }
 
-    private OllirCode arrayVisit(JmmNode jmmNode, Integer integer) {
+    private OllirCode arrayOrIndexVisit(JmmNode jmmNode, Integer integer) {
         StringBuilder beforeCode = new StringBuilder();
         StringBuilder variable = new StringBuilder();
 
@@ -172,13 +171,15 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
         switch (jmmNode.get("type")) {
             case "intArray":
                 type = ".array.i32";
-                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(type).append(" :=").append(type).append(" new(array, ").
-                        append(ollirCode.getVariable()).append(")").append(type).append(";\n");
+                variable.append(type);
+                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=").append(type).
+                        append(" new(array, ").append(ollirCode.getVariable()).append(")").append(type).append(";\n");
                 break;
             case "object":
                 type = jmmNode.getJmmChild(0).get("name");
-                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(".").append(type).append(" :=.").append(type).append(" new(").
-                        append(type).append(").").append(type).append(";\n");
+                variable.append(".").append(type);
+                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.").append(type).
+                        append(" new(").append(type).append(").").append(type).append(";\n");
                 break;
         }
 
@@ -253,7 +254,7 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
                         retType = OllirUtils.getCode(symbolTable.getReturnType(functionName));
                         variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
                         beforeCode.append(variable).append(" :=.").append(retType).append(" ").
-                                append("invokevirtual(").append(name).append(".").
+                                append("invokevirtual(").
                                 append(OllirUtils.getIdentifierCode(variableId, symbolTable)).append(", \"").
                                 append(functionName).append("\"").append(args.isEmpty() ? "" : ", ").append(args).
                                 append(").").append(retType).append(";\n");
@@ -263,13 +264,13 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
                             variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
                             beforeCode.append(variable).append(" :=.").append(retType).append(" ");
                         }
-                        beforeCode.append("invokevirtual(").append(name).append(".").
+                        beforeCode.append("invokevirtual(").
                                 append(OllirUtils.getIdentifierCode(variableId, symbolTable)).
                                 append(", \"").append(functionName).append("\"").
                                 append(args.isEmpty() ? "" : ", ").append(args).append(").").
                                 append(retType).append(";\n");
                     }
-                } else { //MonteCarlo
+                } else {
                     OllirCode ollirCode = visit(variableId);
                     beforeCode.append(ollirCode.getBeforeCode());
                     retType = OllirUtils.getTypeFromUnknown(jmmNode, symbolTable);
@@ -278,7 +279,7 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
                         variable.append(OllirUtils.getVariableName(jmmNode)).append(".").append(retType);
                         beforeCode.append(variable).append(" :=.").append(retType).append(" ");
                     }
-                    beforeCode.append("invokevirtual(").append(ollirCode.getVariable()).append(".").
+                    beforeCode.append("invokevirtual(").append(ollirCode.getVariable()).
                             append(", \"").append(functionName).append("\"").
                             append(args.isEmpty() ? "" : ", ").append(args).append(").").
                             append(retType).append(";\n");

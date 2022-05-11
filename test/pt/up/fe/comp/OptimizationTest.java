@@ -8,7 +8,7 @@ public class OptimizationTest {
 
     @Test
     public void test() {
-        OllirResult ollirResult = TestUtils.optimize(SpecsIo.getResource("fixtures/public/FindMaximum.jmm"));
+        OllirResult ollirResult = TestUtils.optimize(SpecsIo.getResource("fixtures/public/Lazysort.jmm"));
         TestUtils.noErrors(ollirResult);
     }
 }

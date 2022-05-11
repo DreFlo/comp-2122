@@ -64,9 +64,9 @@ public class OllirUtils {
      * @return Variable name
      */
     public static String getVariableName(JmmNode jmmNode){
-        switch (jmmNode.getJmmParent().getKind()){
+        switch (jmmNode.getJmmParent().getKind()) {
             case "AssignmentStatement":
-                switch (jmmNode.getKind()){
+                switch (jmmNode.getJmmParent().getJmmChild(0).getKind()) {
                     case "Identifier":
                         return jmmNode.getJmmParent().getJmmChild(0).get("name");
                 }
@@ -119,6 +119,7 @@ public class OllirUtils {
      */
     public static String getTypeFromVariableName(String name){
         String[] separate = name.split("[.]");
+
         if(name.contains("array")){
             return "array." + separate[separate.length - 1];
         }
@@ -153,7 +154,15 @@ public class OllirUtils {
 
         switch (parent.getKind()) {
             case "AssignmentStatement":
-                return OllirUtils.getIdentifierCode(parent.getJmmChild(0), symbolTable);
+                switch (parent.getJmmChild(0).getKind()){
+                    case "Identifier":
+                        return OllirUtils.getTypeFromVariableName(OllirUtils.getIdentifierCode(parent.getJmmChild(0), symbolTable));
+                    case "Index":
+                        return OllirUtils.getTypeFromVariableName(OllirUtils.
+                                getIdentifierCode(parent.getJmmChild(0).getJmmChild(0), symbolTable)).
+                                toString().split("[.]")[1];
+                }
+
             case "BinOp":
                 switch (parent.get("op")) {
                     case "lt":
@@ -165,7 +174,7 @@ public class OllirUtils {
             case "UnaryOp":
                 return "bool";
             case "Identifier":
-                return OllirUtils.getIdentifierCode(parent, symbolTable);
+                return OllirUtils.getTypeFromVariableName(OllirUtils.getIdentifierCode(parent, symbolTable));
             default:
                 return "V";
         }
@@ -180,14 +189,6 @@ public class OllirUtils {
         variable.append(OllirUtils.getNewVariableName()).append(".").append(type);
         beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.").append(type).
                 append(" getfield(this, ").append(field).append(").").append(type).append(";\n");
-
-        System.out.println("GET FIELD:");
-        System.out.println(field);
-        System.out.println("-");
-        System.out.println(beforeCode);
-        System.out.println("-");
-        System.out.println(variable);
-        System.out.println("END");
 
         return new OllirCode(beforeCode, variable);
     }
@@ -212,11 +213,6 @@ public class OllirUtils {
             type = type.split("[.]")[1];
         }
 
-        StringBuilder tempVar = new StringBuilder(OllirUtils.getNewVariableName()).append(".").append(type);
-
-        beforeCode.append("\t".repeat(indentCounter)).append(tempVar).append(" :=.").append(type).append(" ").
-                append(expressionCode.getVariable()).append(";\n");
-
         String[] parts = identifierCode.getVariable().toString().split("[.]");
         String varName = new String();
         if(parts[0].contains("$")){
@@ -225,7 +221,20 @@ public class OllirUtils {
         else{
             varName = parts[0];
         }
-        variable.append(varName).append("[").append(tempVar).append("].").append(type);
+
+        if(expression.getKind().equals("Identifier")){
+            variable.append(varName).append("[").append(expressionCode.getVariable()).append("].").append(type);
+        }
+        else{
+            StringBuilder tempVar = new StringBuilder(OllirUtils.getNewVariableName()).append(".").append(type);
+
+            beforeCode.append("\t".repeat(indentCounter)).append(tempVar).append(" :=.").append(type).append(" ").
+                    append(expressionCode.getVariable()).append(";\n");
+
+
+            variable.append(varName).append("[").append(tempVar).append("].").append(type);
+        }
+
 
         return new OllirCode(beforeCode, variable);
     }
