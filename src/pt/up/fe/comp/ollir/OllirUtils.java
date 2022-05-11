@@ -180,6 +180,12 @@ public class OllirUtils {
         }
     }
 
+    /**
+     * Gets the code for retrieval of a class field variable
+     * @param field
+     * @param indentCounter
+     * @return OllirCode with getfield code in the 'beforeCode' and variable where it's stored in the 'variable'
+     */
     public static OllirCode getField(String field, int indentCounter){
         StringBuilder beforeCode = new StringBuilder();
         StringBuilder variable = new StringBuilder();
@@ -192,51 +198,4 @@ public class OllirUtils {
 
         return new OllirCode(beforeCode, variable);
     }
-
-    public static OllirCode getArrayOrIndexVar(JmmNode node, SymbolTable symbolTable, int indentCounter){
-        StringBuilder beforeCode = new StringBuilder();
-        StringBuilder variable = new StringBuilder();
-
-        OllirExpressionsUtils ollirExpressionsUtils = new OllirExpressionsUtils(symbolTable, indentCounter);
-
-        JmmNode identifier = node.getJmmChild(0);
-        JmmNode expression = node.getJmmChild(1);
-
-        OllirCode identifierCode = ollirExpressionsUtils.visit(identifier);
-        OllirCode expressionCode = ollirExpressionsUtils.visit(expression);
-
-        beforeCode.append(identifierCode.getBeforeCode());
-        beforeCode.append(expressionCode.getBeforeCode());
-
-        String type = OllirUtils.getTypeFromVariableName(identifierCode.getVariable().toString());
-        if(type.contains("array")){
-            type = type.split("[.]")[1];
-        }
-
-        String[] parts = identifierCode.getVariable().toString().split("[.]");
-        String varName = new String();
-        if(parts[0].contains("$")){
-            varName = (parts[0] + "." + parts[1]);
-        }
-        else{
-            varName = parts[0];
-        }
-
-        if(expression.getKind().equals("Identifier")){
-            variable.append(varName).append("[").append(expressionCode.getVariable()).append("].").append(type);
-        }
-        else{
-            StringBuilder tempVar = new StringBuilder(OllirUtils.getNewVariableName()).append(".").append(type);
-
-            beforeCode.append("\t".repeat(indentCounter)).append(tempVar).append(" :=.").append(type).append(" ").
-                    append(expressionCode.getVariable()).append(";\n");
-
-
-            variable.append(varName).append("[").append(tempVar).append("].").append(type);
-        }
-
-
-        return new OllirCode(beforeCode, variable);
-    }
-
 }

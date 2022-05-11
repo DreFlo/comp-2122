@@ -1,6 +1,6 @@
 import ioPlus;
 
-class HelloWorld {
+class HelloWorld extends Hello{
     int hey;
     String str;
     int[] newA;
@@ -9,9 +9,8 @@ class HelloWorld {
 	    int a;
 	    int b;
 	    boolean c;
-        a = 6;
-        b = 7;
-        c = a < b;
-		ioPlus.printHelloWorld();
+        HelloWorld d;
+        d = new Hello();
+        //d = new ioPlus(); Isto não devia funcionar
 	}
 }
