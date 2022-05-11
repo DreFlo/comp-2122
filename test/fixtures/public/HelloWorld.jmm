@@ -1,6 +1,6 @@
 import io;
 
-class HelloWorld {
+class HelloWorld extends Hello{
     int hey;
     String str;
     int[] newA;
@@ -8,16 +8,9 @@ class HelloWorld {
 	public static void main(String[] args) {
 	    int[] a;
 	    int b;
-	    a = new int[10];
-	    a[1] = 1;
-	    b = a[1];
-	    io.println(b);
-
-	    if (1 < 2) {
-	        io.println(1);
-	    }
-	    else {
-	        io.println(2);
-	    }
+	    boolean c;
+        HelloWorld d;
+        d = new Hello();
+        //d = new ioPlus(); Isto não devia funcionar
 	}
 }

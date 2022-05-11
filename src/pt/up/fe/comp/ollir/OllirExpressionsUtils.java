@@ -114,8 +114,9 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
                 break;
             case "length":
                 variable.append(OllirUtils.getVariableName(jmmNode)).append(".i32");
-                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.i32 arraylength(").append(child.getVariable()).append(").")
-                        .append(OllirUtils.getTypeFromVariableName(child.getVariable().toString())).append(";\n");
+                beforeCode.append(child.getBeforeCode());
+                beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.i32 arraylength(").
+                        append(child.getVariable()).append(").i32;\n");
                 break;
             default:
                 System.out.println("Not supposed to reach here");
@@ -152,9 +153,43 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
         StringBuilder beforeCode = new StringBuilder();
         StringBuilder variable = new StringBuilder();
 
-        OllirCode arrayCode = OllirUtils.getArrayOrIndexVar(jmmNode, this.symbolTable, this.indentCounter);
-        beforeCode.append(arrayCode.getBeforeCode());
-        variable.append(arrayCode.getVariable());
+        OllirExpressionsUtils ollirExpressionsUtils = new OllirExpressionsUtils(symbolTable, indentCounter);
+
+        JmmNode identifier = jmmNode.getJmmChild(0);
+        JmmNode expression = jmmNode.getJmmChild(1);
+
+        OllirCode identifierCode = ollirExpressionsUtils.visit(identifier);
+        OllirCode expressionCode = ollirExpressionsUtils.visit(expression);
+
+        beforeCode.append(identifierCode.getBeforeCode());
+        beforeCode.append(expressionCode.getBeforeCode());
+
+        String type = OllirUtils.getTypeFromVariableName(identifierCode.getVariable().toString());
+        if(type.contains("array")){
+            type = type.split("[.]")[1];
+        }
+
+        String[] parts = identifierCode.getVariable().toString().split("[.]");
+        String varName = new String();
+        if(parts[0].contains("$")){
+            varName = (parts[0] + "." + parts[1]);
+        }
+        else{
+            varName = parts[0];
+        }
+
+        if(expression.getKind().equals("Identifier")){
+            variable.append(varName).append("[").append(expressionCode.getVariable()).append("].").append(type);
+        }
+        else{
+            StringBuilder tempVar = new StringBuilder(OllirUtils.getNewVariableName()).append(".").append(type);
+
+            beforeCode.append("\t".repeat(indentCounter)).append(tempVar).append(" :=.").append(type).append(" ").
+                    append(expressionCode.getVariable()).append(";\n");
+
+
+            variable.append(varName).append("[").append(tempVar).append("].").append(type);
+        }
 
         return new OllirCode(beforeCode, variable);
     }

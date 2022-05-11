@@ -14,12 +14,6 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
     private int indentCounter;
     private int labelCounter;
 
-    /*
-    TODO:
-      Expressions: Array
-     */
-
-
     public OllirGenerator(SymbolTable symbolTable) {
         this.code = new StringBuilder();
         this.symbolTable = symbolTable;
@@ -343,9 +337,7 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
                     code.append("\t".repeat(indentCounter));
                     if (leftSide.getOptional("field").isPresent()) {
                         code.append("putfield(this, ").append(leftOllir.getVariable()).append(", ").
-                                append(ollirCode.getVariable()).append(").").
-                                append(OllirUtils.getTypeFromVariableName(leftOllir.getVariable().toString()))
-                                .append(";\n");
+                                append(ollirCode.getVariable()).append(").V;\n");
                     } else {
                         code.append(leftOllir.getVariable()).append(" :=.").
                                 append(OllirUtils.getTypeFromVariableName(leftOllir.getVariable().toString())).append(" ").
@@ -360,9 +352,7 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
                             code.append(ollirCode.getBeforeCode());
                             code.append("\t".repeat(indentCounter)).append("putfield(this, ").
                                     append(leftOllir.getVariable()).append(", ").append(ollirCode.getVariable()).
-                                    append(").").
-                                    append(OllirUtils.getTypeFromVariableName(ollirCode.getVariable().toString())).
-                                    append(";\n");
+                                    append(").V;\n");
                         }
                         else{
                             String[] codeLines = ollirCode.getBeforeCode().toString().split("\n");
@@ -380,8 +370,7 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
                             code.append("\t".repeat(indentCounter)).append(newVar).append(" :=").append(rightExp).
                                     append("\n");
                             code.append("\t".repeat(indentCounter)).append("putfield(this, ").
-                                    append(leftOllir.getVariable()).append(", ").append(newVar).append(").").append(type).
-                                    append(";\n");
+                                    append(leftOllir.getVariable()).append(", ").append(newVar).append(").V;\n");
                         }
                     }
                     else{
