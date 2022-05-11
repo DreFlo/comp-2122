@@ -7,15 +7,11 @@ class HelloWorld {
 
 	public static void main(String[] args) {
 	    int a;
+	    int b;
+	    boolean c;
         a = 6;
+        b = 7;
+        c = a < b;
 		ioPlus.printHelloWorld();
-	}
-
-	public int yellow(int yel, int[] arr) {
-	    int[] d;
-	    int a;
-	    d[a] = ioPlus.printHelloWorld();
-
-	    return a;
 	}
 }
