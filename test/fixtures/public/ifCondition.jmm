@@ -1,0 +1,11 @@
+class ifCondition {
+	public int yellow() {
+	    int a;
+
+	    if(1) {
+	    } else {
+	    }
+
+	    return a;
+	}
+}
