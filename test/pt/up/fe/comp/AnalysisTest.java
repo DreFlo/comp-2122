@@ -7,7 +7,10 @@ import pt.up.fe.specs.util.SpecsIo;
 public class AnalysisTest {
     @Test
     public void test() {
-        JmmSemanticsResult result = TestUtils.analyse(SpecsIo.getResource("fixtures/public/HelloWorld.jmm"));
+        JmmSemanticsResult result = TestUtils.analyse(SpecsIo.getResource("fixtures/public/ifCondition.jmm"));
+
         System.out.println(result.getSymbolTable().print());
+
+        TestUtils.mustFail(result.getReports());
     }
 }

@@ -10,7 +10,7 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
         addVisit("Literal", this::LiteralVisit);
         addVisit("UnaryOp", this::unaryOpVisit);
         addVisit("BinOp", this::binOpVisit);
-        addVisit("Identifier", this::identifierVisist);
+        addVisit("Identifier", this::identifierVisit);
         addVisit("Inheritance", this::inheritanceVisit);
         addVisit("VarDeclaration", this::varDeclarationVisit);
         addVisit("Type", this::varTypeVisit);
@@ -106,7 +106,7 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
         return visit(node.getJmmChild(0));
     }
 
-    private Integer identifierVisist(JmmNode node, Object dummy){
+    private Integer identifierVisit(JmmNode node, Object dummy){
         if (node.getNumChildren() == 0) {
             return 0;
         }
