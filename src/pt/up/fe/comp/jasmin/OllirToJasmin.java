@@ -41,7 +41,6 @@ public class OllirToJasmin {
         this.classUnit.checkMethodLabels(); // check the use of labels in the OLLIR loaded
         this.classUnit.buildCFGs(); // build the CFG of each method
         this.classUnit.buildVarTables();
-        this.classUnit.show();
     }
 
     private void registerFullyQualifiedClassNames() {
@@ -168,7 +167,6 @@ public class OllirToJasmin {
     }
 
     private String getCode(Instruction instruction) {
-        instruction.show();
         Optional<String> code = instructionMap.applyTry(instruction);
         if (code.isPresent()) {
             return code.get();
