@@ -199,7 +199,7 @@ public class OllirToJasmin {
                 return getCodeLDC(instruction);
             }
             case arraylength -> {
-                return "arraylength\n";
+                return pushElementToStack(instruction.getFirstArg()) + "arraylength\n";
             }
 
             default -> throw new NotImplementedException("Not implemented for invocation type: " + instruction.getInvocationType());
