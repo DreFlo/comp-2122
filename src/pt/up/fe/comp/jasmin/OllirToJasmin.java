@@ -74,6 +74,7 @@ public class OllirToJasmin {
     }
 
     private String getFullyQualifiedClassName(String name) throws RuntimeException {
+        System.out.println(name);
         String fullyQualifiedName = fullyQualifiedClassNames.get(name);
         if (fullyQualifiedName != null) return fullyQualifiedName;
         else if (symbolTable != null) {
@@ -167,6 +168,7 @@ public class OllirToJasmin {
     }
 
     private String getCode(Instruction instruction) {
+        instruction.show();
         Optional<String> code = instructionMap.applyTry(instruction);
         if (code.isPresent()) {
             return code.get();
@@ -369,7 +371,8 @@ public class OllirToJasmin {
             else {
                 switch (element.getType().getTypeOfElement()) {
                     case INT32, BOOLEAN -> code.append("iload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
-                    case OBJECTREF, ARRAYREF -> code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
+                    case OBJECTREF -> code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
+                    case ARRAYREF -> ((ArrayOperand) element).show();
                     default -> throw new NotImplementedException("Not implemented for type: " + element.getType().getTypeOfElement() + " with no name.");
                 }
             }
