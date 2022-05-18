@@ -1,11 +1,10 @@
 class ifCondition {
 	public int yellow() {
 	    int a;
+	    int b;
+	    int c;
 
-	    if(1) {
-	    } else {
-	    }
-
+	    a = b + c;
 	    return a;
 	}
 }

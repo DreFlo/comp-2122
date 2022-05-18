@@ -5,12 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f381ac2a-4710-4559-b642-0bfbb6dbce26" name="Changes" comment="Symbol Table being constructed. Missing reports.">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/JmmAnalyser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/JmmAnalyser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/VisitorEval.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/VisitorEval.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/VisitorSemantic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/VisitorSemantic.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/fixtures/public/ifCondition.jmm" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixtures/public/ifCondition.jmm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/AnalysisTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/AnalysisTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -94,7 +91,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;jdk.selected.JAVA_MODULE&quot;: &quot;openjdk-15&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/andre/Documents/FEUP/C/comp2022-2f/src/pt/up/fe/comp&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Meu Projetos/3 ANO - 2 S/CPD/g01/assign2/cpd-distributed-system&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -111,6 +108,7 @@
       <recent name="C:\Users\andre\Documents\FEUP\C\comp2022-2f\src\pt\up\fe\comp" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Meu Projetos\3 ANO - 2 S\COMP\Proj\test\fixtures\public" />
       <recent name="C:\Users\andre\Documents\FEUP\C\comp2022-2f\src\main\resources" />
       <recent name="C:\Users\andre\Documents\FEUP\C\comp2022-2f\src\pt\up\fe\comp\jasmin" />
       <recent name="$PROJECT_DIR$/src/pt/up/fe/comp/ollir" />
@@ -133,53 +131,6 @@
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
-    </configuration>
-    <configuration name="AnalysisTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.AnalysisTest&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="AnalysisTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.AnalysisTest.test&quot;" />
-
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
     </configuration>
     <configuration name="Cp2Test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
@@ -204,7 +155,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="OptimizationTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Cp2Test.test_1_10_ObjectAssignmentPassExtends" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -217,7 +168,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.OptimizationTest.test&quot;" />
+            <option value="&quot;pt.up.fe.comp.Cp2Test.test_1_10_ObjectAssignmentPassExtends&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -227,7 +178,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="ParserTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Cp2Test.test_1_11_ObjectAssignmentPassImports" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -240,7 +191,53 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.ParserTest&quot;" />
+            <option value="&quot;pt.up.fe.comp.Cp2Test.test_1_11_ObjectAssignmentPassImports&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="Cp2Test.test_1_14_CallToUndeclaredMethod" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;pt.up.fe.comp.Cp2Test.test_1_14_CallToUndeclaredMethod&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="Cp2Test.test_1_15_CallToMethodAssumedInExtends" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;pt.up.fe.comp.Cp2Test.test_1_15_CallToMethodAssumedInExtends&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -252,22 +249,19 @@
     </configuration>
     <list>
       <item itemvalue="Application.Launcher" />
-      <item itemvalue="Gradle.AnalysisTest.test" />
-      <item itemvalue="Gradle.AnalysisTest" />
+      <item itemvalue="Gradle.Cp2Test.test_1_10_ObjectAssignmentPassExtends" />
+      <item itemvalue="Gradle.Cp2Test.test_1_11_ObjectAssignmentPassImports" />
+      <item itemvalue="Gradle.Cp2Test.test_1_14_CallToUndeclaredMethod" />
+      <item itemvalue="Gradle.Cp2Test.test_1_15_CallToMethodAssumedInExtends" />
       <item itemvalue="Gradle.Cp2Test" />
-      <item itemvalue="Gradle.ParserTest" />
-      <item itemvalue="Gradle.OptimizationTest.test" />
-      <item itemvalue="Gradle.Cp2Test.test_3_02_OllirToJasminArithmetics" />
-      <item itemvalue="Gradle.Cp2Test.test_3_03_OllirToJasminInvoke" />
-      <item itemvalue="Gradle.Cp2Test.test_3_04_OllirToJasminFields" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.Cp2Test" />
-        <item itemvalue="Gradle.AnalysisTest.test" />
-        <item itemvalue="Gradle.AnalysisTest" />
-        <item itemvalue="Gradle.ParserTest" />
-        <item itemvalue="Gradle.OptimizationTest.test" />
+        <item itemvalue="Gradle.Cp2Test.test_1_14_CallToUndeclaredMethod" />
+        <item itemvalue="Gradle.Cp2Test.test_1_11_ObjectAssignmentPassImports" />
+        <item itemvalue="Gradle.Cp2Test.test_1_10_ObjectAssignmentPassExtends" />
+        <item itemvalue="Gradle.Cp2Test.test_1_15_CallToMethodAssumedInExtends" />
       </list>
     </recent_temporary>
   </component>
@@ -287,6 +281,13 @@
       <workItem from="1652387105995" duration="8057000" />
       <workItem from="1652549000269" duration="547000" />
       <workItem from="1652619957176" duration="331000" />
+      <workItem from="1652711789681" duration="6191000" />
+      <workItem from="1652737254009" duration="4174000" />
+      <workItem from="1652774663129" duration="301000" />
+      <workItem from="1652778769940" duration="2057000" />
+      <workItem from="1652808152784" duration="598000" />
+      <workItem from="1652827062107" duration="3067000" />
+      <workItem from="1652860091284" duration="7291000" />
     </task>
     <task id="LOCAL-00001" summary="Symbol Table being constructed. Missing reports.">
       <created>1651493959654</created>

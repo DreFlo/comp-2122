@@ -1,0 +1,8 @@
+class Not {
+	public boolean red() {
+        boolean not;
+
+	    not = !not;
+	    return a;
+	}
+}
