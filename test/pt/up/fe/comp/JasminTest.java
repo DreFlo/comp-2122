@@ -15,7 +15,7 @@ public class JasminTest {
 
     @Test
     public void test() {
-        JasminResult jasminResult = TestUtils.backend(SpecsIo.getResource("fixtures/public/cp2/ArrayAccessOnInt.jmm"));
+        JasminResult jasminResult = TestUtils.backend(SpecsIo.getResource("fixtures/public/HelloWorld.jmm"));
         TestUtils.noErrors(jasminResult.getReports());
 
         Scanner scanner = new Scanner(jasminResult.getJasminCode());
