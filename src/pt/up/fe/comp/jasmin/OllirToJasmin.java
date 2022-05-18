@@ -244,14 +244,8 @@ public class OllirToJasmin {
     private String getCode(AssignInstruction instruction) {
         StringBuilder code = new StringBuilder();
         if (instruction.getDest() instanceof ArrayOperand) {
-            System.out.println("Here");
-            ArrayOperand arrayOperand = (ArrayOperand) instruction.getDest();
-            code.append(pushElementToStack(arrayOperand));
-            for (Element index : arrayOperand.getIndexOperands()) {
-                code.append(pushElementToStack(index));
-            }
-            code.append(getCode(instruction.getRhs()));
-            code.append("iastore\n");
+            System.out.println("Storing in array");
+            code.append(storeInArray((ArrayOperand) instruction.getDest(), getCode(instruction.getRhs())));
         }
         else {
             code.append(getCode(instruction.getRhs()));
@@ -385,14 +379,23 @@ public class OllirToJasmin {
 
     private String pushElementToStack(Element element) {
         StringBuilder code = new StringBuilder();
-        if (!element.isLiteral()) {
+        if (element instanceof ArrayOperand) {
+            System.out.println("Called here");
+            ArrayOperand arrayOperand = (ArrayOperand) element;
+            code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(arrayOperand)).append("\n");
+            for (Element index : arrayOperand.getIndexOperands()) {
+                code.append(pushElementToStack(index));
+            }
+            code.append("iaload");
+        }
+        else if (!element.isLiteral()) {
             if (((Operand) element).getName().equals("this")) {
                 code.append("aload_0");
             }
             else {
                 switch (element.getType().getTypeOfElement()) {
                     case INT32, BOOLEAN -> code.append("iload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
-                    case OBJECTREF -> code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
+                    case OBJECTREF, ARRAYREF -> code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
                     default -> throw new NotImplementedException("Not implemented for type: " + element.getType().getTypeOfElement() + " with no name.");
                 }
             }
@@ -404,12 +407,18 @@ public class OllirToJasmin {
             }
         }
         code.append("\n");
-        System.out.println("Code for element: " + code);
         return code.toString();
     }
 
-    private String pushElementToStack(ArrayOperand arrayOperand) {
-        return "aload " + getCurrentMethodVarVirtualRegisterFromElement(arrayOperand) + "\n";
+    private String storeInArray(ArrayOperand arrayOperand, String toStore) {
+        StringBuilder code = new StringBuilder();
+        code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(arrayOperand)).append("\n");
+        for (Element index : arrayOperand.getIndexOperands()) {
+            code.append(pushElementToStack(index));
+        }
+        code.append(toStore);
+        code.append("iastore\n");
+        return code.toString();
     }
 
     private String pushArgumentsToStack(CallInstruction instruction) {

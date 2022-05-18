@@ -5,9 +5,13 @@ class HelloWorld {
 	public static void main(String[] args) {
 	    int[] a;
 	    int b;
-	    a = new int[10];
+	    int[] c;
+ 	    a = new int[10];
+ 	    c = a;
 	    a[1] = 1;
 	    b = a[1];
 	    io.println(a[1]);
+	    io.println(c[1]);
+	    io.println(b);
 	}
 }
