@@ -118,11 +118,7 @@
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-<<<<<<< HEAD
   <component name="RunManager" selected="Gradle.JasminTest.test">
-=======
-  <component name="RunManager" selected="Gradle.Cp2Test">
->>>>>>> a4400f5d5d490734a51d7c83c707a13e694f1766
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -159,11 +155,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-<<<<<<< HEAD
     <configuration name="JasminTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-=======
-    <configuration name="Cp2Test.test_1_10_ObjectAssignmentPassExtends" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
->>>>>>> 6cd09e7b9d7bc9014bc67aa43d4c5934dc13b2ed
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -176,11 +168,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-<<<<<<< HEAD
             <option value="&quot;pt.up.fe.comp.JasminTest.test&quot;" />
-=======
-            <option value="&quot;pt.up.fe.comp.Cp2Test.test_1_10_ObjectAssignmentPassExtends&quot;" />
->>>>>>> 6cd09e7b9d7bc9014bc67aa43d4c5934dc13b2ed
           </list>
         </option>
         <option name="vmOptions" />
@@ -261,50 +249,23 @@
     </configuration>
     <list>
       <item itemvalue="Application.Launcher" />
-<<<<<<< HEAD
-<<<<<<< HEAD
-      <item itemvalue="Gradle.JasminTest.test" />
-      <item itemvalue="Gradle.Cp2Test.test_3_01_OllirToJasminBasic" />
-=======
       <item itemvalue="Gradle.AnalysisTest.test" />
       <item itemvalue="Gradle.AnalysisTest" />
       <item itemvalue="Gradle.Cp2Test" />
       <item itemvalue="Gradle.ParserTest" />
       <item itemvalue="Gradle.OptimizationTest.test" />
->>>>>>> a4400f5d5d490734a51d7c83c707a13e694f1766
-      <item itemvalue="Gradle.Cp2Test.test_3_02_OllirToJasminArithmetics" />
-      <item itemvalue="Gradle.Cp2Test.test_3_03_OllirToJasminInvoke" />
-      <item itemvalue="Gradle.Cp2Test.test_3_04_OllirToJasminFields" />
-=======
-      <item itemvalue="Gradle.Cp2Test.test_1_10_ObjectAssignmentPassExtends" />
-      <item itemvalue="Gradle.Cp2Test.test_1_11_ObjectAssignmentPassImports" />
-      <item itemvalue="Gradle.Cp2Test.test_1_14_CallToUndeclaredMethod" />
-      <item itemvalue="Gradle.Cp2Test.test_1_15_CallToMethodAssumedInExtends" />
-      <item itemvalue="Gradle.Cp2Test" />
->>>>>>> 6cd09e7b9d7bc9014bc67aa43d4c5934dc13b2ed
     </list>
     <recent_temporary>
       <list>
-<<<<<<< HEAD
         <item itemvalue="Gradle.JasminTest.test" />
         <item itemvalue="Gradle.Cp2Test.test_3_04_OllirToJasminFields" />
         <item itemvalue="Gradle.Cp2Test.test_3_03_OllirToJasminInvoke" />
         <item itemvalue="Gradle.Cp2Test.test_3_02_OllirToJasminArithmetics" />
         <item itemvalue="Gradle.Cp2Test.test_3_01_OllirToJasminBasic" />
-=======
-        <item itemvalue="Gradle.Cp2Test" />
-<<<<<<< HEAD
-        <item itemvalue="Gradle.AnalysisTest.test" />
-        <item itemvalue="Gradle.AnalysisTest" />
-        <item itemvalue="Gradle.ParserTest" />
-        <item itemvalue="Gradle.OptimizationTest.test" />
->>>>>>> a4400f5d5d490734a51d7c83c707a13e694f1766
-=======
         <item itemvalue="Gradle.Cp2Test.test_1_14_CallToUndeclaredMethod" />
         <item itemvalue="Gradle.Cp2Test.test_1_11_ObjectAssignmentPassImports" />
         <item itemvalue="Gradle.Cp2Test.test_1_10_ObjectAssignmentPassExtends" />
         <item itemvalue="Gradle.Cp2Test.test_1_15_CallToMethodAssumedInExtends" />
->>>>>>> 6cd09e7b9d7bc9014bc67aa43d4c5934dc13b2ed
       </list>
     </recent_temporary>
   </component>
@@ -319,23 +280,11 @@
       <workItem from="1651431638019" duration="4237000" />
       <workItem from="1651483067350" duration="10843000" />
       <workItem from="1651518565997" duration="1218000" />
-<<<<<<< HEAD
-      <workItem from="1652033672943" duration="8078000" />
-      <workItem from="1652364456864" duration="18000" />
-      <workItem from="1652608266125" duration="784000" />
-      <workItem from="1652610769781" duration="2193000" />
-      <workItem from="1652615456974" duration="3879000" />
-      <workItem from="1652729290519" duration="161000" />
-      <workItem from="1652867066663" duration="431000" />
-=======
       <workItem from="1652258917937" duration="9301000" />
       <workItem from="1652279137338" duration="7883000" />
       <workItem from="1652387105995" duration="8057000" />
       <workItem from="1652549000269" duration="547000" />
       <workItem from="1652619957176" duration="331000" />
-<<<<<<< HEAD
->>>>>>> a4400f5d5d490734a51d7c83c707a13e694f1766
-=======
       <workItem from="1652711789681" duration="6191000" />
       <workItem from="1652737254009" duration="4174000" />
       <workItem from="1652774663129" duration="301000" />
@@ -343,7 +292,6 @@
       <workItem from="1652808152784" duration="598000" />
       <workItem from="1652827062107" duration="3067000" />
       <workItem from="1652860091284" duration="7291000" />
->>>>>>> 6cd09e7b9d7bc9014bc67aa43d4c5934dc13b2ed
     </task>
     <task id="LOCAL-00001" summary="Symbol Table being constructed. Missing reports.">
       <created>1651493959654</created>
