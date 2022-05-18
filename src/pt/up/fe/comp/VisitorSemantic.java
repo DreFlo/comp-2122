@@ -1,7 +1,9 @@
 package pt.up.fe.comp;
 
+import jdk.swing.interop.SwingInterOpUtils;
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
+import pt.up.fe.comp.jmm.ast.AJmmVisitor;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ast.PostorderJmmVisitor;
 import pt.up.fe.comp.jmm.report.Report;
@@ -9,15 +11,21 @@ import pt.up.fe.comp.jmm.report.ReportType;
 import pt.up.fe.comp.jmm.report.Stage;
 
 import javax.swing.text.StyledEditorKit;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
+public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
     final SymbolTable symbolTable;
     final List<Report> reports;
 
     public List<Report> getReports() {
         return reports;
+    }
+    private void addReport(JmmNode node, String message) {
+        reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
+                Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")),
+                message));
     }
 
     public VisitorSemantic (SymbolTable symbolTable){
@@ -29,14 +37,33 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
         addVisit("CallExpression", this::callExpressionVisit);
         addVisit("AssignmentStatement", this::callAssignmentStatement);
         addVisit("IfCondition", this::ifConditionVisit);
+        addVisit("WhileCondition", this::whileConditionStatement);
+
+        setDefaultVisit(this::defaultVisit);
+    }
+
+    private Integer defaultVisit(JmmNode node, Object dummy) {
+
+        for(var child: node.getChildren())
+            visit(child, dummy);
+        return 0;
+    }
+
+    private Integer whileConditionStatement(JmmNode node, Object dummy) {
+        var child = node.getJmmChild(0);
+        var childType = getType(child);
+        if(childType == null) return null;
+        if(!childType.equals("boolean")) {
+            addReport(node.getJmmChild(0), "While condition should be a boolean");
+            return null;
+        }
+        return 0;
     }
     private Integer ifConditionVisit(JmmNode node, Object dummy) {
         switch(node.getJmmChild(0).getKind()) {
             case "Literal":
                 if(!node.get("type").equals("boolean")) {
-                    reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                            Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")),
-                            "If Condition should be 'boolean'"));
+                    addReport(node, "If Statement should be 'boolean'");
                     return null;
                 }
                 break;
@@ -47,9 +74,7 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
                     return null;
                 }
                 if(!typeI.equals("boolean")){
-                    reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                            Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")),
-                            "If Condition should be 'boolean'"));
+                    addReport(node, "If Statement should be 'boolean'");
                     return null;
                 }
                 break;
@@ -60,9 +85,7 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
                     return null;
                 }
                 if(!typeB.equals("bool")) {
-                    reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                            Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")),
-                            "If Condition should be 'boolean'"));
+                    addReport(node, "If Statement should be 'boolean'");
                     return null;
                 }
                 break;
@@ -73,9 +96,8 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
         return 0;
     }
     private Integer binOpVisit(JmmNode node, Object dummy) {
+        /* Get important node items */
 
-        /* Get importants node items */
-        var op = node.get("op");
         var child0 = node.getJmmChild(0);
         if (!checkVariableDeclaration(child0)) return null;
         var child1 = node.getJmmChild(1);
@@ -88,104 +110,123 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
         /* Check op and types */
         var child0Type = getType(child0);
         var child1Type = getType(child1);
-
         if(child0Type == null) return null;
         if(child1Type == null) return null;
 
         if (!child0Type.equals(child1Type)) {
-            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC, Integer.parseInt(node.get("line")),
-                    Integer.parseInt(node.get("col")), "Operation with different arguments:'" + child0Type + "' and '" + child1Type + "'"));
-            return -1;
+            addReport(node, "Operation with different arguments:'" + child0Type + "' and '" + child1Type + "'");
+            return null;
         }
 
-        /* Check operators and types */
+        switch(child0.getKind()) {
+            case "Literal":
+                if(!checkOperation(node.get("op"), child0)) return null;
+                break;
+            case "Identifier":
+                if(isArray(child0)) {
+                    addReport(child0, "Not supported operation for array");
+                    return null;
+                }
+                if(!child1.getKind().equals("Literal") && isArray(child1)) {
+                    addReport(child1, "Not supported operation for array");
+                    return null;
+                }
+                if(!checkOperation(node.get("op"), child0)) return null;
+                break;
+            default:
+                System.out.println("Add new options: binOpVisit - " + child0.getKind());
+        }
+
+        return 0;
+    }
+
+    private Boolean checkOperation(String op, JmmNode node) {
+        var nodeType = getType(node);
         switch (op) {
             case "add":
             case "sub":
             case "mult":
             case "div":
             case "lt":
-                if(!child0Type.equals("int")) {
-                    reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC, Integer.parseInt(node.get("line")),
-                            Integer.parseInt(node.get("col")), "Operation '" + op + "' not allowed for type '" + child0Type + "'"));
-                    return null;
+                if(!nodeType.equals("int")) {
+                    addReport(node, "Operation '" + op + "' not allowed for type '" + nodeType + "'");
+                    return false;
                 }
                 break;
             case "or":
             case "and":
-                if(!child0Type.equals("bool")) {
-                    reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC, Integer.parseInt(node.get("line")),
-                            Integer.parseInt(node.get("col")), "Operation '" + op + "' not allowed for type '" + child0Type + "'"));
-                    return null;
+                if(!nodeType.equals("boolean")) {
+                    addReport(node, "Operation '" + op + "' not allowed for type '" + nodeType + "'");
+                    return false;
                 }
                 break;
             default:
                 System.out.println("Not Implemented yet: binOpVisit - " + op);
-                return -1;
+                return false;
         }
-
-        return 0;
+        return true;
     }
     private Integer unaryOpVisit (JmmNode node, Object dummy) {
         var op = node.get("op");
-        switch(op) {
-            case "return":
+        switch (op) {
+            case "return" -> {
                 var child = node.getJmmChild(0);
-                var returnType = this.symbolTable.getReturnType(getParentMethodSignature(child));
 
+                var returnType = this.symbolTable.getReturnType(getParentMethodSignature(child));
                 switch (child.getKind()) {
                     case "Literal":
-                        if(!returnType.getName().equals(child.get("type"))) {
-                            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                                    Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")),
-                                    "Invalid return type. Expected: '"+returnType.getName()+"'"));
+                        if (!returnType.getName().equals(child.get("type"))) {
+                            addReport(node, "Invalid return type. Expected: '" + returnType.getName() + "'");
                             return null;
                         }
                         break;
                     case "Identifier":
-                        if(!checkVariableDeclaration(child)) return -1;
+                        if (!checkVariableDeclaration(child)) return null;
                         var typeI = getType(child);
                         if (typeI == null) {
                             System.out.println("Error: unaryOpVisit - " + child.getKind());
                             return null;
                         }
-                        if(!typeI.equals(returnType.getName())){
-                            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                                    Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")),
-                                    "Invalid return type. Expected: '"+returnType.getName()+"'"));
+                        if (!typeI.equals(returnType.getName())) {
+                            addReport(node, "Invalid return type. Expected: '" + returnType.getName() + "'");
                             return null;
                         }
                         break;
                     case "CallExpression":
+                        if(checkClass(child)) {
+                            var ceType = getType(child);
+                            if(ceType == null) return null;
+                            if(!ceType.equals(returnType.getName())){
+                                addReport(child, "Invalid Return Type");
+                            }
+                            break;
+                        }
+                        break;
                     case "BinOp":
                         var typeB = getType(child);
                         if (typeB == null) {
                             System.out.println("Error: unaryOpVisit - " + child.getKind());
                             return null;
                         }
-                        if(!typeB.equals(returnType.getName())) {
-                            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                                    Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")),
-                                    "Invalid return type. Expected: '"+returnType.getName()+"'"));
+                        if (!typeB.equals(returnType.getName())) {
+                            addReport(node, "Invalid return type. Expected: '" + returnType.getName() + "'");
                             return -1;
                         }
                         break;
                     case "Array":
-                        if(!checkVariableDeclaration(child.getJmmChild(0))){
-                            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                                    Integer.parseInt(child.getJmmChild(0).get("line")), Integer.parseInt(child.getJmmChild(0).get("col")),
-                                    child.getJmmChild(0).get("name") + " not declared"));
+                        if(!checkVariableDeclaration(child)) return null;
+                        var childA = child.getJmmChild(0);
+                        if (!checkVariableDeclaration(childA)) {
+                            addReport(childA, childA.get("name") + " not declared");
                             return null;
                         }
                         Boolean array = isArray(child.getJmmChild(0));
-                        if(array == null) {
+                        if (array == null) {
                             System.out.println("Array null somehow");
                             return null;
                         }
-                        if(!array) {
-                            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                                    Integer.parseInt(child.getJmmChild(0).get("line")), Integer.parseInt(child.getJmmChild(0).get("col")),
-                                    child.getJmmChild(0).get("name") + " is not an array"));
+                        if (!array) {
+                            addReport(child, child.getJmmChild(0).get("name") + " is not an array");
                             return null;
                         }
                         break;
@@ -194,47 +235,110 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
                         System.out.println("Not implemented yet: return - unaryOpVisit - " + child.getKind());
                         break;
                 }
+                visit(child, dummy);
+            }
+            case "not" -> {
+                var childN = node.getJmmChild(0);
+                var typeN = getType(childN);
+                if (typeN == null) return null;
+                if (!typeN.equals("boolean")) {
+                    addReport(childN, "Expression not a boolean");
+                    return null;
+                }
+                visit(childN, dummy);
+            }
+            case "length" -> {
+                var childL = node.getJmmChild(0);
+                if (!isArray(childL)) {
+                    addReport(childL, childL.get("name") + " is not an array");
+                    return null;
+                }
                 break;
-            case "not":
-            case "length":
-            default:
-                System.out.println("Not implemented yet: unaryOpVisit - " + node.getKind());
-                return null;
-        }
-
-        return 0;
-    }
-    private Integer callExpressionVisit(JmmNode node, Object dummy) {
-
-        /* Verify parameters */
-        var methodArguments = node.getJmmChild(2).getChildren();
-        if(methodArguments == null) return null;
-        var methodParameters = this.symbolTable.getParameters(node.getJmmChild(1).get("name"));
-        if(methodParameters == null) return null;
-
-        /* Verify size of arguments */
-        if (methodArguments.size() == methodParameters.size()) {
-            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC, Integer.parseInt(node.get("line")),
-                    Integer.parseInt(node.get("col")), "Invalid number of Arguments"));
-            return -1;
-        }
-
-        /* Get types of arguments */
-        List<String> argumentType = new ArrayList<>();
-        for(var argument: methodArguments) {
-            argumentType.add(getType(argument));
-        }
-
-        for(var i = 0; i < argumentType.size(); i++) {
-            if(!argumentType.get(i).equals(methodParameters.get(i).getType().getName())) {
-                reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC, Integer.parseInt(node.get("line")),
-                        Integer.parseInt(node.get("col")),
-                        "Invalid argument type. Expected:'" + methodParameters.get(i).getType().getName() + "'. Get:'" + argumentType.get(i) + "'"));
+            }
+            default -> {
+                System.out.println("Not implemented yet: unaryOpVisit - " + node.get("op"));
                 return null;
             }
         }
 
         return 0;
+    }
+    private Integer callExpressionVisit(JmmNode node, Object dummy) {
+        List<JmmNode> identifiers = new ArrayList<>();
+        JmmNode argument = null;
+
+        for(var child: node.getChildren()) {
+            if(child.getKind().equals("Arguments")) {
+                argument = child;
+                break;
+            } else {
+                identifiers.add(child);
+            }
+        }
+
+        if(argument == null) return null;
+
+        switch(identifiers.size()) {
+            case 1:
+                if(!checkVariableDeclaration(identifiers.get(0))) {
+                    addReport(identifiers.get(0), "Function not declared");
+                    return null;
+                }
+                if(!checkArguments(argument, identifiers)) return null;
+                break;
+            case 2:
+                if(!checkClass(identifiers.get(0))) {
+                    if(!checkVariableDeclaration(identifiers.get(0))) {
+                        addReport(identifiers.get(0), "Not accessible");
+                        return null;
+                    }
+                } else {
+                    if(this.symbolTable.getSuper() == null) {
+                        if(!checkVariableDeclaration(identifiers.get(1))){
+                            addReport(identifiers.get(1), "Not declared");
+                            return null;
+                        }
+                    }
+                }
+                break;
+            default:
+                System.out.println("callExpressionVisit(identifiers.size()) - " + identifiers.size());
+                return null;
+        }
+
+
+
+        return 0;
+    }
+
+    private Boolean checkArguments(JmmNode argument, List<JmmNode> identifiers) {
+        /* Verify parameters */
+        var methodArguments = argument.getChildren();
+        if(methodArguments == null) return false;
+        var methodParameters = this.symbolTable.getParameters(identifiers.get(identifiers.size()-1).get("name"));
+        if(methodParameters == null) return false;
+
+
+
+        /* Verify size of arguments */
+        if (methodArguments.size() == methodParameters.size()) {
+            addReport(argument, "Invalid number of Arguments");
+            return false;
+        }
+
+        /* Get types of arguments */
+        List<String> argumentType = new ArrayList<>();
+        for(var argument_: methodArguments) {
+            argumentType.add(getType(argument_));
+        }
+
+        for(var i = 0; i < argumentType.size(); i++) {
+            if(!argumentType.get(i).equals(methodParameters.get(i).getType().getName())) {
+                addReport(argument, "Invalid argument type. Expected:'" + methodParameters.get(i).getType().getName() + "'. Get:'" + argumentType.get(i) + "'");
+                return false;
+            }
+        }
+        return true;
     }
 
     private Integer callAssignmentStatement(JmmNode node, Object dummy) {
@@ -247,30 +351,31 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
         var leftChildType = getType(leftChild);
         var rightChildType = getType(rightChild);
         if(leftChildType == null) {
-            System.out.println("leftChildType with error");
             return null;
         }
         if(rightChildType == null) {
-            System.out.println("rightChildType with error");
             return null;
         }
 
 
         switch (leftChild.getKind()){
             case "Literal":
-                reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                        Integer.parseInt(leftChild.get("line")), Integer.parseInt(leftChild.get("col")),
-                        "Literal cannot be assigned"));
-                return -1;
+                addReport(leftChild, "Literal cannot be assigned");
+                return null;
             case "Identifier":
                 switch(rightChild.getKind()) {
+                    case "BinOp":
+                    case "UnaryOp":
                     case "Literal":
                     case "Identifier":
                         if(!leftChildType.equals(rightChildType)) {
-                            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                                    Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")),
-                                    "Invalid assignment type"));
-                            return -1;
+                            if(checkImport(leftChild) && checkImport(rightChild)) break;
+                            if((checkSuperclass(leftChild) || checkClass(leftChild)) &&
+                                    (checkSuperclass(rightChild)) || checkClass(rightChild)) {
+                                break;
+                            }
+                            addReport(node, "Invalid assignment type");
+                            return null;
                         }
                         break;
                     case "Index":
@@ -278,20 +383,19 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
                         break;
                     case "NewExp":
                         if(!leftChildType.equals(getType(rightChild.getJmmChild(0)))) {
-                            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                                    Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")),
-                                    "Invalid assignment type"));
-                            return -1;
+                            System.out.println(leftChildType + "\t" + getType(rightChild.getJmmChild(0)));
+                            addReport(node, "Invalid assignment type");
+                            return null;
                         }
                         break;
                     default:
-                        System.out.println("Not Implemented Yet: default - callAssignmentStatement");
-                        return -1;
+                        System.out.println("Not Implemented Yet: default - callAssignmentStatement - " + rightChild.getKind());
+                        return null;
                 }
                 break;
             default:
                 System.out.print("Add new options: callAssignmentStatement");
-                return -1;
+                return null;
         }
 
         return 0;
@@ -311,11 +415,6 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
                 var variables = getVariablesInScope(getParentMethodSignature(node));
                 for(var variable: variables) {
                     if(node.get("name").equals(variable.getName())) {
-                        if(variable.getType().isArray()) {
-                            reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC, Integer.parseInt(node.get("line")),
-                                    Integer.parseInt(node.get("col")), ""));
-                            return null;
-                        }
                         return variable.getType().getName();
                     }
                 }
@@ -325,7 +424,10 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
                 return getTypeOfOp(node);
             case "CallExpression":
                 return getTypeOfCall(node);
+            case "AssignmentStatement":
+                return getTypeOfAssignment(node);
             case "NewExp":
+            case "Array":
                 return getType(node.getJmmChild(0));
             case "IfCondition":
                 return "boolean";
@@ -384,6 +486,22 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
         return false;
     }
 
+    private Boolean checkSuperclass(JmmNode node) {
+        var export = this.symbolTable.getSuper();;
+        if(export == null) return false;
+        return export.equals(getType(node));
+    }
+
+    private Boolean checkClass (JmmNode node) {
+        var class_ = this.symbolTable.getClassName();
+        if(class_ == null) return false;
+        for(var atr: node.getAttributes()) {
+            if(atr.equals("name")) {
+                return class_.equals(getType(node)) || class_.equals(node.get("name"));
+            }
+        }
+        return class_.equals(getType(node));
+    }
     /**
      * Verify if variable is a import
      * @param variable
@@ -392,7 +510,12 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
     private Boolean checkImport(JmmNode variable) {
         var imports = this.symbolTable.getImports();
         for(var import_: imports) {
-            if (variable.get("name").equals(import_)) {
+            var type = getType(variable);
+            if(type == null) {
+                if(variable.get("name").equals(import_))
+                    return true;
+            }
+            else if (type.equals(import_)) {
                 return true;
             }
         }
@@ -417,11 +540,12 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
             case "BinOp":
                 switch(node.getJmmParent().getKind()) {
                     case "UnaryOp":
-                        return getTypeOfOp(node.getJmmParent());
+                    case "AssignmentStatement":
+                        return getType(node.getJmmParent());
                     case "IfCondition":
                         return "boolean";
                     default:
-                        System.out.println("Not Implemented Yet: BinOp - getTypeOfOp");
+                        System.out.println("Not Implemented Yet: getTypeOfOp/BinOp - " + node.getJmmParent().getKind());
                         return null;
                 }
             default:
@@ -443,17 +567,10 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
 
         JmmNode lastIdentifier = null;
 
-        for(var i = 0; i < node.getNumChildren(); i++ ) {
-            lastIdentifier = node.getJmmChild(i);
-            if (!checkVariableDeclaration(lastIdentifier)) {
-                reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                        Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")),
-                        lastIdentifier.get("name") + " not declared in scope"));
-                return null;
-            }
-
-            if(node.getJmmChild(i+1).getKind().equals("Arguments"))
-                break;
+        lastIdentifier = node.getJmmChild(0);
+        if (!checkVariableDeclaration(lastIdentifier)) {
+            addReport(node, lastIdentifier.get("name") + " not declared in scope");
+            return null;
         }
         if(lastIdentifier == null) {
             System.out.println("Some error: getTypeofCall");
@@ -462,42 +579,104 @@ public class VisitorSemantic extends PostorderJmmVisitor<Object, Integer> {
 
         return getType(lastIdentifier);
     }
+
+    private String getTypeOfAssignment(JmmNode node) {
+        var leftChild = node.getJmmChild(0);
+        if(!checkVariableDeclaration(leftChild)) return null;
+
+        switch(leftChild.getKind()) {
+            case "Literal":
+            case "Identifier":
+                return getType(leftChild);
+            default:
+                System.out.print("Add new options: callAssignmentStatement");
+                return null;
+        }
+    }
     private Boolean checkVariableDeclaration(JmmNode variable) {
         switch(variable.getKind()) {
+            case "Identifier":
+                if(checkVariableOnSymbolTable(variable) || checkImport(variable) || checkSuperclass(variable) || checkClass(variable))
+                    return true;
+                else {
+                    addReport(variable, variable.get("name") + " should be declared");
+                    return false;
+                }
             case "NewExp":
                 variable = variable.getJmmChild(0);
                 if(variable.getKind().equals("Literal")) return true;
                 break;
             case "Literal":
                 return true;
-            case "Index":
-                JmmNode index = variable.getJmmChild(1);
-                variable = variable.getJmmChild(0);
-                if(checkVariableOnSymbolTable(variable))
-                    return true;
+            case "BinOp":
+            case "UnaryOp":
+                var child = variable.getJmmChild(0);
+                switch(child.getKind()) {
+                    case "UnaryOp":
+                    case "Identifier":
+                    case "Literal":
+                        return checkVariableDeclaration(child);
+                    default:
+                        System.out.println("Add new options: checkVariableDeclaration('UnaryOp/BinOp') - " + child.getKind());
+                        return false;
+                }
+            case "Array":
+                var arrayId = variable.getJmmChild(0);
+                if(!arrayId.getKind().equals("Identifier")) {
+                    addReport(arrayId, "Array should be a variable");
+                    return false;
+                }
+                if(checkVariableOnSymbolTable(arrayId)) {
+                    var indexId = variable.getJmmChild(1);
+                    switch (indexId.getKind()) {
+                        case "Literal":
+                            return true;
+                        case "Identifier":
+                            if(checkVariableOnSymbolTable(indexId)) {
+                                if("int".equals(getType(indexId)))
+                                    return true;
+                                else {
+                                    addReport(indexId, indexId.get("name") + " should be an int");
+                                    return false;
+                                }
+                            }
+                            else {
+                                addReport(indexId, indexId.get("name") + " not declared");
+                                return false;
+                            }
+                        default:
+                            System.out.println("Add new options: checkVariableDeclaration('Array') - " + indexId.getKind());
+                            return false;
+                    }
+                }
                 else {
-                    reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                            Integer.parseInt(variable.get("line")), Integer.parseInt(variable.get("col")),
-                            "Variable '" + variable.get("name") + "' not declared."));
+                    addReport(arrayId, arrayId.get("name") + " not declared.");
+                    return false;
                 }
-                if(checkVariableOnSymbolTable(index))
-                    return true;
-                else{
-                    reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                            Integer.parseInt(variable.get("line")), Integer.parseInt(variable.get("col")),
-                            "Variable '" + index.get("name") + "' not declared."));
+            case "Index":
+                var array = variable.getJmmChild(0);
+                if(checkVariableOnSymbolTable(array)) {
+                    JmmNode index = variable.getJmmChild(1);
+                    if(checkVariableOnSymbolTable(index))
+                        return true;
+                    else{
+                        addReport(index, "Variable '" + index.get("name") + "' not declared.");
+                        return false;
+                    }
                 }
+                else {
+                    addReport(array, "Variable '" + array.get("name") + "' not declared.");
+                    return false;
+                }
+            default:
+                System.out.println("Add new options: checkVariableDeclaration - " + variable.getKind());
                 return false;
-
-
         }
 
-        if(checkVariableOnSymbolTable(variable) || checkImport(variable))
+        if(checkVariableOnSymbolTable(variable) || checkImport(variable) || checkSuperclass(variable) || checkClass(variable))
             return true;
 
-        reports.add(new Report(ReportType.ERROR, Stage.SEMANTIC,
-                Integer.parseInt(variable.get("line")), Integer.parseInt(variable.get("col")),
-                "Variable '" + variable.get("name") + "' not declared."));
+        addReport(variable, "Variable '" + variable.get("name") + "' not declared.");
         return false;
 
     }

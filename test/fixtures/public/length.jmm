@@ -1,0 +1,9 @@
+class Length {
+    public int blue() {
+        int len;
+        int[] a;
+
+        len = a.length;
+        return len;
+    }
+}

@@ -1,0 +1,11 @@
+class binOpBool {
+	public boolean cyan() {
+	    boolean a;
+	    boolean b;
+	    boolean c;
+	    b = true;
+	    c = false;
+	    a = b && c;
+	    return a;
+	}
+}
