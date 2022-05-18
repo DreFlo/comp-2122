@@ -76,7 +76,6 @@ public class OllirToJasmin {
     }
 
     private String getFullyQualifiedClassName(String name) throws RuntimeException {
-        System.out.println(name);
         String fullyQualifiedName = fullyQualifiedClassNames.get(name);
         if (fullyQualifiedName != null) return fullyQualifiedName;
         else if (symbolTable != null) {
@@ -244,7 +243,6 @@ public class OllirToJasmin {
     private String getCode(AssignInstruction instruction) {
         StringBuilder code = new StringBuilder();
         if (instruction.getDest() instanceof ArrayOperand) {
-            System.out.println("Storing in array");
             code.append(storeInArray((ArrayOperand) instruction.getDest(), getCode(instruction.getRhs())));
         }
         else {
@@ -380,7 +378,6 @@ public class OllirToJasmin {
     private String pushElementToStack(Element element) {
         StringBuilder code = new StringBuilder();
         if (element instanceof ArrayOperand) {
-            System.out.println("Called here");
             ArrayOperand arrayOperand = (ArrayOperand) element;
             code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(arrayOperand)).append("\n");
             for (Element index : arrayOperand.getIndexOperands()) {
