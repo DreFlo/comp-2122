@@ -71,13 +71,12 @@ public class Launcher {
 
         TestUtils.noErrors(ollirResult.getReports());
 
-        /*
         // Instantiate JmmBackend
         JasminEmitter jasminEmitter = new JasminEmitter();
 
         JasminResult jasminResult = jasminEmitter.toJasmin(ollirResult);
 
-        TestUtils.noErrors(jasminResult.getReports());*/
+        TestUtils.noErrors(jasminResult.getReports());
     }
 
 }

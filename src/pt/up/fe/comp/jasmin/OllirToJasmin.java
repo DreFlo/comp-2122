@@ -398,8 +398,8 @@ public class OllirToJasmin {
             }
         } else {
             switch (element.getType().getTypeOfElement()) {
-                case STRING -> code.append("ldc ").append(((LiteralElement) element).getLiteral());
-                case INT32, BOOLEAN -> code.append("bipush ").append(((LiteralElement) element).getLiteral());
+                case STRING, INT32 -> code.append("ldc ").append(((LiteralElement) element).getLiteral());
+                case BOOLEAN -> code.append("bipush ").append(((LiteralElement) element).getLiteral());
                 default -> throw new NotImplementedException("Not implemented for type: " + element.getType().getTypeOfElement() + " with no name.");
             }
         }
