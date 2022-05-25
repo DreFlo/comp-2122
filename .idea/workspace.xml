@@ -5,10 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f381ac2a-4710-4559-b642-0bfbb6dbce26" name="Changes" comment="Symbol Table being constructed. Missing reports.">
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixtures/public/HelloWorld.jmm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/Launcher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/VisitorEval.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/VisitorEval.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,29 +155,6 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="JasminTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.JasminTest.test&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
     <configuration name="Cp2Test.test_1_11_ObjectAssignmentPassImports" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -247,24 +224,42 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
+    <configuration name="JasminTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;pt.up.fe.comp.JasminTest.test&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Application.Launcher" />
-      <item itemvalue="Gradle.AnalysisTest.test" />
-      <item itemvalue="Gradle.AnalysisTest" />
+      <item itemvalue="Gradle.Cp2Test.test_1_11_ObjectAssignmentPassImports" />
+      <item itemvalue="Gradle.Cp2Test.test_1_14_CallToUndeclaredMethod" />
+      <item itemvalue="Gradle.Cp2Test.test_1_15_CallToMethodAssumedInExtends" />
+      <item itemvalue="Gradle.JasminTest.test" />
       <item itemvalue="Gradle.Cp2Test" />
-      <item itemvalue="Gradle.ParserTest" />
-      <item itemvalue="Gradle.OptimizationTest.test" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.JasminTest.test" />
-        <item itemvalue="Gradle.Cp2Test.test_3_04_OllirToJasminFields" />
-        <item itemvalue="Gradle.Cp2Test.test_3_03_OllirToJasminInvoke" />
-        <item itemvalue="Gradle.Cp2Test.test_3_02_OllirToJasminArithmetics" />
-        <item itemvalue="Gradle.Cp2Test.test_3_01_OllirToJasminBasic" />
         <item itemvalue="Gradle.Cp2Test.test_1_14_CallToUndeclaredMethod" />
         <item itemvalue="Gradle.Cp2Test.test_1_11_ObjectAssignmentPassImports" />
-        <item itemvalue="Gradle.Cp2Test.test_1_10_ObjectAssignmentPassExtends" />
         <item itemvalue="Gradle.Cp2Test.test_1_15_CallToMethodAssumedInExtends" />
       </list>
     </recent_temporary>
