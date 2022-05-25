@@ -1,23 +1,19 @@
 package pt.up.fe.comp;
 
-import jdk.swing.interop.SwingInterOpUtils;
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.ast.AJmmVisitor;
 import pt.up.fe.comp.jmm.ast.JmmNode;
-import pt.up.fe.comp.jmm.ast.PostorderJmmVisitor;
 import pt.up.fe.comp.jmm.report.Report;
 import pt.up.fe.comp.jmm.report.ReportType;
 import pt.up.fe.comp.jmm.report.Stage;
 
-import javax.swing.text.StyledEditorKit;
-import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
     final SymbolTable symbolTable;
     final List<Report> reports;
+
 
     public List<Report> getReports() {
         return reports;
@@ -38,7 +34,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
         addVisit("AssignmentStatement", this::callAssignmentStatement);
         addVisit("IfCondition", this::ifConditionVisit);
         addVisit("WhileCondition", this::whileConditionStatement);
-
+        addVisit("VarDeclaration", this::varDeclarationVisit);
         setDefaultVisit(this::defaultVisit);
     }
 
@@ -48,7 +44,22 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
             visit(child, dummy);
         return 0;
     }
-
+    private Integer varDeclarationVisit(JmmNode node, Object dummy) {
+        JmmNode type = node.getJmmChild(0);
+        JmmNode identifier = node.getJmmChild(1);
+        switch(type.get("type")) {
+            case "int":
+            case "boolean":
+            case "String":
+                break;
+            default:
+                if(!(checkImport(identifier) || checkClass(identifier) || checkSuperclass(identifier))) {
+                    addReport(type, type.get("type") + " not declared.");
+                    return null;
+                }
+        }
+        return 0;
+    }
     private Integer whileConditionStatement(JmmNode node, Object dummy) {
         var child = node.getJmmChild(0);
         var childType = getType(child);
@@ -57,10 +68,13 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
             addReport(node.getJmmChild(0), "While condition should be a boolean");
             return null;
         }
+        visit(child, dummy);
         return 0;
+
     }
     private Integer ifConditionVisit(JmmNode node, Object dummy) {
-        switch(node.getJmmChild(0).getKind()) {
+        JmmNode child = node.getJmmChild(0);
+        switch(child.getKind()) {
             case "Literal":
                 if(!node.get("type").equals("boolean")) {
                     addReport(node, "If Statement should be 'boolean'");
@@ -70,7 +84,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
             case "Identifier":
                 var typeI = getType(node);
                 if(typeI == null) {
-                    System.out.println("Error: ifConditionVisit - " + node.getJmmChild(0).getKind());
+                    //System.out.println("Error: ifConditionVisit - " + node.getJmmChild(0).getKind());
                     return null;
                 }
                 if(!typeI.equals("boolean")){
@@ -81,7 +95,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
             case "BinOp":
                 var typeB = getType(node);
                 if(typeB == null) {
-                    System.out.println("Error: ifConditionVisit - " + node.getJmmChild(0).getKind());
+                    //System.out.println("Error: ifConditionVisit - " + node.getJmmChild(0).getKind());
                     return null;
                 }
                 if(!typeB.equals("bool")) {
@@ -90,19 +104,26 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                 }
                 break;
             default:
-                System.out.println("Not Implemented Yet: ifConditionVisit - " + node.getJmmChild(0).getKind());
+                //System.out.println("Not Implemented Yet: ifConditionVisit - " + node.getJmmChild(0).getKind());
                 return null;
         }
+        visit(child, dummy);
         return 0;
     }
     private Integer binOpVisit(JmmNode node, Object dummy) {
         /* Get important node items */
 
         var child0 = node.getJmmChild(0);
-        if (!checkVariableDeclaration(child0)) return null;
-        var child1 = node.getJmmChild(1);
-        if (!checkVariableDeclaration(child1)) return null;
 
+        if (!checkVariableDeclaration(child0)) {
+            addReport(child0, child0.get("name") + " not declared");
+            return null;
+        }
+        var child1 = node.getJmmChild(1);
+        if (!checkVariableDeclaration(child1)) {
+            addReport(child1, child1.get("name") + " not declared");
+            return null;
+        }
         /* Get Method from BinOp */
         var parentNode = getParentMethodSignature(node);
         if (parentNode == null) return null;
@@ -117,7 +138,6 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
             addReport(node, "Operation with different arguments:'" + child0Type + "' and '" + child1Type + "'");
             return null;
         }
-
         switch(child0.getKind()) {
             case "Literal":
                 if(!checkOperation(node.get("op"), child0)) return null;
@@ -134,9 +154,10 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                 if(!checkOperation(node.get("op"), child0)) return null;
                 break;
             default:
-                System.out.println("Add new options: binOpVisit - " + child0.getKind());
+                //System.out.println("Add new options: binOpVisit - " + child0.getKind());
         }
-
+        visit(child0, dummy);
+        visit(child1, dummy);
         return 0;
     }
 
@@ -161,16 +182,16 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                 }
                 break;
             default:
-                System.out.println("Not Implemented yet: binOpVisit - " + op);
+                //System.out.println("Not Implemented yet: binOpVisit - " + op);
                 return false;
         }
         return true;
     }
     private Integer unaryOpVisit (JmmNode node, Object dummy) {
         var op = node.get("op");
+        JmmNode child = node.getJmmChild(0);
         switch (op) {
             case "return" -> {
-                var child = node.getJmmChild(0);
 
                 var returnType = this.symbolTable.getReturnType(getParentMethodSignature(child));
                 switch (child.getKind()) {
@@ -184,7 +205,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                         if (!checkVariableDeclaration(child)) return null;
                         var typeI = getType(child);
                         if (typeI == null) {
-                            System.out.println("Error: unaryOpVisit - " + child.getKind());
+                            //System.out.println("Error: unaryOpVisit - " + child.getKind());
                             return null;
                         }
                         if (!typeI.equals(returnType.getName())) {
@@ -205,12 +226,12 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                     case "BinOp":
                         var typeB = getType(child);
                         if (typeB == null) {
-                            System.out.println("Error: unaryOpVisit - " + child.getKind());
+                            //System.out.println("Error: unaryOpVisit - " + child.getKind());
                             return null;
                         }
                         if (!typeB.equals(returnType.getName())) {
                             addReport(node, "Invalid return type. Expected: '" + returnType.getName() + "'");
-                            return -1;
+                            return null;
                         }
                         break;
                     case "Array":
@@ -220,47 +241,41 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                             addReport(childA, childA.get("name") + " not declared");
                             return null;
                         }
-                        Boolean array = isArray(child.getJmmChild(0));
-                        if (array == null) {
-                            System.out.println("Array null somehow");
-                            return null;
-                        }
-                        if (!array) {
+                        if (!isArray(child.getJmmChild(0))) {
                             addReport(child, child.getJmmChild(0).get("name") + " is not an array");
                             return null;
                         }
                         break;
 
                     default:
-                        System.out.println("Not implemented yet: return - unaryOpVisit - " + child.getKind());
+                        //System.out.println("Not implemented yet: return - unaryOpVisit - " + child.getKind());
                         break;
                 }
-                visit(child, dummy);
             }
             case "not" -> {
-                var childN = node.getJmmChild(0);
-                var typeN = getType(childN);
+                var typeN = getType(child);
                 if (typeN == null) return null;
                 if (!typeN.equals("boolean")) {
-                    addReport(childN, "Expression not a boolean");
+                    addReport(child, "Expression not a boolean");
                     return null;
                 }
-                visit(childN, dummy);
             }
             case "length" -> {
-                var childL = node.getJmmChild(0);
-                if (!isArray(childL)) {
-                    addReport(childL, childL.get("name") + " is not an array");
+                if(child.getKind().equals("Literal")) {
+                    addReport(child, "Should be a variable");
                     return null;
                 }
-                break;
+                if (!isArray(child)) {
+                    addReport(child, child.get("name") + " is not an array");
+                    return null;
+                }
             }
             default -> {
-                System.out.println("Not implemented yet: unaryOpVisit - " + node.get("op"));
+                //System.out.println("Not implemented yet: unaryOpVisit - " + node.get("op"));
                 return null;
             }
         }
-
+        visit(child, dummy);
         return 0;
     }
     private Integer callExpressionVisit(JmmNode node, Object dummy) {
@@ -302,11 +317,11 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                 }
                 break;
             default:
-                System.out.println("callExpressionVisit(identifiers.size()) - " + identifiers.size());
+                //System.out.println("callExpressionVisit(identifiers.size()) - " + identifiers.size());
                 return null;
         }
 
-
+        // TODO: nao sei bem o que é para fazer aqui
 
         return 0;
     }
@@ -344,18 +359,20 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
     private Integer callAssignmentStatement(JmmNode node, Object dummy) {
 
         var leftChild = node.getJmmChild(0);
-        if(!checkVariableDeclaration(leftChild)) return null;
+        if(!checkVariableDeclaration(leftChild)) {
+            addReport(leftChild, "Variable not declared");
+            return null;
+        }
         var rightChild = node.getJmmChild(1);
-        if(!checkVariableDeclaration(rightChild)) return null;
+        if(!checkVariableInitialization(rightChild)) {
+            addReport(rightChild, "Variable not initialized");
+            return null;
+        }
 
         var leftChildType = getType(leftChild);
         var rightChildType = getType(rightChild);
-        if(leftChildType == null) {
-            return null;
-        }
-        if(rightChildType == null) {
-            return null;
-        }
+        if(leftChildType == null) return null;
+        if(rightChildType == null) return null;
 
 
         switch (leftChild.getKind()){
@@ -379,25 +396,24 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                         }
                         break;
                     case "Index":
-                        System.out.println("Not implemented: Index - callAssignmentStatement");
+                        //System.out.println("Not implemented: Index - callAssignmentStatement");
                         break;
                     case "NewExp":
                         if(!leftChildType.equals(getType(rightChild.getJmmChild(0)))) {
-                            System.out.println(leftChildType + "\t" + getType(rightChild.getJmmChild(0)));
                             addReport(node, "Invalid assignment type");
                             return null;
                         }
                         break;
                     default:
-                        System.out.println("Not Implemented Yet: default - callAssignmentStatement - " + rightChild.getKind());
+                        //System.out.println("Not Implemented Yet: default - callAssignmentStatement - " + rightChild.getKind());
                         return null;
                 }
                 break;
             default:
-                System.out.print("Add new options: callAssignmentStatement");
+                //System.out.print("Add new options: callAssignmentStatement");
                 return null;
         }
-
+        visit(rightChild, dummy);
         return 0;
     }
 
@@ -432,7 +448,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
             case "IfCondition":
                 return "boolean";
             default:
-                System.out.println("Add new option: getType - " + node.getKind());
+                //System.out.println("Add new option: getType - " + node.getKind());
                 return null;
         }
         return null;
@@ -458,7 +474,16 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
             }
         }
     }
-
+    private JmmNode getParentNode(JmmNode node) {
+        while(true) {
+            if(node.getKind().equals("InstanceMethod") || node.getKind().equals("MainMethod")) {
+                return node;
+            } else {
+                node = node.getJmmParent();
+                if(node == null) return null;
+            }
+        }
+    }
     /**
      * Get all variables in scope on node
      * @param nodeSignature
@@ -533,7 +558,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                     case "not":
                         return "boolean";
                     default:
-                        System.out.println("Not implemented yet: UnaryOp - getTypeOfOp");
+                        //System.out.println("Not implemented yet: UnaryOp - getTypeOfOp");
                         return null;
                 }
 
@@ -545,11 +570,11 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                     case "IfCondition":
                         return "boolean";
                     default:
-                        System.out.println("Not Implemented Yet: getTypeOfOp/BinOp - " + node.getJmmParent().getKind());
+                        //System.out.println("Not Implemented Yet: getTypeOfOp/BinOp - " + node.getJmmParent().getKind());
                         return null;
                 }
             default:
-                System.out.println("Not supposed to be here: default - getTypeOfOp");
+                //System.out.println("Not supposed to be here: default - getTypeOfOp");
                 return null;
         }
     }
@@ -561,7 +586,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                 return variable.getType().isArray();
             }
         }
-        return null;
+        return false;
     }
     private String getTypeOfCall(JmmNode node) {
 
@@ -570,10 +595,6 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
         lastIdentifier = node.getJmmChild(0);
         if (!checkVariableDeclaration(lastIdentifier)) {
             addReport(node, lastIdentifier.get("name") + " not declared in scope");
-            return null;
-        }
-        if(lastIdentifier == null) {
-            System.out.println("Some error: getTypeofCall");
             return null;
         }
 
@@ -589,9 +610,60 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
             case "Identifier":
                 return getType(leftChild);
             default:
-                System.out.print("Add new options: callAssignmentStatement");
+                //System.out.print("Add new options: callAssignmentStatement");
                 return null;
         }
+    }
+
+    private Boolean checkVariableInitialization(JmmNode node) {
+        if(node.getKind().equals("Literal")) return true;
+        if(!checkVariableDeclaration(node)) {
+            addReport(node, "Variable should be declared");
+            return false;
+        }
+
+        switch(node.getKind()) {
+            case "Literal":
+                return true;
+            case "Identifier":
+                JmmNode parentNode = getParentNode(node);
+                List<JmmNode> assigns = getAllAssignment(parentNode);
+                for (JmmNode assign : assigns) {
+                    JmmNode identifier = assign.getJmmChild(0);
+                    if (identifier.get("name").equals(node.get("name"))) {
+                        if (Integer.parseInt(identifier.get("line")) < Integer.parseInt(node.get("line"))) {
+                            return true;
+                        }
+                    }
+                }
+                break;
+            case "UnaryOp":
+                return checkVariableInitialization(node.getJmmChild(0));
+            case "BinOp":
+                return checkVariableInitialization(node.getJmmChild(0)) && checkVariableInitialization(node.getJmmChild(1));
+            default:
+                //System.out.println("Add New Options: checkVariableInitialization() - " + node.getKind());
+                return checkVariableDeclaration(node);
+        }
+
+        return false;
+    }
+
+    private List<JmmNode> getAllAssignment(JmmNode parent) {
+        List<JmmNode> result = new ArrayList<>();
+        Queue<JmmNode> queue = new LinkedList<>();
+        queue.add(parent);
+        while(!queue.isEmpty()) {
+            JmmNode temp = queue.peek();
+            queue.remove();
+
+            if(temp.getKind().equals("AssignmentStatement")) {
+                result.add(temp);
+            }
+            queue.addAll(temp.getChildren());
+        }
+
+        return result;
     }
     private Boolean checkVariableDeclaration(JmmNode variable) {
         switch(variable.getKind()) {
@@ -617,7 +689,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                     case "Literal":
                         return checkVariableDeclaration(child);
                     default:
-                        System.out.println("Add new options: checkVariableDeclaration('UnaryOp/BinOp') - " + child.getKind());
+                        //System.out.println("Add new options: checkVariableDeclaration('UnaryOp/BinOp') - " + child.getKind());
                         return false;
                 }
             case "Array":
@@ -630,6 +702,10 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                     var indexId = variable.getJmmChild(1);
                     switch (indexId.getKind()) {
                         case "Literal":
+                            if(!"int".equals(getType(indexId))) {
+                                addReport(indexId, "Index should be an integer");
+                                return false;
+                            }
                             return true;
                         case "Identifier":
                             if(checkVariableOnSymbolTable(indexId)) {
@@ -645,7 +721,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                                 return false;
                             }
                         default:
-                            System.out.println("Add new options: checkVariableDeclaration('Array') - " + indexId.getKind());
+                            //System.out.println("Add new options: checkVariableDeclaration('Array') - " + indexId.getKind());
                             return false;
                     }
                 }
@@ -669,7 +745,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                     return false;
                 }
             default:
-                System.out.println("Add new options: checkVariableDeclaration - " + variable.getKind());
+                //System.out.println("Add new options: checkVariableDeclaration - " + variable.getKind());
                 return false;
         }
 
