@@ -110,7 +110,12 @@ public class OllirToJasmin {
 
         code.append("\n");
 
-        code.append(SpecsIo.getResource("resources/jasminConstructor.template").replace("${SUPER_F_Q_CLASS_NAME}", qualifiedSuperClassName)).append("\n\n");
+        code.append(".method public <init>()V\n" +
+                "   aload_0\n" +
+                "   invokenonvirtual " + qualifiedSuperClassName + "/<init>()V\n" +
+                "   return\n" +
+                ".end method\n\n");
+        //code.append(SpecsIo.getResource("resources/jasminConstructor.template").replace("${SUPER_F_Q_CLASS_NAME}", qualifiedSuperClassName)).append("\n\n");
 
         for (Method method : classUnit.getMethods()) {
             if (method.isConstructMethod()) continue;

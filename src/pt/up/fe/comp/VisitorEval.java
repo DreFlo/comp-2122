@@ -46,17 +46,6 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
             if (node.getNumChildren() != 1) {
                 throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
             }
-
-            /*
-            SimpleCalculatorOps op = SimpleCalculatorOps.fromName(opString);
-            switch (op) {
-            case NEG:
-                return -1 * visit(node.getJmmChild(0));
-
-            default:
-                throw new RuntimeException("Illegal operation '" + op + "' in " + node.getKind() + ".");
-            }
-            */
         }
 
         if (node.getNumChildren() != 1) {
@@ -74,29 +63,6 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
             if (node.getNumChildren() != 2) {
                 throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
             }
-
-            /*
-            SimpleCalculatorOps op = SimpleCalculatorOps.fromName(opString);
-            switch (op) {
-            case MUL:
-                return visit(node.getJmmChild(0)) * visit(node.getJmmChild(1));
-
-            case DIV:
-                return visit(node.getJmmChild(0)) / visit(node.getJmmChild(1));
-
-            case ADD:
-                return visit(node.getJmmChild(0)) + visit(node.getJmmChild(1));
-
-            case SUB:
-                return visit(node.getJmmChild(0)) - visit(node.getJmmChild(1));
-
-            case AND:
-            case LT:
-                return 0;
-
-            default:
-                throw new RuntimeException("Illegal operation '" + op + "' in " + node.getKind() + ".");
-            }*/
         }
 
         if (node.getNumChildren() != 1) {
