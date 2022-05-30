@@ -1,25 +1,8 @@
-import io;
+import ioPlus;
 
-class HelloWorld extends Hello{
-    int hey;
-    String str;
-    int[] newA;
+class HelloWorld {
 
 	public static void main(String[] args) {
-	    int[] a;
-	    int b;
-	    boolean c;
-        HelloWorld d;
-        d = new Hello();
-        //d = new ioPlus(); Isto não devia funcionar
-		ioPlus.printHelloWorld();
-	}
-
-	public int yellow(int yel, int[] arr) {
-	    int[] d;
-	    int a;
-	    d[a] = ioPlus.printHelloWorld();
-        a = a + d;
-	    return a;
+	    ioPlus.printHelloWorld();
 	}
 }

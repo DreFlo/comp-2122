@@ -119,7 +119,7 @@
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.Cp2Test">
+  <component name="RunManager" selected="Gradle.JasminTest.test">
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -156,7 +156,11 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
+<<<<<<< HEAD
     <configuration name="Cp2Test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+=======
+    <configuration name="Cp2Test.test_1_11_ObjectAssignmentPassImports" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+>>>>>>> 174585d8bef877bfb0b59e8abd774c125e736b64
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
