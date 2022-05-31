@@ -16,20 +16,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class OllirToJasmin {
-    private final ClassUnit classUnit;
-
-    private final SymbolTable symbolTable;
-
-    private final Map<String, String> fullyQualifiedClassNames;
-
-    private final FunctionClassMap<Instruction, String> instructionMap;
-
-    private final Map<String, String> variableClass;
-
-    private Method currentMethod = null;
-
     private final static String DEFAULT_ACCESS = "public";
-
+    private final ClassUnit classUnit;
+    private final SymbolTable symbolTable;
+    private final Map<String, String> fullyQualifiedClassNames;
+    private final FunctionClassMap<Instruction, String> instructionMap;
+    private final Map<String, String> variableClass;
+    private Method currentMethod = null;
     private int labelNumber = 0;
 
     OllirToJasmin(OllirResult ollirResult) throws OllirErrorException {
@@ -49,7 +42,7 @@ public class OllirToJasmin {
         fullyQualifiedClassNames.put("this", classUnit.getClassName());
         fullyQualifiedClassNames.put(classUnit.getClassName(), classUnit.getClassName());
         for (String importString : classUnit.getImports()) {
-            String[] split =  importString.split("\\.");
+            String[] split = importString.split("\\.");
             String lastName;
 
             if (split.length == 0) {
@@ -73,6 +66,7 @@ public class OllirToJasmin {
         instructionMap.put(GetFieldInstruction.class, this::getCode);
         instructionMap.put(PutFieldInstruction.class, this::getCode);
         instructionMap.put(OpCondInstruction.class, this::getCode);
+        instructionMap.put(SingleOpCondInstruction.class, this::getCode);
     }
 
     private String getFullyQualifiedClassName(String name) throws RuntimeException {
@@ -84,9 +78,9 @@ public class OllirToJasmin {
                     return fullyQualifiedClassNames.get(symbol.getType().getName());
                 }
             }
-        }
-        else if (variableClass.containsKey(name)) {
-            return variableClass.get(name);
+            if (variableClass.containsKey(name)) {
+                return variableClass.get(name);
+            }
         }
         throw new RuntimeException("Could not find fully qualified class name for class: " + name);
     }
@@ -115,7 +109,6 @@ public class OllirToJasmin {
                 "   invokenonvirtual " + qualifiedSuperClassName + "/<init>()V\n" +
                 "   return\n" +
                 ".end method\n\n");
-        //code.append(SpecsIo.getResource("resources/jasminConstructor.template").replace("${SUPER_F_Q_CLASS_NAME}", qualifiedSuperClassName)).append("\n\n");
 
         for (Method method : classUnit.getMethods()) {
             if (method.isConstructMethod()) continue;
@@ -134,7 +127,7 @@ public class OllirToJasmin {
         if (field.isFinalField()) {
             code.append("final ");
         }
-        code.append(field.getFieldName()).append(" ");
+        code.append("'").append(field.getFieldName()).append("' ");
         code.append(getJasminType(field.getFieldType())).append(" ");
         if (field.isInitialized()) {
             code.append("= ").append(field.getInitialValue());
@@ -162,7 +155,7 @@ public class OllirToJasmin {
 
         // TODO CP3 - Calculate values
         code.append(".limit stack 99\n");
-        code.append(".limit locals 99\n");
+        code.append(".limit locals 200\n");
 
         for (Instruction instruction : method.getInstructions()) {
             code.append(getLabels(method.getLabels(instruction)));
@@ -206,7 +199,8 @@ public class OllirToJasmin {
                 return pushElementToStack(instruction.getFirstArg()) + "arraylength\n";
             }
 
-            default -> throw new NotImplementedException("Not implemented for invocation type: " + instruction.getInvocationType());
+            default ->
+                    throw new NotImplementedException("Not implemented for invocation type: " + instruction.getInvocationType());
         }
     }
 
@@ -216,7 +210,7 @@ public class OllirToJasmin {
         code.append(instruction.getInvocationType()).append(" ");
         code.append(getFullyQualifiedClassName(((Operand) instruction.getFirstArg()).getName()));
         code.append("/");
-        code.append(((LiteralElement )instruction.getSecondArg()).getLiteral().replace("\"", ""));
+        code.append(((LiteralElement) instruction.getSecondArg()).getLiteral().replace("\"", ""));
         code.append("(");
         code.append(instruction.getListOfOperands().stream().map(this::getJasminType).collect(Collectors.joining()));
         code.append(")");
@@ -238,7 +232,11 @@ public class OllirToJasmin {
                 return code.toString();
             }
         }
-        return "new " + getFullyQualifiedClassName(((Operand) instruction.getFirstArg()).getName()) + "\n";
+        String qualifiedClassName = getFullyQualifiedClassName(((Operand) instruction.getFirstArg()).getName());
+        code.append("new ").append(qualifiedClassName).append("\n");
+        code.append("dup\n");
+        code.append("invokenonvirtual ").append(qualifiedClassName).append("/<init>()V\n");
+        return code.toString();
     }
 
     private String getCodeLDC(CallInstruction instruction) {
@@ -249,13 +247,15 @@ public class OllirToJasmin {
         StringBuilder code = new StringBuilder();
         if (instruction.getDest() instanceof ArrayOperand) {
             code.append(storeInArray((ArrayOperand) instruction.getDest(), getCode(instruction.getRhs())));
-        }
-        else {
+        } else {
             code.append(getCode(instruction.getRhs()));
             switch (instruction.getTypeOfAssign().getTypeOfElement()) {
-                case INT32, BOOLEAN -> code.append("istore ").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
-                case OBJECTREF, ARRAYREF -> code.append("astore ").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
-                default -> throw new NotImplementedException("Not implemented for type: " + instruction.getTypeOfAssign().getTypeOfElement());
+                case INT32, BOOLEAN ->
+                        code.append("istore ").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
+                case OBJECTREF, ARRAYREF ->
+                        code.append("astore ").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
+                default ->
+                        throw new NotImplementedException("Not implemented for type: " + instruction.getTypeOfAssign().getTypeOfElement());
             }
             code.append("\n");
             switch (instruction.getTypeOfAssign().getTypeOfElement()) {
@@ -272,10 +272,11 @@ public class OllirToJasmin {
                 }
                 case ARRAYREF -> {
                     if (instruction.getRhs().getClass() == CallInstruction.class) {
-                        variableClass.put(((Operand) instruction.getDest()).getName(), "[I" );
+                        variableClass.put(((Operand) instruction.getDest()).getName(), "[I");
                     }
                 }
-                default -> throw new NotImplementedException("Not implemented for type: " + instruction.getTypeOfAssign().getTypeOfElement());
+                default ->
+                        throw new NotImplementedException("Not implemented for type: " + instruction.getTypeOfAssign().getTypeOfElement());
             }
         }
         return code.toString();
@@ -291,6 +292,7 @@ public class OllirToJasmin {
             case MULI32, MUL -> code.append("imul\n");
             case DIVI32, DIV -> code.append("idiv\n");
             case ANDB, AND -> code.append("iand\n");
+            case ORB, OR -> code.append("ior\n");
             case LTHI32, LTH -> {
                 code.append("if_icmplt L").append(labelNumber).append("\n");
                 code.append(pushComparisonResultToStack());
@@ -311,7 +313,8 @@ public class OllirToJasmin {
                 code.append("if_icmpeq L").append(labelNumber).append("\n");
                 code.append(pushComparisonResultToStack());
             }
-            default -> throw new NotImplementedException("Not implemented for type: " + instruction.getOperation().getOpType());
+            default ->
+                    throw new NotImplementedException("Not implemented for type: " + instruction.getOperation().getOpType());
         }
         return code.toString();
     }
@@ -343,7 +346,7 @@ public class OllirToJasmin {
         if (instruction.hasReturnValue()) {
             code.append(pushElementToStack(instruction.getOperand()));
             switch (instruction.getOperand().getType().getTypeOfElement()) {
-                case OBJECTREF, STRING -> code.append("areturn\n");
+                case OBJECTREF, STRING, ARRAYREF -> code.append("areturn\n");
                 case INT32, BOOLEAN -> code.append("ireturn\n");
             }
         } else {
@@ -380,6 +383,11 @@ public class OllirToJasmin {
                 "ifne " + instruction.getLabel() + "\n";
     }
 
+    public String getCode(SingleOpCondInstruction instruction) {
+        return getCode(instruction.getCondition()) +
+                "ifne " + instruction.getLabel() + "\n";
+    }
+
     private String pushElementToStack(Element element) {
         StringBuilder code = new StringBuilder();
         if (element instanceof ArrayOperand) {
@@ -389,23 +397,25 @@ public class OllirToJasmin {
                 code.append(pushElementToStack(index));
             }
             code.append("iaload");
-        }
-        else if (!element.isLiteral()) {
+        } else if (!element.isLiteral()) {
             if (((Operand) element).getName().equals("this")) {
                 code.append("aload_0");
-            }
-            else {
+            } else {
                 switch (element.getType().getTypeOfElement()) {
-                    case INT32, BOOLEAN -> code.append("iload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
-                    case OBJECTREF, ARRAYREF -> code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
-                    default -> throw new NotImplementedException("Not implemented for type: " + element.getType().getTypeOfElement() + " with no name.");
+                    case INT32, BOOLEAN ->
+                            code.append("iload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
+                    case OBJECTREF, ARRAYREF ->
+                            code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
+                    default ->
+                            throw new NotImplementedException("Not implemented for type: " + element.getType().getTypeOfElement() + " with no name.");
                 }
             }
         } else {
             switch (element.getType().getTypeOfElement()) {
                 case STRING, INT32 -> code.append("ldc ").append(((LiteralElement) element).getLiteral());
                 case BOOLEAN -> code.append("bipush ").append(((LiteralElement) element).getLiteral());
-                default -> throw new NotImplementedException("Not implemented for type: " + element.getType().getTypeOfElement() + " with no name.");
+                default ->
+                        throw new NotImplementedException("Not implemented for type: " + element.getType().getTypeOfElement() + " with no name.");
             }
         }
         code.append("\n");
@@ -429,14 +439,12 @@ public class OllirToJasmin {
             for (Element element : instruction.getListOfOperands()) {
                 code.append(pushElementToStack(element));
             }
-        }
-        else if (instruction.getInvocationType() == CallType.invokespecial || instruction.getInvocationType() == CallType.invokevirtual) {
+        } else if (instruction.getInvocationType() == CallType.invokespecial || instruction.getInvocationType() == CallType.invokevirtual) {
             code.append(pushElementToStack(instruction.getFirstArg()));
             for (Element element : instruction.getListOfOperands()) {
                 code.append(pushElementToStack(element));
             }
-        }
-        else {
+        } else {
             instruction.show();
             throw new NotImplementedException("Not implemented for " + instruction.getInvocationType());
         }
@@ -446,8 +454,7 @@ public class OllirToJasmin {
     private String getJasminType(Element element) {
         if (element.getType() instanceof ArrayType) {
             return "[" + getJasminType(((ArrayType) element.getType()).getArrayType());
-        }
-        else {
+        } else {
             switch (element.getType().getTypeOfElement()) {
                 case INT32 -> {
                     return "I";
