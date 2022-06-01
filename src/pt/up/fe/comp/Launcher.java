@@ -49,8 +49,6 @@ public class Launcher {
         var eval = new VisitorEval();
         JmmNode root = parserResult.getRootNode();
 
-        System.out.println("visitor eval: " + eval.visit(root, null));
-
         // Check if there are parsing errors
         TestUtils.noErrors(parserResult.getReports());
 
@@ -76,6 +74,9 @@ public class Launcher {
         JasminResult jasminResult = jasminEmitter.toJasmin(ollirResult);
 
         TestUtils.noErrors(jasminResult.getReports());
+
+        File file = new File("./libs-jmm/compiled");
+        jasminResult.compile(file);
     }
 
 }
