@@ -1,5 +1,4 @@
 import BoardBase;
-import io;
 
 class TicTacToe {
 
@@ -182,13 +181,10 @@ class TicTacToe {
         if (!mygame.inbounds(move[0],move[1])) 
           BoardBase.wrongMove();
         else {
-          if (!mygame.Move(move[0],move[1])) {
+          if (!mygame.Move(move[0],move[1]))
              BoardBase.placeTaken();
-          }
-          else {
+          else
             done = true;
-          }
-
        } 
       }
 	
