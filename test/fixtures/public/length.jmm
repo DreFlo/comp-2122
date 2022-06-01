@@ -2,7 +2,7 @@ class Length {
     public int blue() {
         int len;
         int[] a;
-
+        a[0] = 0;
         len = a.length;
         return len;
     }
