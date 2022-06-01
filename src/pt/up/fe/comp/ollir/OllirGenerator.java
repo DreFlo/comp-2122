@@ -178,21 +178,27 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
             }
         }
 
-        code.append("\t".repeat(indentCounter)).append("if (");
         switch (ifCondition.getJmmChild(0).getKind()){
             case "BinOp":
                 String condition = codeLines[codeLines.length - 1];
                 List<String> variables = OllirUtils.getVarNamesFromExpression(condition);
                 switch (ifCondition.getJmmChild(0).get("op")){
                     case "lt":
+                        code.append("\t".repeat(indentCounter)).append("if (");
                         code.append(variables.get(0)).append(" >=.bool ").append(variables.get(1));
                         break;
                     case "and":
-                        code.append(variables.get(0)).append(" ||.bool ").append(variables.get(1));
+                        StringBuilder leftSideTemp = new StringBuilder(OllirUtils.getNewVariableName()).append(".bool");
+                        code.append("\t".repeat(indentCounter)).append(leftSideTemp).append(" :=.bool !.bool ").append(variables.get(0)).append(";\n");
+                        StringBuilder rightSideTemp = new StringBuilder(OllirUtils.getNewVariableName()).append(".bool");
+                        code.append("\t".repeat(indentCounter)).append(rightSideTemp).append(" :=.bool !.bool ").append(variables.get(1)).append(";\n");
+                        code.append("\t".repeat(indentCounter)).append("if (");
+                        code.append(leftSideTemp).append(" ||.bool ").append(rightSideTemp);
                         break;
                 }
                 break;
             case "UnaryOp":
+                code.append("\t".repeat(indentCounter)).append("if (");
                 switch (ifCondition.getJmmChild(0).get("op")){
                     case "not":
                         String[] parts = codeLines[codeLines.length - 1].split(" ");
@@ -202,6 +208,7 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
                 }
                 break;
             case "Literal":
+                code.append("\t".repeat(indentCounter)).append("if (");
                 switch (ifCondition.getJmmChild(0).get("value")){
                     case "true":
                         code.append("0.bool");
@@ -213,6 +220,7 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
                 break;
             case "Identifier":
             case "CallExpression":
+                code.append("\t".repeat(indentCounter)).append("if (");
                 code.append("!.bool ").append(ollirCode.getVariable());
                 break;
             default:
