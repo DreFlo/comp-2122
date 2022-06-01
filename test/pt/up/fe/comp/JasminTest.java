@@ -15,7 +15,7 @@ public class JasminTest {
 
     @Test
     public void test() {
-        JasminResult jasminResult = TestUtils.backend(SpecsIo.getResource("fixtures/public/Life.jmm"));
+        JasminResult jasminResult = TestUtils.backend(SpecsIo.getResource("fixtures/public/TicTacToe.jmm"));
         TestUtils.noErrors(jasminResult.getReports());
 
         Scanner scanner = new Scanner(jasminResult.getJasminCode());
@@ -29,7 +29,16 @@ public class JasminTest {
             l++;
         }
 
-        jasminResult.run();
+        jasminResult.run("0\n" +
+                "0\n" +
+                "0\n" +
+                "1\n" +
+                "1\n" +
+                "1\n" +
+                "1\n" +
+                "0\n" +
+                "2\n" +
+                "2");
     }
 
     @Test

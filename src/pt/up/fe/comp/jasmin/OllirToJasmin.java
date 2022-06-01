@@ -2,6 +2,7 @@ package pt.up.fe.comp.jasmin;
 
 import org.specs.comp.ollir.*;
 import pt.up.fe.comp.Array;
+import pt.up.fe.comp.UnaryOp;
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.ollir.OllirResult;
@@ -153,9 +154,8 @@ public class OllirToJasmin {
 
         code.append(methodParamTypes).append(")").append(getJasminType(method.getReturnType())).append("\n");
 
-        // TODO CP3 - Calculate values
-        code.append(".limit stack 99\n");
-        code.append(".limit locals 200\n");
+        code.append(".limit stack ").append(calculateStackSize(method)).append("\n");
+        code.append(".limit locals ").append(calculateLocalVariableNumber(method)).append("\n");
 
         for (Instruction instruction : method.getInstructions()) {
             code.append(getLabels(method.getLabels(instruction)));
@@ -165,6 +165,93 @@ public class OllirToJasmin {
         code.append(".end method\n\n");
 
         return code.toString();
+    }
+
+    private int calculateLocalVariableNumber(Method method) {
+        System.out.println("Variable Number: " + (method.getVarTable().size() + 1));
+        return method.getVarTable().size() + 1;
+    }
+
+    private int calculateStackSize(Method method) {
+        int stackSize = 0;
+        for (Instruction instruction : method.getInstructions()) {
+            int minStackSize = instructionMinStackSize(instruction);
+            if (minStackSize > stackSize) stackSize = minStackSize;
+        }
+        return stackSize;
+    }
+
+    private int instructionMinStackSize(Instruction instruction) {
+        if (instruction instanceof CallInstruction) {
+            CallInstruction callInstruction = (CallInstruction) instruction;
+            return callInstruction.getListOfOperands().size() + 2;
+        }
+        else if (instruction instanceof SingleOpInstruction) {
+            SingleOpInstruction singleOpInstruction = (SingleOpInstruction) instruction;
+            return elementMinStackSize(singleOpInstruction.getSingleOperand());
+        } else if (instruction instanceof UnaryOpInstruction) {
+            UnaryOpInstruction unaryOpInstruction = (UnaryOpInstruction) instruction;
+            return elementMinStackSize(unaryOpInstruction.getOperand());
+        } else if (instruction instanceof BinaryOpInstruction) {
+            BinaryOpInstruction binaryOpInstruction = (BinaryOpInstruction) instruction;
+            return elementMinStackSize(binaryOpInstruction.getLeftOperand()) + elementMinStackSize(binaryOpInstruction.getRightOperand());
+        }
+        else if (instruction instanceof SingleOpCondInstruction) {
+            SingleOpCondInstruction singleOpCondInstruction = (SingleOpCondInstruction) instruction;
+            return instructionMinStackSize(singleOpCondInstruction.getCondition());
+        }
+        else if (instruction instanceof OpCondInstruction) {
+            OpCondInstruction opCondInstruction = (OpCondInstruction) instruction;
+            return instructionMinStackSize(opCondInstruction.getCondition());
+        } else if (instruction instanceof PutFieldInstruction) {
+            PutFieldInstruction putFieldInstruction = (PutFieldInstruction) instruction;
+            int stackSize = 0;
+            stackSize += elementMinStackSize(putFieldInstruction.getFirstOperand());
+            stackSize += elementMinStackSize(putFieldInstruction.getSecondOperand());
+            stackSize += elementMinStackSize(putFieldInstruction.getThirdOperand());
+            return stackSize;
+        } else if (instruction instanceof AssignInstruction) {
+            AssignInstruction assignInstruction = (AssignInstruction) instruction;
+            if (assignInstruction.getDest() instanceof ArrayOperand) {
+                return elementMinStackSize(assignInstruction.getDest()) + instructionMinStackSize(assignInstruction.getRhs());
+            }
+            return instructionMinStackSize(assignInstruction.getRhs());
+        } else if (instruction instanceof GetFieldInstruction) {
+            GetFieldInstruction getFieldInstruction = (GetFieldInstruction) instruction;
+            int stackSize = 0;
+            stackSize += elementMinStackSize(getFieldInstruction.getFirstOperand());
+            stackSize += elementMinStackSize(getFieldInstruction.getSecondOperand());
+            return stackSize;
+        } else if (instruction instanceof ReturnInstruction) {
+            ReturnInstruction returnInstruction = (ReturnInstruction) instruction;
+            if (returnInstruction.hasReturnValue()) {
+                return elementMinStackSize(returnInstruction.getOperand());
+            }
+            return 0;
+        } else {
+            instruction.show();
+            return 0;
+        }
+    }
+
+    private int elementMinStackSize(Element element) {
+        if (element instanceof LiteralElement) {
+            return 1;
+        }
+        else if (element instanceof Operand) {
+            Operand operand = (Operand) element;
+            if (operand instanceof ArrayOperand) {
+                ArrayOperand arrayOperand = (ArrayOperand) operand;
+                return arrayOperand.getIndexOperands().size() + 1;
+            }
+            else {
+                return 1;
+            }
+        }
+        else {
+            System.out.println("Went wrong");
+            return 0;
+        }
     }
 
     private String getLabels(List<String> labels) {
