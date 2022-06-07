@@ -82,6 +82,8 @@ public class OllirToJasmin {
             if (variableClass.containsKey(name)) {
                 return variableClass.get(name);
             }
+        } else if (variableClass.containsKey(name)) {
+            return variableClass.get(name);
         }
         throw new RuntimeException("Could not find fully qualified class name for class: " + name);
     }
@@ -184,7 +186,9 @@ public class OllirToJasmin {
     private int instructionMinStackSize(Instruction instruction) {
         if (instruction instanceof CallInstruction) {
             CallInstruction callInstruction = (CallInstruction) instruction;
-            return callInstruction.getListOfOperands().size() + 2;
+            callInstruction.show();
+            List<Element> listOfOperands = callInstruction.getListOfOperands();
+            return listOfOperands == null ? 0 : listOfOperands.size() + 2;
         }
         else if (instruction instanceof SingleOpInstruction) {
             SingleOpInstruction singleOpInstruction = (SingleOpInstruction) instruction;
@@ -321,9 +325,11 @@ public class OllirToJasmin {
             }
         }
         String qualifiedClassName = getFullyQualifiedClassName(((Operand) instruction.getFirstArg()).getName());
+        /*
         code.append("new ").append(qualifiedClassName).append("\n");
         code.append("dup\n");
         code.append("invokenonvirtual ").append(qualifiedClassName).append("/<init>()V\n");
+        */
         return code.toString();
     }
 
