@@ -170,7 +170,6 @@ public class OllirToJasmin {
     }
 
     private int calculateLocalVariableNumber(Method method) {
-        System.out.println("Variable Number: " + (method.getVarTable().size() + 1));
         return method.getVarTable().size() + 1;
     }
 
@@ -186,7 +185,6 @@ public class OllirToJasmin {
     private int instructionMinStackSize(Instruction instruction) {
         if (instruction instanceof CallInstruction) {
             CallInstruction callInstruction = (CallInstruction) instruction;
-            callInstruction.show();
             List<Element> listOfOperands = callInstruction.getListOfOperands();
             return listOfOperands == null ? 0 : listOfOperands.size() + 2;
         }
@@ -296,7 +294,6 @@ public class OllirToJasmin {
     }
 
     public String getCodeInvoke(CallInstruction instruction) {
-        instruction.show();
         StringBuilder code = new StringBuilder();
         code.append(pushArgumentsToStack(instruction));
         code.append(instruction.getInvocationType()).append(" ");
@@ -325,11 +322,7 @@ public class OllirToJasmin {
             }
         }
         String qualifiedClassName = getFullyQualifiedClassName(((Operand) instruction.getFirstArg()).getName());
-        /*
         code.append("new ").append(qualifiedClassName).append("\n");
-        code.append("dup\n");
-        code.append("invokenonvirtual ").append(qualifiedClassName).append("/<init>()V\n");
-        */
         return code.toString();
     }
 
@@ -492,17 +485,13 @@ public class OllirToJasmin {
             }
             code.append("iaload");
         } else if (!element.isLiteral()) {
-            if (((Operand) element).getName().equals("this")) {
-                code.append("aload_0");
-            } else {
-                switch (element.getType().getTypeOfElement()) {
-                    case INT32, BOOLEAN ->
-                            code.append("iload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
-                    case OBJECTREF, ARRAYREF ->
-                            code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
-                    default ->
-                            throw new NotImplementedException("Not implemented for type: " + element.getType().getTypeOfElement() + " with no name.");
-                }
+            switch (element.getType().getTypeOfElement()) {
+                case INT32, BOOLEAN ->
+                        code.append("iload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
+                case OBJECTREF, ARRAYREF, THIS ->
+                        code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
+                default ->
+                        throw new NotImplementedException("Not implemented for type: " + element.getType().getTypeOfElement() + " with no name.");
             }
         } else {
             switch (element.getType().getTypeOfElement()) {
@@ -539,7 +528,6 @@ public class OllirToJasmin {
                 code.append(pushElementToStack(element));
             }
         } else {
-            instruction.show();
             throw new NotImplementedException("Not implemented for " + instruction.getInvocationType());
         }
         return code.toString();
@@ -581,11 +569,14 @@ public class OllirToJasmin {
             case BOOLEAN -> {
                 return "Z";
             }
-            case STRING, OBJECTREF -> {
+            case STRING -> {
                 return "Ljava/lang/String;";
             }
             case VOID -> {
                 return "V";
+            }
+            case OBJECTREF -> {
+                return "L" + ((ClassType) type).getName() + ";";
             }
             default -> throw new NotImplementedException(type.getTypeOfElement());
         }
