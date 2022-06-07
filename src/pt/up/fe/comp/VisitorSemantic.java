@@ -34,9 +34,16 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
         addVisit("IfCondition", this::ifConditionVisit);
         addVisit("WhileCondition", this::whileConditionStatement);
         addVisit("VarDeclaration", this::varDeclarationVisit);
+        addVisit("Index", this::indexVisit);
         setDefaultVisit(this::defaultVisit);
     }
-
+    private Integer indexVisit(JmmNode node, Object dummy){
+        if(!getType(node.getJmmChild(1)).equals("int")){
+            addReport(node.getJmmChild(1), "Index should be an int");
+            return null;
+        }
+        return 0;
+    }
     private Integer defaultVisit(JmmNode node, Object dummy) {
 
         for(var child: node.getChildren())
@@ -76,7 +83,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
         visit(child, dummy);
         switch(child.getKind()) {
             case "Literal":
-                if(!node.get("type").equals("boolean")) {
+                if(!child.get("type").equals("boolean")) {
                     addReport(node, "If Statement should be 'boolean'");
                     return null;
                 }
@@ -284,12 +291,24 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                 if(!checkArguments(argument, identifiers)) return null;
                 break;
             case 2:
+                /* Check this. in static method aka MainMethod */
+                if(identifiers.get(0).getKind().equals("ThisT")) {
+                    var parentMethod = getParentNode(node);
+                    if (parentMethod.getKind().equals("MainMethod")) {
+                        addReport(identifiers.get(0), "this is used on static method");
+                        return null;
+                    }
+                }
+
                 if(!checkClass(getType(identifiers.get(0)))) {
                     if(!checkVariableDeclaration(identifiers.get(0))) {
                         addReport(identifiers.get(0), "Not accessible");
                         return null;
                     }
                 } else {
+
+
+
                     if(this.symbolTable.getSuper() == null) {
                         if(!checkVariableDeclaration(identifiers.get(1))){
                             addReport(identifiers.get(1), "Not declared");
@@ -339,8 +358,11 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
     }
 
     private Integer callAssignmentStatement(JmmNode node, Object dummy) {
+
+
         var leftChild = node.getJmmChild(0);
         var rightChild = node.getJmmChild(1);
+        visit(leftChild, dummy);
         visit(rightChild, dummy);
         if(!checkVariableDeclaration(leftChild)) {
             addReport(leftChild, "Variable not declared");
@@ -355,6 +377,8 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
         var leftChildType = getType(leftChild);
         var rightChildType = getType(rightChild);
 
+
+
         if(leftChildType == null) return null;
         if(rightChildType == null) return null;
 
@@ -363,6 +387,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                 addReport(leftChild, "Literal cannot be assigned");
                 return null;
             case "Identifier":
+            case "Index":
                 switch(rightChild.getKind()) {
                     case "BinOp":
                     case "UnaryOp":
@@ -380,6 +405,10 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                         }
                         break;
                     case "Index":
+                        if(!leftChildType.equals(rightChildType)){
+                            addReport(rightChild, "Invalid type");
+                            return null;
+                        }
                         break;
                     case "NewExp":
                         if(!leftChildType.equals(getType(rightChild.getJmmChild(0)))) {
@@ -409,7 +438,10 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
             case "Literal":
                 return node.get("type");
             case "Identifier":
-                var variables = getVariablesInScope(getParentMethodSignature(node));
+                var methodNode = getParentNode(node);
+                List<Symbol> variables = new ArrayList<>();
+                if(methodNode == null) variables = getVariablesInScope(getParentMethodSignature(node), false);
+                else variables = getVariablesInScope(getParentMethodSignature(node), methodNode.getKind().equals("MainMethod"));
                 for(var variable: variables) {
                     if (node.get("name").equals(variable.getName())) {
                         return variable.getType().getName();
@@ -433,6 +465,8 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                 return getType(node.getJmmChild(0));
             case "IfCondition":
                 return "boolean";
+            case "Index":
+                return "int";
             default:
                 return null;
         }
@@ -503,10 +537,14 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
      * @param nodeSignature
      * @return All variables available in scope
      */
-    private List<Symbol> getVariablesInScope(String nodeSignature) {
-        var variables = this.symbolTable.getLocalVariables(nodeSignature);
-        variables.addAll(this.symbolTable.getParameters(nodeSignature));
-        variables.addAll(this.symbolTable.getFields());
+    private List<Symbol> getVariablesInScope(String nodeSignature, Boolean static_) {
+        List<Symbol> variables = new ArrayList<>();
+        var localVariables = this.symbolTable.getLocalVariables(nodeSignature);
+        if(localVariables != null) variables.addAll(localVariables);
+        var parameters = this.symbolTable.getParameters(nodeSignature);
+        if(localVariables != null) variables.addAll(parameters);
+        var fields = this.symbolTable.getFields();
+        if(fields != null && !static_) variables.addAll(fields);
         return variables;
     }
 
@@ -517,7 +555,10 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
      */
     private Boolean checkIdentifierOnSymbolTable(JmmNode variable) {
         if(!variable.getKind().equals("Identifier")) return true;
-        var variables = getVariablesInScope(getParentMethodSignature(variable));
+        var methodNode = getParentNode(variable);
+        List<Symbol> variables = new ArrayList<>();
+        if(methodNode == null) variables = getVariablesInScope(getParentMethodSignature(variable), false);
+        else variables = getVariablesInScope(getParentMethodSignature(variable), methodNode.getKind().equals("MainMethod"));
         for (var variableTemp: variables) {
             if (variable.get("name").equals(variableTemp.getName())) {
                 return true;
@@ -617,7 +658,12 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
 
     private Boolean isArray(JmmNode node) {
         if(!node.getAttributes().contains("name")) return false;
-        var variables = getVariablesInScope(getParentMethodSignature(node));
+
+        var methodNode = getParentNode(node);
+        List<Symbol> variables = new ArrayList<>();
+        if(methodNode == null) variables = getVariablesInScope(getParentMethodSignature(node), false);
+        else variables = getVariablesInScope(getParentMethodSignature(node), methodNode.getKind().equals("MainMethod"));
+
         for(var variable: variables) {
             if (variable.getName().equals(node.get("name"))) {
                 return variable.getType().isArray();

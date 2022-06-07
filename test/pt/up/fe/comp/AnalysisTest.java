@@ -7,7 +7,7 @@ import pt.up.fe.specs.util.SpecsIo;
 public class AnalysisTest {
     @Test
     public void test() {
-        JmmSemanticsResult result = TestUtils.analyse(SpecsIo.getResource("fixtures/public/WhileAndIf.jmm"));
+        JmmSemanticsResult result = TestUtils.analyse(SpecsIo.getResource("fixtures/public/TicTacToe.jmm"));
 
         System.out.println(result.getSymbolTable().print());
 
