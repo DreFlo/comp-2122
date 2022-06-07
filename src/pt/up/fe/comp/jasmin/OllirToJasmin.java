@@ -170,7 +170,7 @@ public class OllirToJasmin {
     }
 
     private int calculateLocalVariableNumber(Method method) {
-        return method.getVarTable().size() + 1;
+        return method.getVarTable().containsKey("this") ? method.getVarTable().size() : method.getVarTable().size() + 1;
     }
 
     private int calculateStackSize(Method method) {
