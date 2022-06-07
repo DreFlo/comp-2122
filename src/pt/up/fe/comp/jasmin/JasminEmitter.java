@@ -17,6 +17,8 @@ public class JasminEmitter implements JasminBackend {
             throw new RuntimeException(e);
         }
 
+        System.out.println(jasminCode);
+
         return new JasminResult(ollirResult, jasminCode, ollirResult.getReports());
     }
 }

@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="a8f151d9-8ba9-41c0-9415-6a7a4fae211a" name="Changes" comment="Symbol Table being constructed. Missing reports.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/JasminEmitter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/JasminEmitter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +117,7 @@
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Launcher">
+  <component name="RunManager" selected="Gradle.Cpf4_Jasmin.section5_Arrays_Load_ComplexArrayAccess">
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -175,7 +177,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="Cp2Test.test_1_10_ObjectAssignmentPassExtends" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Cp2Test.test_3_03_OllirToJasminInvoke" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -188,7 +190,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.Cp2Test.test_1_10_ObjectAssignmentPassExtends&quot;" />
+            <option value="&quot;pt.up.fe.comp.Cp2Test.test_3_03_OllirToJasminInvoke&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -198,7 +200,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="Cp2Test.test_1_11_ObjectAssignmentPassImports" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Cpf3_Ollir" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -211,7 +213,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.Cp2Test.test_1_11_ObjectAssignmentPassImports&quot;" />
+            <option value="&quot;pt.up.fe.comp.cpf.Cpf3_Ollir&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -221,7 +223,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="Cp2Test.test_1_14_CallToUndeclaredMethod" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Cpf4_Jasmin" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -234,7 +236,30 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.Cp2Test.test_1_14_CallToUndeclaredMethod&quot;" />
+            <option value="&quot;pt.up.fe.comp.cpf.Cpf4_Jasmin&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="Cpf4_Jasmin.section5_Arrays_Load_ComplexArrayAccess" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;pt.up.fe.comp.cpf.Cpf4_Jasmin.section5_Arrays_Load_ComplexArrayAccess&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -247,17 +272,19 @@
     <list>
       <item itemvalue="Application.Launcher" />
       <item itemvalue="Gradle.AnalysisTest" />
-      <item itemvalue="Gradle.Cp2Test.test_1_10_ObjectAssignmentPassExtends" />
-      <item itemvalue="Gradle.Cp2Test.test_1_11_ObjectAssignmentPassImports" />
-      <item itemvalue="Gradle.Cp2Test.test_1_14_CallToUndeclaredMethod" />
+      <item itemvalue="Gradle.Cp2Test.test_3_03_OllirToJasminInvoke" />
+      <item itemvalue="Gradle.Cpf3_Ollir" />
+      <item itemvalue="Gradle.Cpf4_Jasmin" />
+      <item itemvalue="Gradle.Cpf4_Jasmin.section5_Arrays_Load_ComplexArrayAccess" />
       <item itemvalue="Gradle.Cp2Test" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.Cpf4_Jasmin.section5_Arrays_Load_ComplexArrayAccess" />
+        <item itemvalue="Gradle.Cpf4_Jasmin" />
         <item itemvalue="Gradle.Cp2Test" />
-        <item itemvalue="Gradle.Cp2Test.test_1_10_ObjectAssignmentPassExtends" />
-        <item itemvalue="Gradle.Cp2Test.test_1_14_CallToUndeclaredMethod" />
-        <item itemvalue="Gradle.Cp2Test.test_1_11_ObjectAssignmentPassImports" />
+        <item itemvalue="Gradle.Cp2Test.test_3_03_OllirToJasminInvoke" />
+        <item itemvalue="Gradle.Cpf3_Ollir" />
       </list>
     </recent_temporary>
   </component>
@@ -286,6 +313,7 @@
       <workItem from="1652860091284" duration="9825000" />
       <workItem from="1653470844965" duration="6871000" />
       <workItem from="1654255173520" duration="9000" />
+      <workItem from="1654597395010" duration="3070000" />
     </task>
     <task id="LOCAL-00001" summary="Symbol Table being constructed. Missing reports.">
       <created>1651493959654</created>
