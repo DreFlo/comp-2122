@@ -215,6 +215,7 @@ public class OllirExpressionsUtils extends AJmmVisitor<Integer, OllirCode> {
                 variable.append(".").append(type);
                 beforeCode.append("\t".repeat(indentCounter)).append(variable).append(" :=.").append(type).
                         append(" new(").append(type).append(").").append(type).append(";\n");
+                beforeCode.append("\t".repeat(indentCounter)).append("invokespecial(").append(variable).append(",\"<init>\").V;\n");
                 break;
         }
 
