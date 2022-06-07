@@ -34,6 +34,15 @@ public class OllirGenerator extends AJmmVisitor<Integer, Integer> {
         addVisit("AssignmentStatement", this::assignmentStatementVisit);
 
         addVisit("UnaryOp", this::unaryOpVisit);
+
+        addVisit("CurlyStatement", this::curlyStatementVisit);
+    }
+
+    private Integer curlyStatementVisit(JmmNode node, Integer integer) {
+        for (JmmNode child : node.getChildren()) {
+            visit(child);
+        }
+        return 0;
     }
 
     public String getCode() {

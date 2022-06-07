@@ -2,8 +2,15 @@ package pt.up.fe.comp;
 
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ast.AJmmVisitor;
+import pt.up.fe.comp.jmm.report.Report;
+import pt.up.fe.comp.jmm.report.ReportType;
+import pt.up.fe.comp.jmm.report.Stage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class VisitorEval extends AJmmVisitor<Object, Integer> {
+    List<Report> reports;
 
     public VisitorEval() {
 
@@ -18,6 +25,14 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
         addVisit("Index", this::indexVisit);
 
         setDefaultVisit(this::defaultVisit);
+
+        reports = new ArrayList<>();
+    }
+
+    private void addReport(JmmNode node, String message) {
+        reports.add(new Report(ReportType.ERROR, Stage.SYNTATIC,
+                Integer.parseInt(node.get("line")), Integer.parseInt(node.get("col")),
+                message));
     }
 
     private Integer LiteralVisit(JmmNode node, Object dummy) {
@@ -26,30 +41,22 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
         if (node.getNumChildren() == 0) {
             switch (typeString){
                 case "int":
-                    return Integer.parseInt(node.get("image"));
                 case "boolean":
                     return 0;
                 default:
-                    throw new RuntimeException("Illegal type '" + typeString + "' in " + node.getKind() + ".");
+                    addReport(node, "Illegal type '" + typeString + "' in " + node.getKind() + ".");
+                    return 1;
             }
-
         }
-
-        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
+        addReport(node, "Illegal number of children in node");
+        return 1;
     }
 
     private Integer unaryOpVisit(JmmNode node, Object dummy) {
 
-        String opString = node.get("op");
-        if (opString != null) {
-
-            if (node.getNumChildren() != 1) {
-                throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
-            }
-        }
-
         if (node.getNumChildren() != 1) {
-            throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
+            addReport(node, "Illegal number of children in node " + node.getKind() + ".");
+            return 1;
         }
 
         return visit(node.getJmmChild(0));
@@ -57,19 +64,15 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
 
     private Integer binOpVisit(JmmNode node, Object dummy) {
 
-        String opString = node.get("op");
-        if (opString != null) {
-
-            if (node.getNumChildren() != 2) {
-                throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
-            }
+        if (node.getNumChildren() != 2) {
+            addReport(node, "Illegal number of children in node " + node.getKind() + ".");
+            return 1;
         }
 
-        if (node.getNumChildren() != 1) {
-            throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
-        }
+        for(var child: node.getChildren())
+            if (visit(child, dummy) != 0) return 1;
 
-        return visit(node.getJmmChild(0));
+        return 0;
     }
 
     private Integer identifierVisit(JmmNode node, Object dummy){
@@ -77,56 +80,70 @@ public class VisitorEval extends AJmmVisitor<Object, Integer> {
             return 0;
         }
 
-        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
+        addReport(node, "Illegal number of children in node " + node.getKind() + ".");
+        return 1;
     }
 
     private Integer inheritanceVisit(JmmNode node, Object dummy){
-        if (node.getNumChildren() == 0) {
-            return 0;
+        System.out.println(node.toTree());
+        if (node.getNumChildren() == 1) {
+            return visit(node.getJmmChild(0), dummy);
         }
-
-        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
+        addReport(node, "Illegal number of children in node " + node.getKind() + ".");
+        return 1;
     }
 
     private Integer varDeclarationVisit(JmmNode node, Object dummy){
         if (node.getNumChildren() == 2) {
+            for(var child: node.getChildren())
+                if (visit(child, dummy) != 0) return 1;
+
             return 0;
         }
 
-        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");
+        addReport(node, "Illegal number of children in node " + node.getKind() + ".");
+        return 1;
     }
 
     private Integer varTypeVisit(JmmNode node, Object dummy){
-        /*if (node.getNumChildren() == 2) {
+        if (node.getNumChildren() == 0) {
             return 0;
         }
 
-        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");*/
-        return  0;
+        addReport(node, "Illegal number of children in node " + node.getKind() + ".");
+        return 1;
     }
 
     private Integer callExpressionVisit(JmmNode node, Object dummy){
-        /*if (node.getNumChildren() == 2) {
+        if (node.getNumChildren() == 3) {
+            for(var child: node.getChildren())
+                if (visit(child, dummy) != 0) return 1;
+
             return 0;
         }
 
-        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");*/
-        return  0;
+        addReport(node, "Illegal number of children in node " + node.getKind() + ".");
+        return  1;
     }
 
     private Integer indexVisit(JmmNode node, Object dummy){
-        /*if (node.getNumChildren() == 2) {
+        if (node.getNumChildren() == 2) {
+            for(var child: node.getChildren())
+                if (visit(child, dummy) != 0) return 1;
             return 0;
         }
 
-        throw new RuntimeException("Illegal number of children in node " + node.getKind() + ".");*/
+        addReport(node, "Illegal number of children in node " + node.getKind() + ".");
         return  0;
     }
 
     private Integer defaultVisit(JmmNode node, Object dummy) {
-
         for(var child: node.getChildren())
-            visit(child, dummy);
+            if (visit(child, dummy) != 0) return 1;
         return 0;
+    }
+
+    public List<Report> getReports() {
+        return reports;
     }
 }

@@ -46,9 +46,6 @@ public class Launcher {
         // Parse stage
         JmmParserResult parserResult = parser.parse(input, config);
 
-        var eval = new VisitorEval();
-        JmmNode root = parserResult.getRootNode();
-
         // Check if there are parsing errors
         TestUtils.noErrors(parserResult.getReports());
 

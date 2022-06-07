@@ -29,33 +29,7 @@ public class SimpleParser implements JmmParser {
 
     @Override
     public JmmParserResult parse(String jmmCode, Map<String, String> config) {
-
-        try {
-
-            JmmGrammarParser parser = new JmmGrammarParser(SpecsIo.toInputStream(jmmCode));
-            parser.Start();
-
-            /*Node root = parser.rootNode();
-            root.dump("");*/
-
-            var root = (JmmNode) parser.rootNode();
-
-            new LineColAnnotator().visit(root);
-
-            if (root != null) {
-                System.out.println(root.sanitize().toTree());
-            }
-
-            if (root == null) {
-                return JmmParserResult.newError(new Report(ReportType.WARNING, Stage.SYNTATIC, -1,
-                        "JmmNode interface not yet implemented, returning null root node"));
-            }
-
-            return new JmmParserResult((JmmNode) root, Collections.emptyList(), config);
-
-        } catch (Exception e) {
-            return JmmParserResult.newError(Report.newError(Stage.SYNTATIC, -1, -1, "Exception during parsing", e));
-        }
+        return parse(jmmCode, "Start", config);
     }
 
     @Override
@@ -66,18 +40,20 @@ public class SimpleParser implements JmmParser {
             JmmGrammarParser parser = new JmmGrammarParser(SpecsIo.toInputStream(jmmCode));
             SpecsSystem.invoke(parser, startingRule);
 
-            /*Node root = parser.rootNode();
-            root.dump("");*/
+            VisitorEval visitorEval = new VisitorEval();
 
-            var root = ((JmmNode) parser.rootNode()).sanitize();
-            System.out.println(root.toTree());
+            var root = (JmmNode) parser.rootNode();
+
+            new LineColAnnotator().visit(root);
+
+            visitorEval.visit(root, null);
 
             if (!(root instanceof JmmNode)) {
                 return JmmParserResult.newError(new Report(ReportType.WARNING, Stage.SYNTATIC, -1,
                         "JmmNode interface not yet implemented, returning null root node"));
             }
 
-            return new JmmParserResult((JmmNode) root, Collections.emptyList(), config);
+            return new JmmParserResult((JmmNode) root, visitorEval.getReports(), config);
 
         } catch (Exception RE) {
             ParseException e = TestUtils.getException(RE, ParseException.class);

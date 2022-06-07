@@ -130,12 +130,12 @@ MainType #Type :
     < STRING > < OPEN_SQ_BRACK > < CLOSE_SQ_BRACK > ({ jjtThis.put("type", "String"); jjtThis.put("array", "true"); })
 ;
 
-EmptyStatement #void:
+CurlyStatement:
     < OPEN_CURL_BRACK > (Statement)* < CLOSE_CURL_BRACK >
 ;
 
 Statement #void :
-    EmptyStatement |
+    CurlyStatement |
 	(
 		< IF > < OPEN_PAREN > Expression #IfCondition < CLOSE_PAREN >
 			Statement #IfBody
