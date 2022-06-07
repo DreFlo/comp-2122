@@ -16,11 +16,11 @@ public class JmmAnalyser implements JmmAnalysis {
         SymbolTableFiller symbolTableFiller = new SymbolTableFiller();
         symbolTableFiller.visit(parserResult.getRootNode(), symbolTable);
 
-        //VisitorSemantic visitorSemantic = new VisitorSemantic(symbolTable);
-        //visitorSemantic.visit(parserResult.getRootNode(), symbolTable);
+        VisitorSemantic visitorSemantic = new VisitorSemantic(symbolTable);
+        visitorSemantic.visit(parserResult.getRootNode(), symbolTable);
 
         List<Report> reports = new ArrayList<>(symbolTableFiller.getReports());
-        //reports.addAll(visitorSemantic.getReports());
+        reports.addAll(visitorSemantic.getReports());
         return new JmmSemanticsResult(parserResult, symbolTable, reports);
     }
 }

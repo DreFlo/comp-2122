@@ -292,6 +292,7 @@ public class OllirToJasmin {
     }
 
     public String getCodeInvoke(CallInstruction instruction) {
+        instruction.show();
         StringBuilder code = new StringBuilder();
         code.append(pushArgumentsToStack(instruction));
         code.append(instruction.getInvocationType()).append(" ");
@@ -374,25 +375,25 @@ public class OllirToJasmin {
         code.append(pushElementToStack(instruction.getLeftOperand()));
         code.append(pushElementToStack(instruction.getRightOperand()));
         switch (instruction.getOperation().getOpType()) {
-            case ADDI32, ADD -> code.append("iadd\n");
-            case SUBI32, SUB -> code.append("isub\n");
-            case MULI32, MUL -> code.append("imul\n");
-            case DIVI32, DIV -> code.append("idiv\n");
+            case ADD -> code.append("iadd\n");
+            case SUB -> code.append("isub\n");
+            case MUL -> code.append("imul\n");
+            case DIV -> code.append("idiv\n");
             case ANDB, AND -> code.append("iand\n");
             case ORB, OR -> code.append("ior\n");
-            case LTHI32, LTH -> {
+            case LTH -> {
                 code.append("if_icmplt L").append(labelNumber).append("\n");
                 code.append(pushComparisonResultToStack());
             }
-            case GTHI32, GTH -> {
+            case GTH -> {
                 code.append("if_icmpgt L").append(labelNumber).append("\n");
                 code.append(pushComparisonResultToStack());
             }
-            case LTEI32, LTE -> {
+            case LTE -> {
                 code.append("if_icmple L").append(labelNumber).append("\n");
                 code.append(pushComparisonResultToStack());
             }
-            case GTEI32, GTE -> {
+            case GTE -> {
                 code.append("if_icmpge L").append(labelNumber).append("\n");
                 code.append(pushComparisonResultToStack());
             }

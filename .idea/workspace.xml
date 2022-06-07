@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f381ac2a-4710-4559-b642-0bfbb6dbce26" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/test/fixtures/public/TicTacToe.jmm" beforeDir="false" afterPath="$PROJECT_DIR$/test/fixtures/public/TicTacToe.jmm" afterDir="false" />
+    <list default="true" id="a8f151d9-8ba9-41c0-9415-6a7a4fae211a" name="Changes" comment="Symbol Table being constructed. Missing reports.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -264,7 +264,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="f381ac2a-4710-4559-b642-0bfbb6dbce26" name="Changes" comment="" />
+      <changelist id="a8f151d9-8ba9-41c0-9415-6a7a4fae211a" name="Changes" comment="Symbol Table being constructed. Missing reports." />
       <created>1648632973536</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -285,6 +285,7 @@
       <workItem from="1652827062107" duration="3067000" />
       <workItem from="1652860091284" duration="9825000" />
       <workItem from="1653470844965" duration="6871000" />
+      <workItem from="1654255173520" duration="9000" />
     </task>
     <task id="LOCAL-00001" summary="Symbol Table being constructed. Missing reports.">
       <created>1651493959654</created>
