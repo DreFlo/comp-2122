@@ -10,9 +10,13 @@ import java.util.Collections;
 public class JasminEmitter implements JasminBackend {
     @Override
     public JasminResult toJasmin(OllirResult ollirResult) {
+        return toJasmin(ollirResult, false);
+    }
+
+    public JasminResult toJasmin(OllirResult ollirResult, boolean optimize) {
         String jasminCode;
         try {
-            jasminCode = new OllirToJasmin(ollirResult).getCode();
+            jasminCode = new OllirToJasmin(ollirResult, optimize).getCode();
         } catch (OllirErrorException e) {
             throw new RuntimeException(e);
         }

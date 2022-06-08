@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import pt.up.fe.comp.jasmin.JasminEmitter;
 import pt.up.fe.comp.jmm.analysis.JmmSemanticsResult;
@@ -24,7 +25,7 @@ public class Launcher {
         SpecsLogs.info("Executing with args: " + Arrays.toString(args));
 
         // read the input code
-        if (args.length != 1) {
+        if (args.length < 1) {
             throw new RuntimeException("Expected a single argument, a path to an existing input file.");
         }
         File inputFile = new File(args[0]);
@@ -33,10 +34,15 @@ public class Launcher {
         }
         String input = SpecsIo.read(inputFile);
 
+        boolean optimize = false;
+        if (args.length == 2) {
+            optimize = Objects.equals(args[1].trim(), "-o");
+        }
+
         // Create config
         Map<String, String> config = new HashMap<>();
         config.put("inputFile", args[0]);
-        config.put("optimize", "false");
+        config.put("optimize", optimize ? "true" : "false");
         config.put("registerAllocation", "-1");
         config.put("debug", "false");
 
@@ -68,7 +74,7 @@ public class Launcher {
         // Instantiate JmmBackend
         JasminEmitter jasminEmitter = new JasminEmitter();
 
-        JasminResult jasminResult = jasminEmitter.toJasmin(ollirResult);
+        JasminResult jasminResult = jasminEmitter.toJasmin(ollirResult, optimize);
 
         TestUtils.noErrors(jasminResult.getReports());
 

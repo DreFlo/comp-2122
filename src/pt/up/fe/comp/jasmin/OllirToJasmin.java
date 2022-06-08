@@ -25,8 +25,9 @@ public class OllirToJasmin {
     private final Map<String, String> variableClass;
     private Method currentMethod = null;
     private int labelNumber = 0;
+    private boolean optimize;
 
-    OllirToJasmin(OllirResult ollirResult) throws OllirErrorException {
+    OllirToJasmin(OllirResult ollirResult, boolean optimize) throws OllirErrorException {
         this.classUnit = ollirResult.getOllirClass();
         this.symbolTable = ollirResult.getSymbolTable();
         this.fullyQualifiedClassNames = new HashMap<>();
@@ -37,6 +38,11 @@ public class OllirToJasmin {
         this.classUnit.checkMethodLabels(); // check the use of labels in the OLLIR loaded
         this.classUnit.buildCFGs(); // build the CFG of each method
         this.classUnit.buildVarTables();
+        this.optimize = optimize;
+    }
+
+    OllirToJasmin(OllirResult ollirResult) throws OllirErrorException {
+        this(ollirResult, false);
     }
 
     private void registerFullyQualifiedClassNames() {
@@ -495,8 +501,24 @@ public class OllirToJasmin {
             }
         } else {
             switch (element.getType().getTypeOfElement()) {
-                case STRING, INT32 -> code.append("ldc ").append(((LiteralElement) element).getLiteral());
+                case STRING -> code.append("ldc ").append(((LiteralElement) element).getLiteral());
                 case BOOLEAN -> code.append("bipush ").append(((LiteralElement) element).getLiteral());
+                case INT32 -> {
+                    LiteralElement literalElement = (LiteralElement) element;
+                    if (optimize) {
+                        Integer integer = Integer.parseInt(literalElement.getLiteral());
+                        if (integer >= -128 && integer <= 127) {
+                            code.append("bipush ").append(literalElement.getLiteral());
+                        } else if (integer >= -32_768 && integer <= 32_767) {
+                            code.append("sipush ").append(literalElement.getLiteral());
+                        } else {
+                            code.append("ldc ").append(literalElement.getLiteral());
+                        }
+                    }
+                    else {
+                        code.append("ldc ").append(literalElement.getLiteral());
+                    }
+                }
                 default ->
                         throw new NotImplementedException("Not implemented for type: " + element.getType().getTypeOfElement() + " with no name.");
             }

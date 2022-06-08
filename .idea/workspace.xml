@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="a8f151d9-8ba9-41c0-9415-6a7a4fae211a" name="Changes" comment="Symbol Table being constructed. Missing reports.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/Launcher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/JasminEmitter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/JasminEmitter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,17 +108,17 @@
       <recent name="C:\Users\andre\Documents\FEUP\C\comp2022-2f\src\pt\up\fe\comp" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\andre\Documents\FEUP\C\comp2022-2f\test\Our Tests" />
       <recent name="D:\Meu Projetos\3 ANO - 2 S\COMP\Proj\test\fixtures\public" />
       <recent name="C:\Users\andre\Documents\FEUP\C\comp2022-2f\src\main\resources" />
       <recent name="C:\Users\andre\Documents\FEUP\C\comp2022-2f\src\pt\up\fe\comp\jasmin" />
       <recent name="$PROJECT_DIR$/src/pt/up/fe/comp/ollir" />
-      <recent name="$PROJECT_DIR$/test/Basic Tests" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.Cpf1_ParserAndTree">
+  <component name="RunManager" selected="Gradle.OurTests (1)">
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -152,7 +155,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="Cp2Test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="AnalysisTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -165,7 +168,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.Cp2Test&quot;" />
+            <option value="&quot;pt.up.fe.comp.AnalysisTest.test&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -198,7 +201,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="Cpf2_SemanticAnalysis" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="OurTests (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -211,7 +214,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.cpf.Cpf2_SemanticAnalysis&quot;" />
+            <option value="&quot;pt.up.fe.comp.OurTests&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -221,7 +224,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="Cpf3_Ollir" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="OurTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -234,7 +237,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.cpf.Cpf3_Ollir&quot;" />
+            <option value="&quot;OurTests.OurTests&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -244,7 +247,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="Cpf4_Jasmin" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="OurTests.arrayOpTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -257,7 +260,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.cpf.Cpf4_Jasmin&quot;" />
+            <option value="&quot;OurTests.OurTests.arrayOpTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -270,19 +273,19 @@
     <list>
       <item itemvalue="Application.Launcher" />
       <item itemvalue="Gradle.AnalysisTest" />
+      <item itemvalue="Gradle.AnalysisTest.test" />
       <item itemvalue="Gradle.Cpf1_ParserAndTree" />
-      <item itemvalue="Gradle.Cpf2_SemanticAnalysis" />
-      <item itemvalue="Gradle.Cpf3_Ollir" />
-      <item itemvalue="Gradle.Cpf4_Jasmin" />
-      <item itemvalue="Gradle.Cp2Test" />
+      <item itemvalue="Gradle.OurTests" />
+      <item itemvalue="Gradle.OurTests (1)" />
+      <item itemvalue="Gradle.OurTests.arrayOpTest" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.OurTests (1)" />
+        <item itemvalue="Gradle.AnalysisTest.test" />
+        <item itemvalue="Gradle.OurTests" />
+        <item itemvalue="Gradle.OurTests.arrayOpTest" />
         <item itemvalue="Gradle.Cpf1_ParserAndTree" />
-        <item itemvalue="Gradle.Cp2Test" />
-        <item itemvalue="Gradle.Cpf4_Jasmin" />
-        <item itemvalue="Gradle.Cpf3_Ollir" />
-        <item itemvalue="Gradle.Cpf2_SemanticAnalysis" />
       </list>
     </recent_temporary>
   </component>
@@ -312,7 +315,7 @@
       <workItem from="1653470844965" duration="6871000" />
       <workItem from="1654255173520" duration="9000" />
       <workItem from="1654597395010" duration="3070000" />
-      <workItem from="1654678570051" duration="1867000" />
+      <workItem from="1654678570051" duration="5051000" />
     </task>
     <task id="LOCAL-00001" summary="Symbol Table being constructed. Missing reports.">
       <created>1651493959654</created>
