@@ -15,30 +15,10 @@ public class JasminTest {
 
     @Test
     public void test() {
-        JasminResult jasminResult = TestUtils.backend(SpecsIo.getResource("fixtures/public/TicTacToe.jmm"));
+        JasminResult jasminResult = TestUtils.backend(SpecsIo.getResource("fixtures/public/WhileAndIf.jmm"));
         TestUtils.noErrors(jasminResult.getReports());
 
-        Scanner scanner = new Scanner(jasminResult.getJasminCode());
-
-        int l;
-        l = 1;
-
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            System.out.println(l + ":\t" + line);
-            l++;
-        }
-
-        jasminResult.run("0\n" +
-                "0\n" +
-                "0\n" +
-                "1\n" +
-                "1\n" +
-                "1\n" +
-                "1\n" +
-                "0\n" +
-                "2\n" +
-                "2");
+        jasminResult.run();
     }
 
     @Test

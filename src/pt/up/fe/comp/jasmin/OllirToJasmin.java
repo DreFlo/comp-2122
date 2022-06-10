@@ -23,9 +23,10 @@ public class OllirToJasmin {
     private final Map<String, String> fullyQualifiedClassNames;
     private final FunctionClassMap<Instruction, String> instructionMap;
     private final Map<String, String> variableClass;
+    private final boolean optimize;
     private Method currentMethod = null;
     private int labelNumber = 0;
-    private boolean optimize;
+    private int indentCounter;
 
     OllirToJasmin(OllirResult ollirResult, boolean optimize) throws OllirErrorException {
         this.classUnit = ollirResult.getOllirClass();
@@ -39,6 +40,7 @@ public class OllirToJasmin {
         this.classUnit.buildCFGs(); // build the CFG of each method
         this.classUnit.buildVarTables();
         this.optimize = optimize;
+        indentCounter = 0;
     }
 
     OllirToJasmin(OllirResult ollirResult) throws OllirErrorException {
@@ -109,27 +111,31 @@ public class OllirToJasmin {
 
         code.append("\n\n");
 
+        indentCounter++;
+
         code.append(classUnit.getFields().stream().map(this::getCode).collect(Collectors.joining()));
 
         code.append("\n");
 
-        code.append(".method public <init>()V\n" +
-                "   aload_0\n" +
-                "   invokenonvirtual " + qualifiedSuperClassName + "/<init>()V\n" +
-                "   return\n" +
-                ".end method\n\n");
+        code.append(indent()).append(".method public <init>()V\n");
+        indentCounter++;
+        code.append(indent()).append("   aload_0\n").append(indent()).append("   invokenonvirtual ").append(indent()).append(qualifiedSuperClassName).append("/<init>()V\n").append(indent()).append("   return\n");
+        indentCounter--;
+        code.append(indent()).append(".end method\n\n");
 
         for (Method method : classUnit.getMethods()) {
             if (method.isConstructMethod()) continue;
             code.append(getCode(method));
         }
 
+        indentCounter--;
+
         return code.toString();
     }
 
     private String getCode(Field field) {
         StringBuilder code = new StringBuilder();
-        code.append(".field ").append(getAccessModifierString(field.getFieldAccessModifier())).append(" ");
+        code.append(indent()).append(".field ").append(getAccessModifierString(field.getFieldAccessModifier())).append(" ");
         if (field.isStaticField()) {
             code.append("static ");
         }
@@ -145,12 +151,16 @@ public class OllirToJasmin {
         return code.toString();
     }
 
+    private String indent() {
+        return "\t".repeat(indentCounter);
+    }
+
     private String getCode(Method method) {
         currentMethod = method;
 
         StringBuilder code = new StringBuilder();
 
-        code.append(".method ").append(getAccessModifierString(method.getMethodAccessModifier())).append(" ");
+        code.append(indent()).append(".method ").append(getAccessModifierString(method.getMethodAccessModifier())).append(" ");
 
         if (method.isStaticMethod()) {
             code.append("static ");
@@ -162,15 +172,23 @@ public class OllirToJasmin {
 
         code.append(methodParamTypes).append(")").append(getJasminType(method.getReturnType())).append("\n");
 
-        code.append(".limit stack ").append(calculateStackSize(method)).append("\n");
-        code.append(".limit locals ").append(calculateLocalVariableNumber(method)).append("\n");
+        code.append(indent()).append(".limit stack ").append(calculateStackSize(method)).append("\n");
+        code.append(indent()).append(".limit locals ").append(calculateLocalVariableNumber(method)).append("\n");
+
+        indentCounter++;
 
         for (Instruction instruction : method.getInstructions()) {
-            code.append(getLabels(method.getLabels(instruction)));
+            if (method.getLabels(instruction).size() != 0) {
+                indentCounter--;
+                code.append(getLabels(method.getLabels(instruction)));
+                indentCounter++;
+            }
             code.append(getCode(instruction));
         }
 
-        code.append(".end method\n\n");
+        indentCounter = 1;
+
+        code.append(indent()).append(".end method\n\n");
 
         return code.toString();
     }
@@ -193,8 +211,7 @@ public class OllirToJasmin {
             CallInstruction callInstruction = (CallInstruction) instruction;
             List<Element> listOfOperands = callInstruction.getListOfOperands();
             return listOfOperands == null ? 0 : listOfOperands.size() + 2;
-        }
-        else if (instruction instanceof SingleOpInstruction) {
+        } else if (instruction instanceof SingleOpInstruction) {
             SingleOpInstruction singleOpInstruction = (SingleOpInstruction) instruction;
             return elementMinStackSize(singleOpInstruction.getSingleOperand());
         } else if (instruction instanceof UnaryOpInstruction) {
@@ -203,12 +220,10 @@ public class OllirToJasmin {
         } else if (instruction instanceof BinaryOpInstruction) {
             BinaryOpInstruction binaryOpInstruction = (BinaryOpInstruction) instruction;
             return elementMinStackSize(binaryOpInstruction.getLeftOperand()) + elementMinStackSize(binaryOpInstruction.getRightOperand());
-        }
-        else if (instruction instanceof SingleOpCondInstruction) {
+        } else if (instruction instanceof SingleOpCondInstruction) {
             SingleOpCondInstruction singleOpCondInstruction = (SingleOpCondInstruction) instruction;
             return instructionMinStackSize(singleOpCondInstruction.getCondition());
-        }
-        else if (instruction instanceof OpCondInstruction) {
+        } else if (instruction instanceof OpCondInstruction) {
             OpCondInstruction opCondInstruction = (OpCondInstruction) instruction;
             return instructionMinStackSize(opCondInstruction.getCondition());
         } else if (instruction instanceof PutFieldInstruction) {
@@ -245,18 +260,15 @@ public class OllirToJasmin {
     private int elementMinStackSize(Element element) {
         if (element instanceof LiteralElement) {
             return 1;
-        }
-        else if (element instanceof Operand) {
+        } else if (element instanceof Operand) {
             Operand operand = (Operand) element;
             if (operand instanceof ArrayOperand) {
                 ArrayOperand arrayOperand = (ArrayOperand) operand;
                 return arrayOperand.getIndexOperands().size() + 1;
-            }
-            else {
+            } else {
                 return 1;
             }
-        }
-        else {
+        } else {
             System.out.println("Went wrong");
             return 0;
         }
@@ -265,7 +277,7 @@ public class OllirToJasmin {
     private String getLabels(List<String> labels) {
         StringBuilder code = new StringBuilder();
         for (String label : labels) {
-            code.append(label).append(":\n");
+            code.append(indent()).append(label).append(":\n");
         }
         return code.toString();
     }
@@ -291,7 +303,7 @@ public class OllirToJasmin {
                 return getCodeLDC(instruction);
             }
             case arraylength -> {
-                return pushElementToStack(instruction.getFirstArg()) + "arraylength\n";
+                return pushElementToStack(instruction.getFirstArg()) + indent() + "arraylength\n";
             }
 
             default ->
@@ -302,6 +314,7 @@ public class OllirToJasmin {
     public String getCodeInvoke(CallInstruction instruction) {
         StringBuilder code = new StringBuilder();
         code.append(pushArgumentsToStack(instruction));
+        code.append(indent());
         code.append(instruction.getInvocationType()).append(" ");
         code.append(getFullyQualifiedClassName(((Operand) instruction.getFirstArg()).getName()));
         code.append("/");
@@ -323,17 +336,17 @@ public class OllirToJasmin {
             if (operand.getType().getTypeOfElement() == ElementType.ARRAYREF) {
                 Element element = instruction.getListOfOperands().get(0);
                 code.append(pushElementToStack(element));
-                code.append("newarray int\n");
+                code.append(indent()).append("newarray int\n");
                 return code.toString();
             }
         }
         String qualifiedClassName = getFullyQualifiedClassName(((Operand) instruction.getFirstArg()).getName());
-        code.append("new ").append(qualifiedClassName).append("\n");
+        code.append(indent()).append("new ").append(qualifiedClassName).append("\n");
         return code.toString();
     }
 
     private String getCodeLDC(CallInstruction instruction) {
-        return "ldc " + ((Operand) instruction.getFirstArg()).getName() + "\n";
+        return indent() + "ldc " + ((Operand) instruction.getFirstArg()).getName() + "\n";
     }
 
     private String getCode(AssignInstruction instruction) {
@@ -342,6 +355,7 @@ public class OllirToJasmin {
             code.append(storeInArray((ArrayOperand) instruction.getDest(), getCode(instruction.getRhs())));
         } else {
             code.append(getCode(instruction.getRhs()));
+            code.append(indent());
             switch (instruction.getTypeOfAssign().getTypeOfElement()) {
                 case INT32, BOOLEAN ->
                         code.append("istore ").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
@@ -379,6 +393,7 @@ public class OllirToJasmin {
         StringBuilder code = new StringBuilder();
         code.append(pushElementToStack(instruction.getLeftOperand()));
         code.append(pushElementToStack(instruction.getRightOperand()));
+        code.append(indent());
         switch (instruction.getOperation().getOpType()) {
             case ADD -> code.append("iadd\n");
             case SUB -> code.append("isub\n");
@@ -415,6 +430,7 @@ public class OllirToJasmin {
     private String getCode(UnaryOpInstruction instruction) {
         StringBuilder code = new StringBuilder();
         code.append(pushElementToStack(instruction.getOperand()));
+        code.append(indent());
         if (instruction.getOperation().getOpType() == OperationType.NOT || instruction.getOperation().getOpType() == OperationType.NOTB) {
             code.append("ifeq L").append(labelNumber).append("\n");
             code.append(pushComparisonResultToStack());
@@ -425,24 +441,31 @@ public class OllirToJasmin {
     }
 
     private String pushComparisonResultToStack() {
-        String code = "bipush 0\n" +
-                "goto LE" + labelNumber + "\n" +
-                "L" + labelNumber + ":\n" +
-                "bipush 1\n" +
-                "LE" + labelNumber + ":\n";
+        StringBuilder code = new StringBuilder();
+        indentCounter++;
+        code.append(indent()).append("bipush 0\n").append(indent()).append("goto LE").append(labelNumber).append("\n");
+        indentCounter--;
+        code.append(indent()).append("L").append(labelNumber).append(":\n");
+        indentCounter++;
+        code.append(indent()).append("bipush 1\n");
+        indentCounter -= 2;
+        code.append(indent()).append("LE").append(labelNumber).append(":\n");
+        indentCounter++;
         labelNumber++;
-        return code;
+        return code.toString();
     }
 
     private String getCode(ReturnInstruction instruction) {
         StringBuilder code = new StringBuilder();
         if (instruction.hasReturnValue()) {
             code.append(pushElementToStack(instruction.getOperand()));
+            code.append(indent());
             switch (instruction.getOperand().getType().getTypeOfElement()) {
                 case OBJECTREF, STRING, ARRAYREF -> code.append("areturn\n");
                 case INT32, BOOLEAN -> code.append("ireturn\n");
             }
         } else {
+            code.append(indent());
             code.append("return\n");
         }
         return code.toString();
@@ -453,17 +476,17 @@ public class OllirToJasmin {
     }
 
     public String getCode(GotoInstruction instruction) {
-        return "goto " + instruction.getLabel() + "\n";
+        return indent() + "goto " + instruction.getLabel() + "\n";
     }
 
     public String getCode(GetFieldInstruction instruction) {
-        return pushElementToStack(instruction.getFirstOperand()) +
+        return pushElementToStack(instruction.getFirstOperand()) + indent() +
                 "getfield " + getFullyQualifiedClassName(((Operand) instruction.getFirstOperand()).getName()) + "/" + ((Operand) instruction.getSecondOperand()).getName() + " " + getJasminType((instruction.getSecondOperand())) + "\n";
     }
 
     public String getCode(PutFieldInstruction instruction) {
         return pushElementToStack(instruction.getFirstOperand()) +
-                pushElementToStack(instruction.getThirdOperand()) +
+                pushElementToStack(instruction.getThirdOperand()) + indent() +
                 "putfield " +
                 getFullyQualifiedClassName(((Operand) instruction.getFirstOperand()).getName()) + "/" +
                 ((Operand) instruction.getSecondOperand()).getName() + " " +
@@ -472,24 +495,25 @@ public class OllirToJasmin {
     }
 
     public String getCode(OpCondInstruction instruction) {
-        return getCode(instruction.getCondition()) +
+        return getCode(instruction.getCondition()) + indent() +
                 "ifne " + instruction.getLabel() + "\n";
     }
 
     public String getCode(SingleOpCondInstruction instruction) {
-        return getCode(instruction.getCondition()) +
+        return getCode(instruction.getCondition()) + indent() +
                 "ifne " + instruction.getLabel() + "\n";
     }
 
     private String pushElementToStack(Element element) {
         StringBuilder code = new StringBuilder();
+        code.append(indent());
         if (element instanceof ArrayOperand) {
             ArrayOperand arrayOperand = (ArrayOperand) element;
             code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(arrayOperand)).append("\n");
             for (Element index : arrayOperand.getIndexOperands()) {
                 code.append(pushElementToStack(index));
             }
-            code.append("iaload");
+            code.append(indent()).append("iaload");
         } else if (!element.isLiteral()) {
             switch (element.getType().getTypeOfElement()) {
                 case INT32, BOOLEAN ->
@@ -506,7 +530,7 @@ public class OllirToJasmin {
                 case INT32 -> {
                     LiteralElement literalElement = (LiteralElement) element;
                     if (optimize) {
-                        Integer integer = Integer.parseInt(literalElement.getLiteral());
+                        int integer = Integer.parseInt(literalElement.getLiteral());
                         if (integer >= -128 && integer <= 127) {
                             code.append("bipush ").append(literalElement.getLiteral());
                         } else if (integer >= -32_768 && integer <= 32_767) {
@@ -514,8 +538,7 @@ public class OllirToJasmin {
                         } else {
                             code.append("ldc ").append(literalElement.getLiteral());
                         }
-                    }
-                    else {
+                    } else {
                         code.append("ldc ").append(literalElement.getLiteral());
                     }
                 }
@@ -529,12 +552,12 @@ public class OllirToJasmin {
 
     private String storeInArray(ArrayOperand arrayOperand, String toStore) {
         StringBuilder code = new StringBuilder();
-        code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(arrayOperand)).append("\n");
+        code.append(indent()).append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(arrayOperand)).append("\n");
         for (Element index : arrayOperand.getIndexOperands()) {
             code.append(pushElementToStack(index));
         }
         code.append(toStore);
-        code.append("iastore\n");
+        code.append(indent()).append("iastore\n");
         return code.toString();
     }
 

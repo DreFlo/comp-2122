@@ -6,9 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="a8f151d9-8ba9-41c0-9415-6a7a4fae211a" name="Changes" comment="Symbol Table being constructed. Missing reports.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/Launcher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs-jmm/compiled/TicTacToe.class" beforeDir="false" afterPath="$PROJECT_DIR$/libs-jmm/compiled/TicTacToe.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/JasminEmitter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/JasminEmitter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/pt/up/fe/comp/jasmin/OllirToJasmin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/pt/up/fe/comp/JasminTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,6 +92,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;jdk.selected.JAVA_MODULE&quot;: &quot;openjdk-15&quot;,
+    &quot;last.edited.regexp&quot;: &quot;Sample Text&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/Meu Projetos/3 ANO - 2 S/CPD/g01/assign2/cpd-distributed-system&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -118,7 +120,7 @@
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.OurTests (1)">
+  <component name="RunManager" selected="Gradle.JasminTest.test">
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -178,7 +180,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="Cpf1_ParserAndTree" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Cpf4_Jasmin" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -191,7 +193,30 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;pt.up.fe.comp.cpf.Cpf1_ParserAndTree&quot;" />
+            <option value="&quot;pt.up.fe.comp.cpf.Cpf4_Jasmin&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="JasminTest.test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;pt.up.fe.comp.JasminTest.test&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -247,45 +272,22 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="OurTests.arrayOpTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;OurTests.OurTests.arrayOpTest&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
     <list>
       <item itemvalue="Application.Launcher" />
       <item itemvalue="Gradle.AnalysisTest" />
+      <item itemvalue="Gradle.Cpf4_Jasmin" />
+      <item itemvalue="Gradle.JasminTest.test" />
       <item itemvalue="Gradle.AnalysisTest.test" />
-      <item itemvalue="Gradle.Cpf1_ParserAndTree" />
       <item itemvalue="Gradle.OurTests" />
       <item itemvalue="Gradle.OurTests (1)" />
-      <item itemvalue="Gradle.OurTests.arrayOpTest" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.JasminTest.test" />
+        <item itemvalue="Gradle.Cpf4_Jasmin" />
         <item itemvalue="Gradle.OurTests (1)" />
         <item itemvalue="Gradle.AnalysisTest.test" />
         <item itemvalue="Gradle.OurTests" />
-        <item itemvalue="Gradle.OurTests.arrayOpTest" />
-        <item itemvalue="Gradle.Cpf1_ParserAndTree" />
       </list>
     </recent_temporary>
   </component>
@@ -316,6 +318,8 @@
       <workItem from="1654255173520" duration="9000" />
       <workItem from="1654597395010" duration="3070000" />
       <workItem from="1654678570051" duration="5051000" />
+      <workItem from="1654690807956" duration="4522000" />
+      <workItem from="1654852904862" duration="2538000" />
     </task>
     <task id="LOCAL-00001" summary="Symbol Table being constructed. Missing reports.">
       <created>1651493959654</created>

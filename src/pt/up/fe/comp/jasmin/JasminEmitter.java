@@ -10,7 +10,7 @@ import java.util.Collections;
 public class JasminEmitter implements JasminBackend {
     @Override
     public JasminResult toJasmin(OllirResult ollirResult) {
-        return toJasmin(ollirResult, false);
+        return toJasmin(ollirResult, true);
     }
 
     public JasminResult toJasmin(OllirResult ollirResult, boolean optimize) {
@@ -21,7 +21,13 @@ public class JasminEmitter implements JasminBackend {
             throw new RuntimeException(e);
         }
 
-        System.out.println(jasminCode);
+        if (optimize) {
+            RedundantJMVInstructionRemover redundantJMVInstructionRemover = new RedundantJMVInstructionRemover(jasminCode);
+
+            jasminCode = redundantJMVInstructionRemover.getOptimizedCode();
+
+            System.out.println(jasminCode);
+        }
 
         return new JasminResult(ollirResult, jasminCode, ollirResult.getReports());
     }
