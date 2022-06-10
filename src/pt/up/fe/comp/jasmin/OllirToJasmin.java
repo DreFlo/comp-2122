@@ -10,10 +10,7 @@ import pt.up.fe.specs.util.SpecsIo;
 import pt.up.fe.specs.util.classmap.FunctionClassMap;
 import pt.up.fe.specs.util.exceptions.NotImplementedException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class OllirToJasmin {
@@ -23,12 +20,11 @@ public class OllirToJasmin {
     private final Map<String, String> fullyQualifiedClassNames;
     private final FunctionClassMap<Instruction, String> instructionMap;
     private final Map<String, String> variableClass;
-    private final boolean optimize;
     private Method currentMethod = null;
     private int labelNumber = 0;
     private int indentCounter;
 
-    OllirToJasmin(OllirResult ollirResult, boolean optimize) throws OllirErrorException {
+    OllirToJasmin(OllirResult ollirResult) throws OllirErrorException {
         this.classUnit = ollirResult.getOllirClass();
         this.symbolTable = ollirResult.getSymbolTable();
         this.fullyQualifiedClassNames = new HashMap<>();
@@ -39,12 +35,7 @@ public class OllirToJasmin {
         this.classUnit.checkMethodLabels(); // check the use of labels in the OLLIR loaded
         this.classUnit.buildCFGs(); // build the CFG of each method
         this.classUnit.buildVarTables();
-        this.optimize = optimize;
         indentCounter = 0;
-    }
-
-    OllirToJasmin(OllirResult ollirResult) throws OllirErrorException {
-        this(ollirResult, false);
     }
 
     private void registerFullyQualifiedClassNames() {
@@ -252,7 +243,6 @@ public class OllirToJasmin {
             }
             return 0;
         } else {
-            instruction.show();
             return 0;
         }
     }
@@ -354,43 +344,134 @@ public class OllirToJasmin {
         if (instruction.getDest() instanceof ArrayOperand) {
             code.append(storeInArray((ArrayOperand) instruction.getDest(), getCode(instruction.getRhs())));
         } else {
-            code.append(getCode(instruction.getRhs()));
-            code.append(indent());
-            switch (instruction.getTypeOfAssign().getTypeOfElement()) {
-                case INT32, BOOLEAN ->
-                        code.append("istore ").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
-                case OBJECTREF, ARRAYREF ->
-                        code.append("astore ").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest()));
-                default ->
-                        throw new NotImplementedException("Not implemented for type: " + instruction.getTypeOfAssign().getTypeOfElement());
+            long inc = isIncrementInstruction(instruction);
+            if (inc != Long.MIN_VALUE) {
+                code.append(indent()).append("iinc ").append(getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest())).append(" ").append(inc);
+            } else {
+                code.append(getCode(instruction.getRhs()));
+                code.append(indent());
+                int register = getCurrentMethodVarVirtualRegisterFromElement(instruction.getDest());
+                switch (instruction.getTypeOfAssign().getTypeOfElement()) {
+                    case INT32 -> {
+                        code.append("istore").append(register <= 3 ? "_" : " ").append(register);
+                        variableClass.put(((Operand) instruction.getDest()).getName(), "int");
+                    }
+                    case BOOLEAN -> {
+                        code.append("istore").append(register <= 3 ? "_" : " ").append(register);
+                        variableClass.put(((Operand) instruction.getDest()).getName(), "boolean");
+                    }
+                    case OBJECTREF -> {
+                        code.append("astore").append(register <= 3 ? "_" : " ").append(register);
+                        if (instruction.getRhs().getClass() == SingleOpInstruction.class) {
+                            variableClass.put(((Operand) instruction.getDest()).getName(), getFullyQualifiedClassName(((Operand) ((SingleOpInstruction) instruction.getRhs()).getSingleOperand()).getName()));
+                        } else if (instruction.getRhs().getClass() == CallInstruction.class) {
+                            variableClass.put(((Operand) instruction.getDest()).getName(), getFullyQualifiedClassName(((Operand) ((CallInstruction) instruction.getRhs()).getFirstArg()).getName()));
+                        } else {
+                            throw new NotImplementedException("Not implemented for : " + instruction.getRhs().getClass());
+                        }
+                    }
+                    case ARRAYREF -> {
+                        code.append("astore").append(register <= 3 ? "_" : " ").append(register);
+                        if (instruction.getRhs().getClass() == CallInstruction.class) {
+                            variableClass.put(((Operand) instruction.getDest()).getName(), "[I");
+                        }
+                    }
+                    default ->
+                            throw new NotImplementedException("Not implemented for type: " + instruction.getTypeOfAssign().getTypeOfElement());
+                }
             }
             code.append("\n");
-            switch (instruction.getTypeOfAssign().getTypeOfElement()) {
-                case INT32 -> variableClass.put(((Operand) instruction.getDest()).getName(), "int");
-                case BOOLEAN -> variableClass.put(((Operand) instruction.getDest()).getName(), "boolean");
-                case OBJECTREF -> {
-                    if (instruction.getRhs().getClass() == SingleOpInstruction.class) {
-                        variableClass.put(((Operand) instruction.getDest()).getName(), getFullyQualifiedClassName(((Operand) ((SingleOpInstruction) instruction.getRhs()).getSingleOperand()).getName()));
-                    } else if (instruction.getRhs().getClass() == CallInstruction.class) {
-                        variableClass.put(((Operand) instruction.getDest()).getName(), getFullyQualifiedClassName(((Operand) ((CallInstruction) instruction.getRhs()).getFirstArg()).getName()));
-                    } else {
-                        throw new NotImplementedException("Not implemented for : " + instruction.getRhs().getClass());
-                    }
-                }
-                case ARRAYREF -> {
-                    if (instruction.getRhs().getClass() == CallInstruction.class) {
-                        variableClass.put(((Operand) instruction.getDest()).getName(), "[I");
-                    }
-                }
-                default ->
-                        throw new NotImplementedException("Not implemented for type: " + instruction.getTypeOfAssign().getTypeOfElement());
-            }
         }
         return code.toString();
     }
 
+    private long isIncrementInstruction(AssignInstruction instruction) {
+        if (instruction.getTypeOfAssign().getTypeOfElement() == ElementType.INT32) {
+            String destName = ((Operand) instruction.getDest()).getName();
+            if (instruction.getRhs().getInstType() == InstructionType.BINARYOPER) {
+                BinaryOpInstruction binaryOpInstruction = (BinaryOpInstruction) instruction.getRhs();
+                if (!binaryOpInstruction.getLeftOperand().isLiteral() && binaryOpInstruction.getRightOperand().isLiteral()) {
+                    String operandName = ((Operand) binaryOpInstruction.getLeftOperand()).getName();
+                    if (Objects.equals(destName, operandName)) {
+                        if (binaryOpInstruction.getOperation().getOpType() == OperationType.ADD)
+                            return Integer.parseInt(((LiteralElement) binaryOpInstruction.getRightOperand()).getLiteral());
+                        else if (binaryOpInstruction.getOperation().getOpType() == OperationType.SUB)
+                            return -Integer.parseInt(((LiteralElement) binaryOpInstruction.getRightOperand()).getLiteral());
+                    }
+                } else if (binaryOpInstruction.getLeftOperand().isLiteral() && !binaryOpInstruction.getRightOperand().isLiteral()) {
+                    String operandName = ((Operand) binaryOpInstruction.getRightOperand()).getName();
+                    if (Objects.equals(destName, operandName)) {
+                        if (binaryOpInstruction.getOperation().getOpType() == OperationType.ADD)
+                            return Integer.parseInt(((LiteralElement) binaryOpInstruction.getLeftOperand()).getLiteral());
+                    }
+                }
+            }
+        }
+        return Long.MIN_VALUE;
+    }
+
     private String getCode(BinaryOpInstruction instruction) {
         StringBuilder code = new StringBuilder();
+        if (isComparison(instruction)) {
+            if (instruction.getLeftOperand().isLiteral()) {
+                if (Objects.equals(((LiteralElement) instruction.getLeftOperand()).getLiteral(), "0")) {
+                    code.append(pushElementToStack(instruction.getRightOperand()));
+                    code.append(indent());
+                    switch (instruction.getOperation().getOpType()) {
+                        case LTH -> {
+                            code.append("ifgt L").append(labelNumber).append("\n");
+                            code.append(pushComparisonResultToStack());
+                        }
+                        case GTH -> {
+                            code.append("iflt L").append(labelNumber).append("\n");
+                            code.append(pushComparisonResultToStack());
+                        }
+                        case LTE -> {
+                            code.append("ifge L").append(labelNumber).append("\n");
+                            code.append(pushComparisonResultToStack());
+                        }
+                        case GTE -> {
+                            code.append("ifle L").append(labelNumber).append("\n");
+                            code.append(pushComparisonResultToStack());
+                        }
+                        case EQ -> {
+                            code.append("ifeq L").append(labelNumber).append("\n");
+                            code.append(pushComparisonResultToStack());
+                        }
+                    }
+                    return code.toString();
+                }
+            }
+            if (instruction.getRightOperand().isLiteral()) {
+                if (Objects.equals(((LiteralElement) instruction.getRightOperand()).getLiteral(), "0")) {
+                    code.append(pushElementToStack(instruction.getLeftOperand()));
+                    code.append(indent());
+                    switch (instruction.getOperation().getOpType()) {
+                        case LTH -> {
+                            code.append("iflt L").append(labelNumber).append("\n");
+                            code.append(pushComparisonResultToStack());
+                        }
+                        case GTH -> {
+                            code.append("ifgt L").append(labelNumber).append("\n");
+                            code.append(pushComparisonResultToStack());
+                        }
+                        case LTE -> {
+                            code.append("ifle L").append(labelNumber).append("\n");
+                            code.append(pushComparisonResultToStack());
+                        }
+                        case GTE -> {
+                            code.append("ifge L").append(labelNumber).append("\n");
+                            code.append(pushComparisonResultToStack());
+                        }
+                        case EQ -> {
+                            code.append("ifeq L").append(labelNumber).append("\n");
+                            code.append(pushComparisonResultToStack());
+                        }
+                    }
+                    return code.toString();
+                }
+            }
+        }
         code.append(pushElementToStack(instruction.getLeftOperand()));
         code.append(pushElementToStack(instruction.getRightOperand()));
         code.append(indent());
@@ -427,6 +508,17 @@ public class OllirToJasmin {
         return code.toString();
     }
 
+    private boolean isComparison(BinaryOpInstruction instruction) {
+        switch (instruction.getOperation().getOpType()) {
+            case EQ, GTE, GTH, LTE, LTH -> {
+                return true;
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
+
     private String getCode(UnaryOpInstruction instruction) {
         StringBuilder code = new StringBuilder();
         code.append(pushElementToStack(instruction.getOperand()));
@@ -443,11 +535,11 @@ public class OllirToJasmin {
     private String pushComparisonResultToStack() {
         StringBuilder code = new StringBuilder();
         indentCounter++;
-        code.append(indent()).append("bipush 0\n").append(indent()).append("goto LE").append(labelNumber).append("\n");
+        code.append(indent()).append("iconst_0\n").append(indent()).append("goto LE").append(labelNumber).append("\n");
         indentCounter--;
         code.append(indent()).append("L").append(labelNumber).append(":\n");
         indentCounter++;
-        code.append(indent()).append("bipush 1\n");
+        code.append(indent()).append("iconst_1\n");
         indentCounter -= 2;
         code.append(indent()).append("LE").append(labelNumber).append(":\n");
         indentCounter++;
@@ -508,36 +600,38 @@ public class OllirToJasmin {
         StringBuilder code = new StringBuilder();
         code.append(indent());
         if (element instanceof ArrayOperand) {
+            int register = getCurrentMethodVarVirtualRegisterFromElement(element);
             ArrayOperand arrayOperand = (ArrayOperand) element;
-            code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(arrayOperand)).append("\n");
+            code.append("aload").append(register <= 3 ? "_" : " ").append(getCurrentMethodVarVirtualRegisterFromElement(arrayOperand)).append("\n");
             for (Element index : arrayOperand.getIndexOperands()) {
                 code.append(pushElementToStack(index));
             }
             code.append(indent()).append("iaload");
         } else if (!element.isLiteral()) {
+            int register = getCurrentMethodVarVirtualRegisterFromElement(element);
             switch (element.getType().getTypeOfElement()) {
                 case INT32, BOOLEAN ->
-                        code.append("iload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
+                        code.append("iload").append(register <= 3 ? "_" : " ").append(register);
                 case OBJECTREF, ARRAYREF, THIS ->
-                        code.append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(element));
+                        code.append("aload").append(register <= 3 ? "_" : " ").append(register);
                 default ->
                         throw new NotImplementedException("Not implemented for type: " + element.getType().getTypeOfElement() + " with no name.");
             }
         } else {
             switch (element.getType().getTypeOfElement()) {
                 case STRING -> code.append("ldc ").append(((LiteralElement) element).getLiteral());
-                case BOOLEAN -> code.append("bipush ").append(((LiteralElement) element).getLiteral());
+                case BOOLEAN -> code.append("iconst_").append(((LiteralElement) element).getLiteral());
                 case INT32 -> {
                     LiteralElement literalElement = (LiteralElement) element;
-                    if (optimize) {
-                        int integer = Integer.parseInt(literalElement.getLiteral());
-                        if (integer >= -128 && integer <= 127) {
-                            code.append("bipush ").append(literalElement.getLiteral());
-                        } else if (integer >= -32_768 && integer <= 32_767) {
-                            code.append("sipush ").append(literalElement.getLiteral());
-                        } else {
-                            code.append("ldc ").append(literalElement.getLiteral());
-                        }
+                    int integer = Integer.parseInt(literalElement.getLiteral());
+                    if (integer == -1) {
+                        code.append("iconst_m1");
+                    } else if (integer >= 0 && integer <= 5) {
+                        code.append("iconst_").append(literalElement.getLiteral());
+                    } else if (integer >= -128 && integer <= 127) {
+                        code.append("bipush ").append(literalElement.getLiteral());
+                    } else if (integer >= -32_768 && integer <= 32_767) {
+                        code.append("sipush ").append(literalElement.getLiteral());
                     } else {
                         code.append("ldc ").append(literalElement.getLiteral());
                     }
@@ -552,7 +646,8 @@ public class OllirToJasmin {
 
     private String storeInArray(ArrayOperand arrayOperand, String toStore) {
         StringBuilder code = new StringBuilder();
-        code.append(indent()).append("aload ").append(getCurrentMethodVarVirtualRegisterFromElement(arrayOperand)).append("\n");
+        int register = getCurrentMethodVarVirtualRegisterFromElement(arrayOperand);
+        code.append(indent()).append("aload").append(register <= 3 ? "_" : " ").append(register).append("\n");
         for (Element index : arrayOperand.getIndexOperands()) {
             code.append(pushElementToStack(index));
         }

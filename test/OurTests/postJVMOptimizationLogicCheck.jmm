@@ -1,0 +1,100 @@
+import io;
+
+class LogicCheck {
+
+    public int If() {
+        int a;
+        int b;
+        int c;
+        a = 1;
+        b = 2;
+        c = new int[10];
+        c[0] = 0 - 1;
+        c[1] = 0;
+        c[2] = 1;
+
+        if (a < 0) {
+            io.println(1);
+        }
+        else {
+            io.println(0);
+        }
+
+        if (0 < a) {
+            io.println(1);
+        }
+        else {
+            io.println(a);
+        }
+
+        if (a < 1) {
+            io.println(1);
+        }
+        else {
+            io.println(0);
+        }
+
+        if (1 < a) {
+            io.println(1);
+        }
+        else {
+            io.println(0);
+        }
+
+        if (a < b) {
+            io.println(1);
+        }
+        else {
+            io.println(0);
+        }
+
+        if (0 < c[0]) {
+            io.println(1);
+        }
+        else {
+            io.println(0);
+        }
+        if (0 < c[1]) {
+            io.println(1);
+        }
+        else {
+            io.println(0);
+        }
+        if (0 < c[2]) {
+            io.println(1);
+        }
+        else {
+            io.println(0);
+        }
+
+        return 0;
+    }
+
+    public int iinc() {
+        int a;
+
+        a = 0;
+
+        io.println(a);
+
+        a = a + 1;
+
+        io.println(a);
+
+        a = a - 1;
+
+        io.println(a);
+
+        a = 1 + a;
+
+        io.println(a);
+
+        return 0;
+    }
+
+    public static void main(String[] args) {
+        LogicCheck logicCheck;
+        logicCheck = new LogicCheck();
+        logicCheck.If();
+    }
+}

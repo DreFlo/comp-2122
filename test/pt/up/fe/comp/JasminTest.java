@@ -15,7 +15,7 @@ public class JasminTest {
 
     @Test
     public void test() {
-        JasminResult jasminResult = TestUtils.backend(SpecsIo.getResource("fixtures/public/WhileAndIf.jmm"));
+        JasminResult jasminResult = TestUtils.backend(SpecsIo.getResource("OurTests/postJVMOptimizationLogicCheck.jmm"));
         TestUtils.noErrors(jasminResult.getReports());
 
         jasminResult.run();
