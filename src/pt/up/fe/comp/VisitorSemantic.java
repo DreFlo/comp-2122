@@ -359,7 +359,6 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
 
     private Integer callAssignmentStatement(JmmNode node, Object dummy) {
 
-
         var leftChild = node.getJmmChild(0);
         var rightChild = node.getJmmChild(1);
         visit(leftChild, dummy);
@@ -411,8 +410,12 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                         }
                         break;
                     case "NewExp":
-                        if(!leftChildType.equals(getType(rightChild.getJmmChild(0)))) {
+                        if(!leftChildType.equals(getType(rightChild))) {
                             addReport(node, "Invalid assignment type");
+                            return null;
+                        }
+                        if(!(rightChild.get("type").equals("intArray") && isArray(leftChild))) {
+                            addReport(node, "Array error assignment");
                             return null;
                         }
                         break;
@@ -461,6 +464,10 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
             case "AssignmentStatement":
                 return getTypeOfAssignment(node);
             case "NewExp":
+                if(node.get("type").equals("intArray")) {
+                    return "int";
+                }
+                return getType(node.getJmmChild(0));
             case "Array":
                 return getType(node.getJmmChild(0));
             case "IfCondition":
