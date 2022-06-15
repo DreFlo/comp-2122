@@ -414,7 +414,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                             addReport(node, "Invalid assignment type");
                             return null;
                         }
-                        if(!(rightChild.get("type").equals("intArray") && isArray(leftChild))) {
+                        if(!(rightChild.get("type").equals("intArray") == isArray(leftChild))) {
                             addReport(node, "Array error assignment");
                             return null;
                         }
