@@ -27,6 +27,7 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
         this.symbolTable = symbolTable;
         this.reports = new ArrayList<>();
 
+        addVisit("Inheritance", this::InheritanceVisit);
         addVisit("UnaryOp", this::unaryOpVisit);
         addVisit("BinOp", this::binOpVisit);
         addVisit("CallExpression", this::callExpressionVisit);
@@ -36,6 +37,14 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
         addVisit("VarDeclaration", this::varDeclarationVisit);
         addVisit("Index", this::indexVisit);
         setDefaultVisit(this::defaultVisit);
+    }
+
+    private Integer InheritanceVisit(JmmNode node, Object dummy) {
+        if(!checkImport(node.getJmmChild(0))) {
+            addReport(node, node.getJmmChild(0).get("name") + " not imported");
+            return null;
+        }
+        return 0;
     }
     private Integer indexVisit(JmmNode node, Object dummy){
         if(!getType(node.getJmmChild(1)).equals("int")){
@@ -414,8 +423,12 @@ public class VisitorSemantic extends AJmmVisitor<Object, Integer> {
                             addReport(node, "Invalid assignment type");
                             return null;
                         }
-                        if(!(rightChild.get("type").equals("intArray") && isArray(leftChild))) {
+                        if(!(rightChild.get("type").equals("intArray") == isArray(leftChild))) {
                             addReport(node, "Array error assignment");
+                            return null;
+                        }
+                        if(!(rightChild.get("type").equals("object") == (checkImport(leftChild) || checkClass(leftChild) || checkSuperclass(rightChild)))) {
+                            addReport(node, "Object not imported");
                             return null;
                         }
                         break;
