@@ -117,7 +117,7 @@
       <recent name="pt.up.fe.comp" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.Cpf4_Jasmin">
+  <component name="RunManager" selected="Gradle.Cpf5_Optimizations">
     <configuration name="Launcher" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pt.up.fe.comp.Launcher" />
       <module name="comp2022-2f.main" />
@@ -291,7 +291,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="a8f151d9-8ba9-41c0-9415-6a7a4fae211a" name="Changes" comment="Symbol Table being constructed. Missing reports." />
+      <changelist id="f381ac2a-4710-4559-b642-0bfbb6dbce26" name="Changes" comment="Symbol Table being constructed. Missing reports." />
       <created>1648632973536</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
